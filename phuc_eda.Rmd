@@ -16,11 +16,10 @@ library(tidyverse)
 read_cas <- function(folder, file, recordfile) {
   skip <- grep("--------", readLines(unz(folder, recordfile)))
   record_layout <- read.table(unz(folder, recordfile), 
-                            fill = TRUE, skip = skip, header = FALSE) 
+                            fill = TRUE, skip = skip, header = FALSE)
   colnames(record_layout) <- c("variable_name", "start_col", "end_col", "type")
+  record_layout <- record_layout %>% filter(!is.na(end_col))
   widths <- as.numeric(as.character(record_layout$end_col)) - as.numeric(as.character(record_layout$start_col)) + 1
-  # Remove NA's
-  widths <- widths[!is.na(widths)]
   cas <- read.fwf(unz(folder, file), widths = widths, header	= FALSE,
                   col.names = record_layout$variable_name)
   return(cas)
@@ -63,3 +62,5 @@ data.frame(name = colnames(cas93), na_pct = na_count/nrow(cas93)) %>% arrange(de
 ```
 
 Almost all variables have some missing data.
+
+
