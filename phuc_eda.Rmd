@@ -1,0 +1,57 @@
+---
+title: "EDA"
+author: "Phuc Nguyen"
+date: "2/9/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Clean Data
+
+```{r, cache=TRUE}
+read_cas <- function(folder, file, recordfile) {
+  skip <- grep("--------", readLines(unz(folder, recordfile)))
+  record_layout <- read.table(unz(folder, recordfile), 
+                            fill = TRUE, skip = skip, header = FALSE) 
+  colnames(record_layout) <- c("variable_name", "start_col", "end_col", "type")
+  widths <- as.numeric(as.character(record_layout$end_col)) - as.numeric(as.character(record_layout$start_col)) + 1
+  # Remove NA's
+  widths <- widths[!is.na(widths)]
+  cas <- read.fwf(unz(folder, file), widths = widths, header	= FALSE,
+                  col.names = record_layout$variable_name)
+  return(cas)
+}
+cas93 <- read_cas(folder = "Harvard_CAS_1993.zip", 
+                  file = "Harvard_CAS_1993/DS0001/06577-0001-Data.txt",
+                  recordfile = "Harvard_CAS_1993/DS0001/06577-0001-Record_layout.txt")
+# NOTE: Need to remove the extra notes on DATE variables in the Record_layout file.
+cas97 <- read_cas(folder = "Harvard_CAS_1997.zip", 
+                  file = "Harvard_CAS_1997/DS0001/03163-0001-Data.txt",
+                  recordfile = "Harvard_CAS_1997/DS0001/03163-0001-Record_layout.txt")
+cas99 <- read_cas(folder = "Harvard_CAS_1999.zip", 
+                  file = "Harvard_CAS_1999/DS0001/03818-0001-Data.txt",
+                  recordfile = "Harvard_CAS_1999/DS0001/03818-0001-Record_layout.txt")
+cas20 <- read_cas(folder = "Harvard_CAS_2001.zip", 
+                  file = "Harvard_CAS_2001/DS0001/04291-0001-Data.txt",
+                  recordfile = "Harvard_CAS_2001/DS0001/04291-0001-Record_layout.txt")
+```
+
+
+```{r, cache=TRUE}
+head(cas93)
+```
+
+There are `r ncol(cas93)` columns and `r nrow(cas93)` observations for 1993 data.
+
+```{r}
+cas93 <- cas93 %>% mutate(STUDY_YEAR = 1993)
+cas97 <- cas97 %>% mutate(STUDY_YEAR = 1997)
+cas99 <- cas99 %>% mutate(STUDY_YEAR = 1999)
+cas20 <- cas20 %>% mutate(STUDY_YEAR = 2001)
+cas <- bind_rows(cas93, cas97, cas99, cas20)
+```
+
