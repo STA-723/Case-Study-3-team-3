@@ -28,7 +28,6 @@ read_cas <- function(folder, file, recordfile) {
 cas93 <- read_cas(folder = "Harvard_CAS_1993.zip", 
                   file = "Harvard_CAS_1993/DS0001/06577-0001-Data.txt",
                   recordfile = "Harvard_CAS_1993/DS0001/06577-0001-Record_layout.txt")
-# NOTE: Need to remove the extra notes on DATE variables in the Record_layout file.
 cas97 <- read_cas(folder = "Harvard_CAS_1997.zip", 
                   file = "Harvard_CAS_1997/DS0001/03163-0001-Data.txt",
                   recordfile = "Harvard_CAS_1997/DS0001/03163-0001-Record_layout.txt")
@@ -52,6 +51,15 @@ cas93 <- cas93 %>% mutate(STUDY_YEAR = 1993)
 cas97 <- cas97 %>% mutate(STUDY_YEAR = 1997)
 cas99 <- cas99 %>% mutate(STUDY_YEAR = 1999)
 cas20 <- cas20 %>% mutate(STUDY_YEAR = 2001)
-cas <- bind_rows(cas93, cas97, cas99, cas20)
 ```
 
+We cannot join data from all four years because the variable names change from year to year. For example, A9 in 1993 is about extracurricular activities while in 1997 is about greek life. There doesn't seem to be any table keeping track of these changes.
+
+We check for missing data:
+
+```{r}
+na_count <- colSums(apply(cas93, 2, is.na))
+data.frame(name = colnames(cas93), na_pct = na_count/nrow(cas93)) %>% arrange(desc(na_pct))
+```
+
+Almost all variables have some missing data.
