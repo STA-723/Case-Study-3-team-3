@@ -45,22 +45,115 @@ head(cas93)
 
 There are `r ncol(cas93)` columns and `r nrow(cas93)` observations for 1993 data.
 
-```{r}
-cas93 <- cas93 %>% mutate(STUDY_YEAR = 1993)
-cas97 <- cas97 %>% mutate(STUDY_YEAR = 1997)
-cas99 <- cas99 %>% mutate(STUDY_YEAR = 1999)
-cas20 <- cas20 %>% mutate(STUDY_YEAR = 2001)
-```
-
 We cannot join data from all four years because the variable names change from year to year. For example, A9 in 1993 is about extracurricular activities while in 1997 is about greek life. There doesn't seem to be any table keeping track of these changes.
 
 We check for missing data:
 
 ```{r}
-na_count <- colSums(apply(cas93, 2, is.na))
-data.frame(name = colnames(cas93), na_pct = na_count/nrow(cas93)) %>% arrange(desc(na_pct))
+summary_na <- function(df) {
+  na_count <- colSums(apply(df, 2, is.na))
+  data.frame(name = colnames(df), na_pct = na_count/nrow(df)) %>% arrange(desc(na_pct))
+}
+
+summary_na(cas93) %>%
+  #filter(name %in% c("C8", "C9"))
+  filter(grepl("^F", name))
 ```
 
 Almost all variables have some missing data.
 
+### Missing Values
 
+```{r}
+summary_na(cas93) %>%
+  filter(grepl("^B", name)) %>% head(7)
+summary(cas93 %>% select_if(grepl("^B13|^B14|^B15", colnames(.))))
+```
+
+In Section B, variables B14 and B15 have a high percentage of missing values. The questionaire asks respondents to skip B14, B15 if they are Residential Assistants and skip B15 if they don't have RAs. 
+
+We can code B14 = 0, B15_* = 0 if B13 = 2; B15_* = 0 if B14 = 2. Then the remaing NA's are missing values. 
+
+```{r impute_b}
+cas93 <- cas93 %>% mutate(B14 = ifelse(B13 == 2, 0, B14),
+                          B15_A = ifelse(B13 == 2 | B14 == 2, 0, B15_A),
+                          B15_B = ifelse(B13 == 2 | B14 == 2, 0, B15_B),
+                          B15_C = ifelse(B13 == 2 | B14 == 2, 0, B15_C),
+                          B15_D = ifelse(B13 == 2 | B14 == 2, 0, B15_D),
+                          B15_E = ifelse(B13 == 2 | B14 == 2, 0, B15_E))
+summary_na(cas93) %>%
+  filter(grepl("^B13|^B14|^B15", name)) %>% head(7)
+```
+
+Now these variables only have at most about 10% missing values.
+
+## Exploratory Analysis
+
+For now, I'll be using C8: How many drinks usually have in last 30 days and C9: In last 30 days, how often did you drink enough to get drunk? as measures of how much people drink. The analysis below is for 1993 survey only because I could not match the questionaires up between years.
+
+```{r}
+summary(cas93 %>% select(C8, C9))
+```
+
+For this first analysis, 
+1. I'm removing the ~30% of observations with missing values in C8 and C9. 
+2. I'm also dropping all the variables with more than 10% of missing values after step 1.
+
+```{r}
+cas <- cas93 %>%
+  select(which(colMeans(is.na(.)) < 0.1))
+summary_na(cas)
+```
+
+### Imputing with MICE
+
+Use MICE to impute the missing values for now
+
+```{r, cache=TRUE}
+library(mice)
+imp1 <- mice(cas, m = 1)
+imp_tot2 <- complete(imp1, "long", inc = TRUE)
+col <- rep(c("blue", "red")[1 + as.numeric(is.na(imp1$data$B13))], 6)
+stripplot(B13 ~ .imp, data = imp_tot2, jit = TRUE, col = col, xlab = "imputation Number")
+```
+
+The plot above shows a diagnostic of imputation for B13
+
+### Removing correlated/duplicated variables
+
+Many variables are derived from the same questions in the survey. We should remove them before fitting models to reduce multicollinearity. An easy fix is to only include variables that come directly from the survey. We can filter for these by getting variable names in the format: one letter followed by at least one number.
+
+```{r}
+get_cas_noc <- function(df) {
+  df %>%
+    select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
+    select(which(!grepl("^C", colnames(.))))
+}
+cas_from_survey <- cas %>%
+  select(which(grepl("^[[:upper:]]\\d", colnames(.))))
+cas_noc <- cas_from_survey %>%
+  select(which(!grepl("^C", colnames(.))))
+colnames(cas_noc)
+```
+
+
+
+### BMA
+
+I'm using variable `drinkcat` as the response here and will do an ordinal logistic since there are 4 levels of drinking (0, 1, 2, 3).
+
+```{r}
+cas_complete <- complete(imp1, 1)
+cas_noc <- get_cas_noc(cas_complete)
+drinkcat <- cas_complete[["DRINKCAT"]][complete.cases(cas_noc)]
+x <- model.matrix(~., cas_noc)
+```
+
+Let's look at variable importance using Bayesian Model Averaging from package BMA.
+
+```{r, cache=TRUE}
+library(BMA)
+bma_mod1 <- bic.glm(x = x, y = I(as.numeric(drinkcat) >= 1), glm.family = "binomial")
+```
+
+Yikes this is taking forever to run!
