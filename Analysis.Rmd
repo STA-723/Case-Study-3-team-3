@@ -69,6 +69,18 @@ cas93 <- cas93 %>% mutate(B14 = ifelse(B13 == 2, 0, B14),
                           B15_E = ifelse(B13 == 2 | B14 == 2, 0, B15_E))
 ```
 
+#### Section E
+
+```{r}
+cas93 <- cas93 %>% 
+    mutate(E4 = ifelse(E3 == 2, 0, E4)) %>% 
+    mutate(E6 = ifelse(E5== 2, 0, E6)) %>% 
+    mutate(E7 = ifelse(E5 == 2, 0, E7)) %>% 
+    mutate(E8= ifelse(E5 == 2, 0, E8)) 
+```
+
+
+
 ### Section 3
 
 We first look at missing data in section C:
