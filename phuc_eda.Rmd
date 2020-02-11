@@ -157,3 +157,17 @@ bma_mod1 <- bic.glm(x = x, y = I(as.numeric(drinkcat) >= 1), glm.family = "binom
 ```
 
 Yikes this is taking forever to run!
+
+```{r, cache=TRUE}
+library(BAS)
+bas_mod1 <- bas.glm(I(as.numeric(drinkcat) >= 1) ~ .,
+                    family = binomial(link = "logit"), 
+                    data = cas_noc %>%
+                      mutate(drinkcat = cas_complete[["DRINKCAT"]]),
+                    na.action = "na.omit",
+                    method = "MCMC",
+                    modelprior = beta.binomial(1, 1),
+                    MCMC.iterations = 100000,
+                    n.models = 1500)
+```
+
