@@ -1,0 +1,72 @@
+---
+title: "Analysis"
+author: "Phuc Nguyen, Frances Hung, Ezinne Nwankwo"
+date: "2/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Cleaning
+
+### Load data
+
+Split file by number of columns for each variable in Record_layout.txt file. Spaces are missing values.
+
+```{r load_data, cache=TRUE}
+read_cas <- function(folder, file, recordfile) {
+  skip <- grep("--------", readLines(unz(folder, recordfile)))
+  record_layout <- read.table(unz(folder, recordfile), 
+                            fill = TRUE, skip = skip, header = FALSE)
+  colnames(record_layout) <- c("variable_name", "start_col", "end_col", "type")
+  record_layout <- record_layout %>% filter(!is.na(end_col))
+  widths <- as.numeric(as.character(record_layout$end_col)) - as.numeric(as.character(record_layout$start_col)) + 1
+  cas <- read.fwf(unz(folder, file), widths = widths, header	= FALSE,
+                  col.names = record_layout$variable_name)
+  return(cas)
+}
+cas93 <- read_cas(folder = "Harvard_CAS_1993.zip", 
+                  file = "Harvard_CAS_1993/DS0001/06577-0001-Data.txt",
+                  recordfile = "Harvard_CAS_1993/DS0001/06577-0001-Record_layout.txt")
+cas97 <- read_cas(folder = "Harvard_CAS_1997.zip", 
+                  file = "Harvard_CAS_1997/DS0001/03163-0001-Data.txt",
+                  recordfile = "Harvard_CAS_1997/DS0001/03163-0001-Record_layout.txt")
+cas99 <- read_cas(folder = "Harvard_CAS_1999.zip", 
+                  file = "Harvard_CAS_1999/DS0001/03818-0001-Data.txt",
+                  recordfile = "Harvard_CAS_1999/DS0001/03818-0001-Record_layout.txt")
+cas20 <- read_cas(folder = "Harvard_CAS_2001.zip", 
+                  file = "Harvard_CAS_2001/DS0001/04291-0001-Data.txt",
+                  recordfile = "Harvard_CAS_2001/DS0001/04291-0001-Record_layout.txt")
+```
+
+### Impute missing values
+
+The survey asks students to skip some questions on purpose. We manually go through the survey to impute these values. We use MICE to impute the remaining missing values.
+
+*The below code is for survey in 1993 only*
+
+```{r impute_skip}
+# Section A
+# Section B
+# If answer yes to B13, skip B14, B15; If answer no to B14, skip B15.
+# We fill in all the skipped rows with 0 ???
+cas93 <- cas93 %>% mutate(B14 = ifelse(B13 == 2, 0, B14),
+                          B15_A = ifelse(B13 == 2 | B14 == 2, 0, B15_A),
+                          B15_B = ifelse(B13 == 2 | B14 == 2, 0, B15_B),
+                          B15_C = ifelse(B13 == 2 | B14 == 2, 0, B15_C),
+                          B15_D = ifelse(B13 == 2 | B14 == 2, 0, B15_D),
+                          B15_E = ifelse(B13 == 2 | B14 == 2, 0, B15_E))
+# Section C
+# Section D
+# Section E
+# Section F
+# Section G
+```
+
+
+
+
+
+
