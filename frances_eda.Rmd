@@ -145,3 +145,9 @@ cas93_G<-cas93[,grepl("G[0-9]",colnames(cas93))]
 ```
 
 
+```{r}
+MICEd_impute_C<-MICEd_impute_C %>% select(-E1_M34)
+saveRDS(MICE_cas93_dataset
+multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
+```
+
