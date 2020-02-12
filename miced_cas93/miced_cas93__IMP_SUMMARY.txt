@@ -1,0 +1,194 @@
+2020-02-12 06:59:36 
+
+ C:/Users/Frances/Documents/First_Year_Classes/Second/Case Studies/Case-Study-3-team-3/miced_cas93 
+
+Class: mids
+Number of multiple imputations:  4 
+Imputation methods:
+STUDY_ID       A1       A2       A3       A4       A5       A6       A7       A8     A9_A     A9_B     A9_C     A9_D     A9_E     A9_F     A9_G 
+      ""    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+    A9_H     A9_I    A10_A    A10_B    A10_C    A10_D    A10_E    A10_F    A10_G    A10_H    A10_I    A10_J    A10_K     B1_A     B1_B     B1_C 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+    B1_D     B1_E     B1_F     B2_A     B2_B     B3_A     B3_B     B4_A     B4_B     B4_C     B4_D       B5       B6     B7_A     B7_B     B7_C 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+    B7_D     B7_E     B7_F     B8_A     B8_B     B8_C     B8_D     B8_E     B8_F     B9_A     B9_B     B9_C     B9_D     B9_E     B9_F    B10_A 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+   B10_B    B10_C    B10_D    B10_E      B11      B12      B13      B14    B15_A    B15_B    B15_C    B15_D    B15_E     B16A     B16B     B16C 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+    B16D     B16E     B16F     B16G     B16H    B17_A    B17_B    B17_C    B17_D    B17_E    B17_F    B17_G    B17_H    B17_I    B17_J    B17_K 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+     B18     D1_A     D1_B     D1_C     D1_D     D1_E     D1_F     D1_G     D1_H     D1_I     D2_A     D2_B     D2_C     D2_D     D2_E     D3_A 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+    D3_B     D3_C     D3_D     D3_E     D3_F     D3_G     D3_H       D4       D5       D6     E1_A     E1_B     E1_C     E1_D     E1_E     E1_F 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+    E1_G     E1_H     E1_I     E1_J     E1_K     E1_L     E1_M       E2       E3       E4       E5       E6       E7       E8       E9      E10 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+     E11     E12A     E12B     E12C     E12D      E13      E15      E16      E17    E14_A    E14_B    E14_C    E14_D    E14_E    E14_F       F1 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+      F2       F3       F4       F5     F6_A     F6_B     F6_C     F6_D     F6_E     F6_F     F6_G     F6_H     F6_I       G1       G2       G3 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+      G4       G5       G6       G7       G8       G9      G10      G11      G12      G13      G14      G15      SEX DRINKCAT   OCCALC USUALBIN 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"       ""    "pmm"    "pmm"    "pmm" 
+DRUNKN30 DR2DRUNK  DRPROBA  DRPROBB  DRPROBC  DRPROBD  DRPROBE  DRPROBF  DRPROBG  DRPROBH  DRPROBI  DRPROBJ  DRPROBK  DRPROBL  DRDRIVE BNGDRIVE 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"       ""    "pmm" 
+PASSDRDV SECALC_A SECALC_B SECALC_C SECALC_D SECALC_E SECALC_G SECALC_H SECALC_I   DAYE1A   DAYE1B   DAYE1C   DAYE1D   DAYE1E   DAYE1F   DAYE1G 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+  DAYE1H   DAYE1I   DAYE1J   DAYE1K   DAYE1L   DAYE1M  YEARE1A  YEARE1B  YEARE1C  YEARE1D  YEARE1E  YEARE1F  YEARE1G  YEARE1H  YEARE1I  YEARE1J 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+ YEARE1K  YEARE1L  YEARE1M HSUBINGE    BINGE    DRIVE  NUMPROB PROBGULP ANYDRUG1 ANYDRUG2  PERSIST    PROB5   E1_M34 FULLYEAR     YEAR      OTH 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"       ""       ""       ""    "pmm" 
+ NATIVAM    OTHER       AA    ASIAN     RACE    CLASS HISPANIC NEVERMAR YOUNGSTU    WHITE  CIGYEAR   CIGUSE EVERSMOK  SMOKERS QUITTERS UNDERAGE 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"       ""       ""    "pmm"    "pmm"    "pmm"       ""       ""    "pmm"    "pmm"       ""    "pmm" 
+FREQBING MEMGREEK    FRESH     SOPH   JUNIOR   SENIOR  ATHLETE  CHEWTOB  PHYSACT EVERCHEW CHEWQUIT    DORMS  OFFCAMP FRATHOUS OTHRHOUS   PARDRK 
+   "pmm"       ""    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"       ""    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"       "" 
+ PARAPRV    GRADE   GIVEUP  NOBINGE   UPTAKE CONTBING     DD_1     DD_5 AGEGROUP  AGELT21  AGE2123  AGEGT23 SELFRATE SELFEVER STWGT_93    VOL30 
+   "pmm"       ""    "pmm"    "pmm"    "pmm"    "pmm"       ""       ""    "pmm"       ""    "pmm"       ""    "pmm"       ""       ""    "pmm" 
+    MMDD   SERIAL NEWC19_A NEWC19_B NEWC19_C NEWC19_D     WAVE     C1_A     C1_B       C2     C3_A     C3_B     C3_C     C3_D       C4       C5 
+   "pmm"       ""       ""       ""       ""       ""    "pmm"    "pmm"    "pmm"    "pmm"       ""       ""       ""       ""    "pmm"    "pmm" 
+      C6       C7       C8       C9    C10_A    C10_B    C10_C    C10_D    C10_E    C10_F    C10_G    C10_H    C10_I    C10_J    C10_K    C11_A 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+   C11_B    C11_C    C11_D    C11_E    C12_A    C12_B    C12_C    C13_A    C13_B    C13_C    C13_D      C14      C15    C16_A    C16_B    C16_C 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+   C16_D    C16_E    C16_F    C16_G    C16_H    C16_I    C16_J    C16_K    C17_A    C17_B    C17_C    C17_D    C17_E    C17_F    C17_G    C17_H 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+   C17_I    C17_J    C17_K    C17_L    C18_A    C18_B    C18_C    C18_D    C18_E    C18_F    C18_G    C18_H    C18_I    C18_J    C19_A    C19_B 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+   C19_C    C19_D    C19_E    C19_F      C20      C21    C22_A    C22_B    C22_C    C22_D    C22_E    C22_F    C22_G    C22_H    C22_I    C22_J 
+   "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm"    "pmm" 
+   C22_K    C22_L    C22_M    C22_N 
+   "pmm"    "pmm"    "pmm"    "pmm" 
+PredictorMatrix:
+         STUDY_ID A1 A2 A3 A4 A5 A6 A7 A8 A9_A A9_B A9_C A9_D A9_E A9_F A9_G A9_H A9_I A10_A A10_B A10_C A10_D A10_E A10_F A10_G A10_H A10_I
+STUDY_ID        0  1  1  1  1  1  1  1  1    1    1    1    1    1    1    1    1    1     1     1     1     1     1     1     1     1     1
+A1              1  0  1  1  1  1  1  1  1    1    1    1    1    1    1    1    1    1     1     1     1     1     1     1     1     1     1
+         A10_J A10_K B1_A B1_B B1_C B1_D B1_E B1_F B2_A B2_B B3_A B3_B B4_A B4_B B4_C B4_D B5 B6 B7_A B7_B B7_C B7_D B7_E B7_F B8_A B8_B B8_C
+STUDY_ID     1     1    1    1    1    1    1    1    1    1    1    1    1    1    1    1  1  1    1    1    1    1    1    1    1    1    1
+A1           1     1    1    1    1    1    1    1    1    1    1    1    1    1    1    1  1  1    1    1    1    1    1    1    1    1    1
+         B8_D B8_E B8_F B9_A B9_B B9_C B9_D B9_E B9_F B10_A B10_B B10_C B10_D B10_E B11 B12 B13 B14 B15_A B15_B B15_C B15_D B15_E B16A B16B B16C
+STUDY_ID    1    1    1    1    1    1    1    1    1     1     1     1     1     1   1   1   1   1     1     1     1     1     1    1    1    1
+A1          1    1    1    1    1    1    1    1    1     1     1     1     1     1   1   1   1   1     1     1     1     1     1    1    1    1
+         B16D B16E B16F B16G B16H B17_A B17_B B17_C B17_D B17_E B17_F B17_G B17_H B17_I B17_J B17_K B18 D1_A D1_B D1_C D1_D D1_E D1_F D1_G D1_H
+STUDY_ID    1    1    1    1    1     1     1     1     1     1     1     1     1     1     1     1   1    1    1    1    1    1    1    1    1
+A1          1    1    1    1    1     1     1     1     1     1     1     1     1     1     1     1   1    1    1    1    1    1    1    1    1
+         D1_I D2_A D2_B D2_C D2_D D2_E D3_A D3_B D3_C D3_D D3_E D3_F D3_G D3_H D4 D5 D6 E1_A E1_B E1_C E1_D E1_E E1_F E1_G E1_H E1_I E1_J E1_K
+STUDY_ID    1    1    1    1    1    1    1    1    1    1    1    1    1    1  1  1  1    1    1    1    1    1    1    1    1    1    1    1
+A1          1    1    1    1    1    1    1    1    1    1    1    1    1    1  1  1  1    1    1    1    1    1    1    1    1    1    1    1
+         E1_L E1_M E2 E3 E4 E5 E6 E7 E8 E9 E10 E11 E12A E12B E12C E12D E13 E15 E16 E17 E14_A E14_B E14_C E14_D E14_E E14_F F1 F2 F3 F4 F5 F6_A
+STUDY_ID    1    1  1  1  1  1  1  1  1  1   1   1    1    1    1    1   1   1   1   1     1     1     1     1     1     1  1  1  1  1  1    1
+A1          1    1  1  1  1  1  1  1  1  1   1   1    1    1    1    1   1   1   1   1     1     1     1     1     1     1  1  1  1  1  1    1
+         F6_B F6_C F6_D F6_E F6_F F6_G F6_H F6_I G1 G2 G3 G4 G5 G6 G7 G8 G9 G10 G11 G12 G13 G14 G15 SEX DRINKCAT OCCALC USUALBIN DRUNKN30
+STUDY_ID    1    1    1    1    1    1    1    1  1  1  1  1  1  1  1  1  1   1   1   1   1   1   1   0        1      1        1        1
+A1          1    1    1    1    1    1    1    1  1  1  1  1  1  1  1  1  1   1   1   1   1   1   1   0        1      1        1        1
+         DR2DRUNK DRPROBA DRPROBB DRPROBC DRPROBD DRPROBE DRPROBF DRPROBG DRPROBH DRPROBI DRPROBJ DRPROBK DRPROBL DRDRIVE BNGDRIVE PASSDRDV
+STUDY_ID        1       1       1       1       1       1       1       1       1       1       1       1       1       0        1        1
+A1              1       1       1       1       1       1       1       1       1       1       1       1       1       0        1        1
+         SECALC_A SECALC_B SECALC_C SECALC_D SECALC_E SECALC_G SECALC_H SECALC_I DAYE1A DAYE1B DAYE1C DAYE1D DAYE1E DAYE1F DAYE1G DAYE1H DAYE1I
+STUDY_ID        1        1        1        1        1        1        1        1      1      1      1      1      1      1      1      1      1
+A1              1        1        1        1        1        1        1        1      1      1      1      1      1      1      1      1      1
+         DAYE1J DAYE1K DAYE1L DAYE1M YEARE1A YEARE1B YEARE1C YEARE1D YEARE1E YEARE1F YEARE1G YEARE1H YEARE1I YEARE1J YEARE1K YEARE1L YEARE1M
+STUDY_ID      1      1      1      1       1       1       1       1       1       1       1       1       1       1       1       1       1
+A1            1      1      1      1       1       1       1       1       1       1       1       1       1       1       1       1       1
+         HSUBINGE BINGE DRIVE NUMPROB PROBGULP ANYDRUG1 ANYDRUG2 PERSIST PROB5 E1_M34 FULLYEAR YEAR OTH NATIVAM OTHER AA ASIAN RACE CLASS
+STUDY_ID        1     1     1       1        1        1        1       1     1      0        0    0   1       1     1  1     1    1     0
+A1              1     1     1       1        1        1        1       1     1      0        0    0   1       1     1  1     1    1     0
+         HISPANIC NEVERMAR YOUNGSTU WHITE CIGYEAR CIGUSE EVERSMOK SMOKERS QUITTERS UNDERAGE FREQBING MEMGREEK FRESH SOPH JUNIOR SENIOR ATHLETE
+STUDY_ID        0        1        1     1       0      0        1       1        0        1        1        0     1    1      1      1       1
+A1              0        1        1     1       0      0        1       1        0        1        1        0     1    1      1      1       1
+         CHEWTOB PHYSACT EVERCHEW CHEWQUIT DORMS OFFCAMP FRATHOUS OTHRHOUS PARDRK PARAPRV GRADE GIVEUP NOBINGE UPTAKE CONTBING DD_1 DD_5
+STUDY_ID       0       1        1        1     1       1        1        1      1       1     1      1       1      1        1    0    0
+A1             0       1        1        1     1       1        1        1      1       1     1      1       1      1        1    0    0
+         AGEGROUP AGELT21 AGE2123 AGEGT23 SELFRATE SELFEVER STWGT_93 VOL30 MMDD SERIAL NEWC19_A NEWC19_B NEWC19_C NEWC19_D WAVE C1_A C1_B C2
+STUDY_ID        1       0       1       0        1        0        1     1    1      0        0        0        0        0    1    1    1  1
+A1              1       0       1       0        1        0        1     1    1      0        0        0        0        0    1    1    1  1
+         C3_A C3_B C3_C C3_D C4 C5 C6 C7 C8 C9 C10_A C10_B C10_C C10_D C10_E C10_F C10_G C10_H C10_I C10_J C10_K C11_A C11_B C11_C C11_D C11_E
+STUDY_ID    1    1    1    1  1  1  1  1  1  1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1
+A1          1    1    1    1  1  1  1  1  1  1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1
+         C12_A C12_B C12_C C13_A C13_B C13_C C13_D C14 C15 C16_A C16_B C16_C C16_D C16_E C16_F C16_G C16_H C16_I C16_J C16_K C17_A C17_B C17_C
+STUDY_ID     1     1     1     1     1     1     1   1   1     1     1     1     1     1     1     1     1     1     1     1     1     1     1
+A1           1     1     1     1     1     1     1   1   1     1     1     1     1     1     1     1     1     1     1     1     1     1     1
+         C17_D C17_E C17_F C17_G C17_H C17_I C17_J C17_K C17_L C18_A C18_B C18_C C18_D C18_E C18_F C18_G C18_H C18_I C18_J C19_A C19_B C19_C
+STUDY_ID     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1
+A1           1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1
+         C19_D C19_E C19_F C20 C21 C22_A C22_B C22_C C22_D C22_E C22_F C22_G C22_H C22_I C22_J C22_K C22_L C22_M C22_N
+STUDY_ID     1     1     1   1   1     1     1     1     1     1     1     1     1     1     1     1     1     1     1
+A1           1     1     1   1   1     1     1     1     1     1     1     1     1     1     1     1     1     1     1
+ [ reached getOption("max.print") -- omitted 4 rows ]
+Number of logged events:  13577 
+NULL
+
+
+
+To cite R in publications use:
+
+  R Core Team (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna,
+  Austria. URL https://www.R-project.org/.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {R: A Language and Environment for Statistical Computing},
+    author = {{R Core Team}},
+    organization = {R Foundation for Statistical Computing},
+    address = {Vienna, Austria},
+    year = {2019},
+    url = {https://www.R-project.org/},
+  }
+
+We have invested a lot of time and effort in creating R, please cite it when using it for data analysis. See also
+‘citation("pkgname")’ for citing R packages.
+
+
+To cite mice in publications use:
+
+  Stef van Buuren, Karin Groothuis-Oudshoorn (2011). mice: Multivariate Imputation by Chained Equations in R. Journal of
+  Statistical Software, 45(3), 1-67. URL https://www.jstatsoft.org/v45/i03/.
+
+A BibTeX entry for LaTeX users is
+
+  @Article{,
+    title = {{mice}: Multivariate Imputation by Chained Equations in R},
+    author = {Stef {van Buuren} and Karin Groothuis-Oudshoorn},
+    journal = {Journal of Statistical Software},
+    year = {2011},
+    volume = {45},
+    number = {3},
+    pages = {1-67},
+    url = {https://www.jstatsoft.org/v45/i03/},
+  }
+
+          sysname           release           version          nodename           machine             login              user    effective_user 
+        "Windows"          "10 x64"     "build 18362" "DESKTOP-QS90MOG"          "x86-64"         "Frances"         "Frances"         "Frances" 
+R version 3.6.0 (2019-04-26)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 18362)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252  LC_CTYPE=English_United States.1252    LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                           LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] miceadds_3.7-6      glmnet_3.0-2        Matrix_1.2-17       mice_3.7.0          rebus_0.1-3         randomForest_4.6-14 caret_6.0-85       
+ [8] ggplot2_3.2.1       lattice_0.20-38     tidyr_1.0.0         dplyr_0.8.3        
+
+loaded via a namespace (and not attached):
+ [1] nlme_3.1-139          matrixStats_0.54.0    lubridate_1.7.4       rstan_2.19.2          tools_3.6.0           backports_1.1.4      
+ [7] R6_2.4.0              rpart_4.1-15          DBI_1.0.0             rebus.base_0.0-3      lazyeval_0.2.2        colorspace_1.4-1     
+[13] jomo_2.6-10           nnet_7.3-12           withr_2.1.2           tidyselect_0.2.5      gridExtra_2.3         prettyunits_1.0.2    
+[19] processx_3.4.1        compiler_3.6.0        cli_1.1.0             scales_1.0.0          callr_3.3.1           stringr_1.4.0        
+[25] digest_0.6.20         StanHeaders_2.18.1-10 rebus.unicode_0.0-2   minqa_1.2.4           rmarkdown_1.14        base64enc_0.1-3      
+[31] pkgconfig_2.0.2       htmltools_0.3.6       lme4_1.1-21           rlang_0.4.0           rstudioapi_0.10       shape_1.4.4          
+[37] generics_0.0.2        jsonlite_1.6          ModelMetrics_1.2.2.1  inline_0.3.15         magrittr_1.5          loo_2.1.0            
+[43] Rcpp_1.0.2            munsell_0.5.0         lifecycle_0.1.0       stringi_1.4.3         pROC_1.16.1           yaml_2.2.0           
+[49] MASS_7.3-51.4         pkgbuild_1.0.5        plyr_1.8.4            recipes_0.1.9         grid_3.6.0            parallel_3.6.0       
+[55] mitml_0.3-7           crayon_1.3.4          rebus.datetimes_0.0-1 splines_3.6.0         zeallot_0.1.0         knitr_1.24           
+[61] ps_1.3.0              pillar_1.4.2          boot_1.3-22           rebus.numbers_0.0-1   reshape2_1.4.3        codetools_0.2-16     
+[67] stats4_3.6.0          pan_1.6               glue_1.3.1            packrat_0.5.0         evaluate_0.14         mitools_2.4          
+[73] data.table_1.12.2     vctrs_0.2.0           nloptr_1.2.1          foreach_1.4.8         gtable_0.3.0          purrr_0.3.2          
+[79] assertthat_0.2.1      xfun_0.8              gower_0.2.1           prodlim_2019.11.13    broom_0.5.2           class_7.3-15         
+[85] survival_2.44-1.1     timeDate_3043.102     tibble_2.1.3          iterators_1.0.12      lava_1.6.6            ellipsis_0.2.0.1     
+[91] ipred_0.9-9          

@@ -126,7 +126,11 @@ cas93_filled[rowSums(is.na(q_c22)) == ncol(q_c22),grep("C22_",colnames(cas93_fil
 
 
 #bind with rest of C columns
-cas93_filled<-cbind(cas93_filled[1:10],abs_imp[1:69],cas93_filled[80:93])
+cas93_C<-cbind(cas93_filled[1:10],abs_imp[1:69],cas93_filled[80:93])
+
+cas93_final<-cas93[,!grepl("^C[0-9]",colnames(cas93))] %>%
+  cbind(cas93_C) %>%
+  select(-COLL_ID)
 
 ```
 
@@ -135,9 +139,10 @@ cas93_filled<-cbind(cas93_filled[1:10],abs_imp[1:69],cas93_filled[80:93])
 We impute the rest of the missing values with MICE:
 
 ```{r}
-mice_data<-mice(cas93_filled,m=4)
-MICEd_impute_C<-complete(mice_data,1)
-#write.mice.imputation(mi.res=mice_data, name="mice_C" )
+mice_data<-mice(cas93_final,m=4)
+MICEd_impute_C<-complete(mice_data,1) %>%
+  .[,grepl("^[A-Z][1-9]",colnames(.))]
+write.mice.imputation(mi.res=mice_data, name="miced_cas93" )
 
 ```
 
