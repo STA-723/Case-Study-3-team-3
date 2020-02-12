@@ -139,9 +139,19 @@ cas93_final<-cas93[,!grepl("^C[0-9]",colnames(cas93))] %>%
 We impute the rest of the missing values with MICE:
 
 ```{r}
+MICEd_impute_C<-MICEd_impute_C %>% select(-E1_M34)
+saveRDS(MICE_cas93_dataset)
+multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
+```
+
+
+
+```{r}
 mice_data<-mice(cas93_final,m=4)
-MICEd_impute_C<-complete(mice_data,1) %>%
+MICEd_cas93<-complete(mice_data,1) %>%
   .[,grepl("^[A-Z][1-9]",colnames(.))]
+
+
 write.mice.imputation(mi.res=mice_data, name="miced_cas93" )
 
 ```
