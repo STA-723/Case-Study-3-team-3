@@ -134,26 +134,6 @@ cas93_final<-cas93[,!grepl("^C[0-9]",colnames(cas93))] %>%
 
 ```
 
-#### MICE
-
-We impute the rest of the missing values with MICE:
-
-```{r}
-#mice_data<-mice(cas93_final,m=4)
-#MICEd_cas93<-complete(mice_data,1) %>%
-#  .[,grepl("^[A-Z][1-9]",colnames(.))]
-
-
-#write.mice.imputation(mi.res=mice_data, name="miced_cas93" )
-
-```
-
-```{r}
-MICEd_impute_C<-readRDS("MICEd_cas93.rds")
-#saveRDS(MICEd_impute_C,file="MICEd_cas93.rds")
-multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
-```
-
 ### CAS 97
 
 #### Section A
@@ -299,6 +279,55 @@ cas97 <- cas97 %>%
   select(-F70FRND, -F30FRND)
 ```
 
+#### Section G
+
+```{r}
+cas97 <- cas97 %>% 
+  mutate(G3_answered = cas97 %>%
+                        select(which(grepl("^G3_", colnames(.)))) %>%
+                        rowSums(na.rm = TRUE)) %>%
+  mutate(G3_1 = ifelse(is.na(G3_1) & G3_answered > 0, 0, G3_1),
+         G3_2 = ifelse(is.na(G3_2) & G3_answered > 0, 0, G3_2),
+         G3_3 = ifelse(is.na(G3_3) & G3_answered > 0, 0, G3_3),
+         G3_4 = ifelse(is.na(G3_4) & G3_answered > 0, 0, G3_4),
+         G3_5 = ifelse(is.na(G3_5) & G3_answered > 0, 0, G3_5),
+         ) %>%
+  select(-G3_answered) %>%
+  mutate(ones=1) %>%
+  pivot_wider(names_from = G4,
+              values_from = ones,
+              values_fill = list(ones=0),
+              names_prefix = "G4_") %>%  #indicators for religion
+  mutate(G14_NA = as.numeric(G14==5),
+         G14_none = as.numeric(G14==6),
+         G15_NA = as.numeric(G15==5),
+         G15_none = as.numeric(G15==6)) %>% #indicators for don't know/NA, parental drinking
+  mutate(G16_none=as.numeric(G16==4)) #indicator for no family agreement about drinking
+  
+# Which columns in this section have lots of NA?
+cas97 %>% 
+  select(which(grepl("^G\\d", colnames(.)))) %>%
+  summary_na()
+```
+
+Here we check for the number of complete cases after the preprocessing step above:
+
+```{r}
+cas97 %>%
+  select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
+  select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
+  filter(complete.cases(.)) %>%
+  dim()
+```
+
+We only have about 5100 observations for 220 variables 
+
+```{r}
+mean(is.na(cas97$DRINKCAT))
+```
+
+There are few missing values for the response DRINKCAT
+
 #### MICE
 
 We impute the rest of the missing values with MICE:
@@ -323,7 +352,7 @@ multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) 
 1997 UnMICEd data
 
 ```{r}
-MICEd_impute<-cas97 %>% 
+cas97 <- cas97 %>% 
   mutate(ones=1) %>%
   pivot_wider(names_from=G4,values_from=ones, values_fill=list(ones=0),names_prefix = "G4_") %>%  #indicators for religion
   mutate(G14_NA=as.numeric(G14==5),G14_none=as.numeric(G14==6),G15_NA=as.numeric(G15==5),G15_none=as.numeric(G15==6)) %>% #indicators for don't know/NA, parental drinking
@@ -360,7 +389,7 @@ Right now, this gives output but we need more informative variables. Also, we ne
 
 ```{r}
 DRINKCAT<-cas97$DRINKCAT
-drinkcat<-cbind(MICEd_impute,DRINKCAT) %>% drop_na()
+drinkcat<-cbind(cas97, DRINKCAT) %>% drop_na()
 cfa(myModelG,drinkcat)
 ```
 
