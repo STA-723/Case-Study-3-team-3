@@ -53,6 +53,8 @@ cas20 <- read_cas(folder = "Harvard_CAS_2001.zip",
 
 The survey asks students to skip some questions on purpose. We manually go through the survey to impute these values. We use MICE to impute the remaining missing values.
 
+### CAS93
+
 *The below code is for survey in 1993 only*
 
 #### Section B
@@ -79,9 +81,7 @@ cas93 <- cas93 %>%
     mutate(E8= ifelse(E5 == 2, 0, E8)) 
 ```
 
-
-
-### Section 3
+#### Section C
 
 We first look at missing data in section C:
 \begin{enumerate}
@@ -154,6 +154,152 @@ MICEd_impute_C<-readRDS("MICEd_cas93.rds")
 multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
 ```
 
+### CAS 97
+
+#### Section A
+
+```{r}
+# See which vars have lots of NA's
+cas97 %>% 
+  select(which(grepl("^A", colnames(.)))) %>%
+  summary_na()
+
+# Fill in NA's that mean 0
+cas97 <- cas97 %>%
+  mutate(A8_answered = cas97 %>%
+                        select(which(grepl("^A8_", colnames(.)))) %>%
+                        rowSums(na.rm = TRUE)) %>%
+  mutate(A8_1 = ifelse(is.na(A8_1) & A8_answered > 0, 0, A8_1),
+         A8_2 = ifelse(is.na(A8_2) & A8_answered > 0, 0, A8_2),
+         A8_3 = ifelse(is.na(A8_3) & A8_answered > 0, 0, A8_3),
+         A8_4 = ifelse(is.na(A8_4) & A8_answered > 0, 0, A8_4)) %>%
+  # A6 should be dummified
+  mutate(ones = 1) %>%
+  tidyr::pivot_wider(names_from = A6, 
+                     values_from = ones, 
+                     values_fill = list(ones = 0), 
+                     names_prefix = "A6_") %>%
+  # Some NA in A7 means student lived off campus
+  mutate(A7 = ifelse(is.na(A7) & A6_5 == 1, 0, A7)) %>%
+  # Drop A4, A5 that are transfer questions, otherwise have to dummify
+  select(-A4, -A5, -A6, -A8_answered)
+
+# How many complete cases left?
+cas97 %>%
+  select(which(grepl("^A", colnames(.)))) %>%
+  filter(complete.cases(.)) %>%
+  nrow()
+```
+
+
+#### Section B
+
+No skipped questions
+
+For B10, an indicator is an option, fill in zero for than NA
+
+```{r}
+# Which columns in this section have lots of NA?
+cas97 %>% 
+  select(which(grepl("^B", colnames(.)))) %>%
+  summary_na()
+
+# Fill in NA that actually means 0
+cas97 <- cas97 %>%
+  mutate(B10_answered = cas97 %>%
+                        select(which(grepl("^B10_", colnames(.)))) %>%
+                        rowSums(na.rm = TRUE)) %>%
+  mutate(B10_1 = ifelse(is.na(B10_1) & B10_answered > 0, 0, B10_1),
+         B10_2 = ifelse(is.na(B10_2) & B10_answered > 0, 0, B10_2),
+         B10_3 = ifelse(is.na(B10_3) & B10_answered > 0, 0, B10_3),
+         B10_4 = ifelse(is.na(B10_4) & B10_answered > 0, 0, B10_4),
+         B10_5 = ifelse(is.na(B10_5) & B10_answered > 0, 0, B10_5),
+         B10_6 = ifelse(is.na(B10_6) & B10_answered > 0, 0, B10_6),
+         B10_7 = ifelse(is.na(B10_7) & B10_answered > 0, 0, B10_7),
+         B10_8 = ifelse(is.na(B10_8) & B10_answered > 0, 0, B10_8)) %>%
+  select(-B10_answered)
+
+# How many complete cases left?
+cas97 %>%
+  select(which(grepl("^B", colnames(.)))) %>%
+  filter(complete.cases(.)) %>%
+  nrow()
+```
+
+#### Section C
+
+```{r}
+
+```
+
+#### Section D
+
+```{r}
+# Which columns in this section have lots of NA?
+cas97 %>% 
+  select(which(grepl("^D\\d", colnames(.)))) %>%
+  summary_na()
+
+cas97 <- cas97 %>%
+  select(-D7_1, -D7_2, -D7_3, -D7_4)
+
+# How many complete cases left?
+cas97 %>%
+  select(which(grepl("^D\\d", colnames(.)))) %>%
+  filter(complete.cases(.)) %>%
+  nrow()
+```
+
+
+#### Section E
+
+Possible groups to consider: Female vs Male, Younger vs Older than 21 years old
+
+```{r}
+# Which columns in this section have lots of NA?
+cas97 %>% 
+  select(which(grepl("^E\\d", colnames(.)))) %>%
+  summary_na()
+
+cas97 <- cas97 %>%
+  # Fill NA resulted from dummifying vars E23
+  mutate(E23_answered = cas97 %>%
+                        select(which(grepl("^E23_", colnames(.)))) %>%
+                        rowSums(na.rm = TRUE)) %>%
+  mutate(E23_1 = ifelse(is.na(E23_1) & E23_answered > 0, 0, E23_1),
+         E23_2 = ifelse(is.na(E23_2) & E23_answered > 0, 0, E23_2),
+         E23_3 = ifelse(is.na(E23_3) & E23_answered > 0, 0, E23_3)) %>%
+  # Fill E27 with 0 for people less than 21 years old
+  mutate(E27_A = ifelse(is.na(E27_A) & AGELT21 == 1, 0, E27_A),
+         E27_B = ifelse(is.na(E27_B) & AGELT21 == 1, 0, E27_B),
+         E27_C = ifelse(is.na(E27_C) & AGELT21 == 1, 0, E27_C)) %>%
+  # Combine E24, 25, 26: Did you get seriously injured within 6 hours of drinking: fill 0 in NA E25
+  replace_na(list(E25 = 0)) %>%
+  # E10-12 skipped if never had sex TODO: How to resolve this???
+  # E13-15 skipped if male
+  replace_na(list(E13 = 0, E14 = 0, E15 = 0)) %>%
+  # Drop E24, E26, E23_answered
+  select(-E24, -E26, -E23_answered)
+
+
+```
+
+#### Section F
+
+Everything seems fine
+
+```{r}
+# Which columns in this section have lots of NA?
+cas97 %>% 
+  select(which(grepl("^F", colnames(.)))) %>%
+  summary_na()
+
+# Remove F70/30FRND
+cas97 <- cas97 %>%
+  select(-F70FRND, -F30FRND)
+```
+
+#### Section G
 
 ### Lavaan Model
 
