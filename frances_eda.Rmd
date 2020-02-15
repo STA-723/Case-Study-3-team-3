@@ -224,14 +224,6 @@ MICEd_impute<-MICEd_impute_C %>%
   mutate(G11_NA=as.numeric(G11==8),G11_none=as.numeric(G11==1),G12_NA=as.numeric(G12==8),G12_none=as.numeric(G12==1)) %>% #indicators for don't know/NA, parental drinking
   mutate(G13_none=as.numeric(G13==4)) #indicator for no family agreement about drinking
 
-#background (need to make indicators for G3,G4)
-Back<-G2+G3+G4
-#May need to make one indicator for G16 (Family opinion on alc), G14-15 (the idk or not applicable options)
-Fam<-G14+G15+G16+G17
-#HS
-HS<-G8+G9+G10
-
-MICEd_impute_C %>% ggplot(aes(x=G11))+geom_histogram()
 
 ```
 
