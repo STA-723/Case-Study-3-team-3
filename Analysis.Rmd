@@ -155,6 +155,46 @@ multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) 
 ```
 
 
+### Lavaan Model
+
+#### Section G
+
+```{r G-prep}
+
+MICEd_impute<-MICEd_impute_C %>% 
+  mutate(ones=1) %>%
+  pivot_wider(names_from=G3,values_from=ones, values_fill=list(ones=0),names_prefix = "G3_") %>%  #indicators for race
+  mutate(ones=1) %>%
+  pivot_wider(names_from=G4,values_from=ones, values_fill=list(ones=0),names_prefix = "G4_") %>%  #indicators for religion
+  mutate(G14_NA=as.numeric(G14==5),G14_none=as.numeric(G14==6),G15_NA=as.numeric(G15==5),G15_none=as.numeric(G15==6)) %>% #indicators for don't know/NA, parental education
+  mutate(G11_NA=as.numeric(G11==8),G11_none=as.numeric(G11==1),G12_NA=as.numeric(G12==8),G12_none=as.numeric(G12==1)) %>% #indicators for don't know/NA, parental drinking
+  mutate(G13_none=as.numeric(G13==4)) #indicator for no family agreement about drinking
+
+
+```
+
+
+```{r}
+myModelG <- ' # regressions
+  DRINKCAT ~ Back + Fam + HS
+  # latent variable definitions
+  Back =~ G2 + 
+    G3_1 + G3_2 + G3_3 + G3_4 + G3_5 + 
+    G4_1 + G4_2 + G4_3 + G4_4 + G4_5 + G4_6
+  Fam =~ G14 + G14_NA + G14_none +
+    G15 + G15_none + G15_NA +
+    G11 + G11_NA + G11_none +
+    G12 + G12_NA + G12_none +
+    G13 + G13_none
+  HS =~ G8 + G9 + G10
+  # variances and covariances
+  Fam ~~ HS
+  Fam ~~ Back
+  # intercepts
+  HS ~ 1
+'
+```
+
 
 
 
