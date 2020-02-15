@@ -299,40 +299,55 @@ cas97 <- cas97 %>%
   select(-F70FRND, -F30FRND)
 ```
 
-#### Section G
+#### MICE
+
+We impute the rest of the missing values with MICE:
+
+```{r}
+#mice_data<-mice(cas93_final,m=4)
+#MICEd_cas93<-complete(mice_data,1) %>%
+#  .[,grepl("^[A-Z][1-9]",colnames(.))]
+#write.mice.imputation(mi.res=mice_data, name="miced_cas93" )
+```
+
+```{r}
+MICEd_impute_C<-readRDS("MICEd_cas93.rds")
+#saveRDS(MICEd_impute_C,file="MICEd_cas93.rds")
+multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
+```
 
 ### Lavaan Model
 
-#### Section G
+#### Section G/Living Situation
 
-```{r G-prep}
+1997 UnMICEd data
 
-MICEd_impute<-MICEd_impute_C %>% 
-  mutate(ones=1) %>%
-  pivot_wider(names_from=G3,values_from=ones, values_fill=list(ones=0),names_prefix = "G3_") %>%  #indicators for race
+```{r}
+MICEd_impute<-cas97 %>% 
   mutate(ones=1) %>%
   pivot_wider(names_from=G4,values_from=ones, values_fill=list(ones=0),names_prefix = "G4_") %>%  #indicators for religion
-  mutate(G14_NA=as.numeric(G14==5),G14_none=as.numeric(G14==6),G15_NA=as.numeric(G15==5),G15_none=as.numeric(G15==6)) %>% #indicators for don't know/NA, parental education
-  mutate(G11_NA=as.numeric(G11==8),G11_none=as.numeric(G11==1),G12_NA=as.numeric(G12==8),G12_none=as.numeric(G12==1)) %>% #indicators for don't know/NA, parental drinking
-  mutate(G13_none=as.numeric(G13==4)) #indicator for no family agreement about drinking
-
-
+  mutate(G14_NA=as.numeric(G14==5),G14_none=as.numeric(G14==6),G15_NA=as.numeric(G15==5),G15_none=as.numeric(G15==6)) %>% #indicators for don't know/NA, parental drinking
+  mutate(G16_none=as.numeric(G16==4)) %>% #indicator for no family agreement about drinking
+  mutate(ones=1) %>%
+  pivot_wider(names_from=A6,values_from=ones, values_fill=list(ones=0),names_prefix = "A6_") %>%  #indicators for housing type
+  select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8",colnames(.)))
 ```
 
 
 ```{r}
 myModelG <- ' # regressions
-  DRINKCAT ~ Back + Fam + HS
+  DRINKCAT ~ Back + Fam + HS + Live
   # latent variable definitions
   Back =~ G2 + 
     G3_1 + G3_2 + G3_3 + G3_4 + G3_5 + 
     G4_1 + G4_2 + G4_3 + G4_4 + G4_5 + G4_6
   Fam =~ G14 + G14_NA + G14_none +
     G15 + G15_none + G15_NA +
-    G11 + G11_NA + G11_none +
-    G12 + G12_NA + G12_none +
-    G13 + G13_none
+    G16 + G16_none +
+    G17
   HS =~ G8 + G9 + G10
+  Live =~ A8_1 + A8_2 + A8_3 + A8_4 +
+    A6_1 + A6_2 + A6_3 + A6_4 + A6_5 + A6_6
   # variances and covariances
   Fam ~~ HS
   Fam ~~ Back
@@ -341,8 +356,11 @@ myModelG <- ' # regressions
 '
 ```
 
+Right now, this gives output but we need more informative variables. Also, we need to make sure MICE is filling in values in a way which makes sense.
 
-
-
-
+```{r}
+DRINKCAT<-cas97$DRINKCAT
+drinkcat<-cbind(MICEd_impute,DRINKCAT) %>% drop_na()
+cfa(myModelG,drinkcat)
+```
 
