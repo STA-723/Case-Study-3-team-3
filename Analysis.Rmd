@@ -352,14 +352,14 @@ multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) 
 1997 UnMICEd data
 
 ```{r}
-cas97 <- cas97 %>% 
-  mutate(ones=1) %>%
-  pivot_wider(names_from=G4,values_from=ones, values_fill=list(ones=0),names_prefix = "G4_") %>%  #indicators for religion
-  mutate(G14_NA=as.numeric(G14==5),G14_none=as.numeric(G14==6),G15_NA=as.numeric(G15==5),G15_none=as.numeric(G15==6)) %>% #indicators for don't know/NA, parental drinking
-  mutate(G16_none=as.numeric(G16==4)) %>% #indicator for no family agreement about drinking
-  mutate(ones=1) %>%
-  pivot_wider(names_from=A6,values_from=ones, values_fill=list(ones=0),names_prefix = "A6_") %>%  #indicators for housing type
-  select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8",colnames(.)))
+# cas97 <- cas97 %>% 
+#   mutate(ones=1) %>%
+#   pivot_wider(names_from=G4,values_from=ones, values_fill=list(ones=0),names_prefix = "G4_") %>%  #indicators for religion
+#   mutate(G14_NA=as.numeric(G14==5),G14_none=as.numeric(G14==6),G15_NA=as.numeric(G15==5),G15_none=as.numeric(G15==6)) %>% #indicators for don't know/NA, parental drinking
+#   mutate(G16_none=as.numeric(G16==4)) %>% #indicator for no family agreement about drinking
+#   mutate(ones=1) %>%
+#   pivot_wider(names_from=A6,values_from=ones, values_fill=list(ones=0),names_prefix = "A6_") %>%  #indicators for housing type
+#   select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8",colnames(.)))
 ```
 
 
