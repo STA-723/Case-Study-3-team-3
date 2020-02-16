@@ -473,6 +473,36 @@ fitg <- sem(modg, drinkcat, ordered = c("DRINKCAT"))
 summary(fitg)
 ```
 
+
+```{r}
+
+modf <- "
+  # Regression
+  DRINKCAT ~ personal_wellbeing + academic_wellbeing + F2 + F3
+  # Latent variable definition
+  personal_wellbeing =~  F6_A + F6_B + F6_C + F6_D + F6_E + F6_F + F6_G + F6_H + F6_I
+  academic_wellbeing =~ F1 + F4
+  # Factor covariance
+  personal_wellbeing ~~ personal_wellbeing
+  academic_wellbeing ~~ academic_wellbeing
+  
+"
+```
+  
+
+
+```{r}
+DRINKCAT <- ordered(cas97$DRINKCAT)
+drinkcat <- cas97 %>%
+  select(grep("^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3", colnames(.))) %>%
+  mutate(DRINKCAT = DRINKCAT) %>%
+  filter(complete.cases(.))
+fitf <- sem(modf, drinkcat, ordered = c("DRINKCAT"))
+summary(fitf)
+```
+
+
+
 ## Sensitivity Analysis
 
 We can fit a naive glm multinomial model:
