@@ -180,6 +180,25 @@ cas97 %>%
   nrow()
 ```
 
+```{r}
+moda <- "
+  # Regression
+  DRINKCAT ~ A9 + comms
+  # Latent variable definition
+  comms =~ A10_A + A10_B +A10_C + A10_D +A10_E + A10_F +A10_G + A10_H
+"
+```
+
+```{r}
+DRINKCAT <- ordered(cas97$DRINKCAT)
+drinkcat <- cas97 %>%
+  select(grep("^A9|^A10", colnames(.))) %>%
+  mutate(DRINKCAT = DRINKCAT) %>%
+  filter(complete.cases(.))
+fita <- sem(moda, drinkcat, ordered = c("DRINKCAT"))
+summary(fita)
+```
+
 
 #### Section B
 
