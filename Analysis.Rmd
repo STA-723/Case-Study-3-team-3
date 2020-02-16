@@ -15,6 +15,7 @@ library(rebus)
 library(mice)
 library(glmnet)
 library(miceadds)
+library(lavaan)
 ```
 
 # Data Cleaning
@@ -255,7 +256,9 @@ cas97 <- cas97 %>%
          E27_C = ifelse(is.na(E27_C) & AGELT21 == 1, 0, E27_C)) %>%
   # Combine E24, 25, 26: Did you get seriously injured within 6 hours of drinking: fill 0 in NA E25
   replace_na(list(E25 = 0)) %>%
-  # E10-12 skipped if never had sex TODO: How to resolve this???
+  # E10-12 skipped if never had sex. Can combine E9 and E11, drop E10, E12
+  mutate(E9n11 = ifelse(is.na(E11) & E9 == 1, 0, E11 + 1)) %>%
+  select(-E9, -E10, -E12) %>%
   # E13-15 skipped if male
   replace_na(list(E13 = 0, E14 = 0, E15 = 0)) %>%
   # Drop E24, E26, E23_answered
@@ -328,6 +331,10 @@ mean(is.na(cas97$DRINKCAT))
 
 There are few missing values for the response DRINKCAT
 
+#### Multicolinearity
+
+
+
 #### MICE
 
 We impute the rest of the missing values with MICE:
@@ -370,26 +377,31 @@ myModelG <- ' # regressions
   Back =~ G2 + 
     G3_1 + G3_2 + G3_3 + G3_4 + G3_5 + 
     G4_1 + G4_2 + G4_3 + G4_4 + G4_5 + G4_6
-  Fam =~ G14 + G14_NA + G14_none +
-    G15 + G15_none + G15_NA +
-    G16 + G16_none +
+  Fam =~ G14 +
+    G15 +
+    G16 +
     G17
   HS =~ G8 + G9 + G10
   Live =~ A8_1 + A8_2 + A8_3 + A8_4 +
     A6_1 + A6_2 + A6_3 + A6_4 + A6_5 + A6_6
   # variances and covariances
-  Fam ~~ HS
-  Fam ~~ Back
+  #HS ~~ Fam
   # intercepts
-  HS ~ 1
+  #HS ~ 1
 '
 ```
 
 Right now, this gives output but we need more informative variables. Also, we need to make sure MICE is filling in values in a way which makes sense.
 
 ```{r}
-DRINKCAT<-cas97$DRINKCAT
-drinkcat<-cbind(cas97, DRINKCAT) %>% drop_na()
-cfa(myModelG,drinkcat)
+DRINKCAT <- cas97$DRINKCAT
+drinkcat <- cas97 %>%
+  select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8",colnames(.))) %>%
+  scale(center = TRUE, scale = TRUE) %>%
+  as.data.frame() %>%
+  mutate(DRINKCAT = DRINKCAT) %>%
+  filter(complete.cases(.))
+fitg <- sem(myModelG, drinkcat)
+summary(fitg)
 ```
 
