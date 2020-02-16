@@ -375,6 +375,20 @@ hist(covvec, breaks = 50)
 reshape2::melt(cormat) %>%
   filter(Var1 != Var2) %>%
   arrange(value)
+
+check_cor <- function(df, desc = FALSE) {
+  cormat <- round(cor(df), 2)
+  if (desc) {
+    reshape2::melt(cormat) %>%
+    filter(Var1 != Var2) %>%
+    arrange(desc(value))
+  } else {
+    reshape2::melt(cormat) %>%
+    filter(Var1 != Var2) %>%
+    arrange(value)
+  }
+ 
+} 
 ```
 
 
@@ -397,6 +411,8 @@ MICEd_impute_C<-readRDS("MICEd_cas93.rds")
 #saveRDS(MICEd_impute_C,file="MICEd_cas93.rds")
 multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
 ```
+
+
 
 1997 UnMICEd data
 
@@ -435,6 +451,68 @@ drinkcat <- cas97 %>%
 fita <- sem(moda, drinkcat, ordered = c("DRINKCAT"))
 summary(fita)
 ```
+
+#### Section B
+
+```{r}
+modb <- "
+  # Regression
+  DRINKCAT ~ CollegePolicy + CityPolicy + CollegeEdu
+  # Latent variable definition
+  CollegePolicy =~ B1 + B2 + 
+                   #B6_A + B6_B + B6_C + B6_D + B6_E +
+                   B9_A 
+                   #+ B9_B + B9_C + B9_D + B9_E + B9_F + B9_G
+  CityPolicy =~ #B10_1 + B10_2 + B10_3 + B10_4 + B10_5 + B10_6 + B10_7 + B10_8 + # excluded because no variance
+                B11 + B12_A 
+                #+ B12_B + 
+                B13_A 
+                #+ B13_B + B13_C + B13_D + B13_E highly correlated
+  CollegeEdu =~ B7_A 
+                #+ B7_B + B7_C + B7_D + B7_E + B7_F +
+                B8_B #+ B8_C + B8_D 
+                
+                #+ B8_E + B8_A  # excluded because no variance
+  # Variance
+  CollegePolicy ~~ CollegeEdu          
+"
+
+modb <- "
+  # Regression
+  DRINKCAT ~ CollegePolicy + CityPolicy + CollegeEdu
+  # Latent variable definition
+  CollegePolicy =~ B1 + B2 + 
+                   B9_A + B9_B + B9_C + B9_D + B9_E + B9_F + B9_G
+  CityPolicy =~ B11 + B12 +
+                B13_A + B13_B + B13_C + B13_D + B13_E
+  CollegeEdu =~ B7 + B8
+  # Variance
+  CollegePolicy ~~ CollegeEdu          
+"
+```
+
+```{r}
+DRINKCAT <- ordered(cas97$DRINKCAT)
+drinkcat <- cas97 %>%
+  select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$", colnames(.))) %>%
+  mutate(B11 = scale(B11),
+         B13_E = scale(B13_E),
+         B13_D = scale(B13_D),
+         B13_C = scale(B13_C),
+         B13_B = scale(B13_B),
+         B13_A = scale(B13_A),
+         B2 = scale(B2),
+         B12 = scale(B12_A + B12_B),
+         B8 = scale(B8_B + B8_C + B8_D),
+         B7 = scale(B7_A + B7_B + B7_C + B7_D + B7_E + B7_F)
+         ) %>%
+  mutate(DRINKCAT = DRINKCAT) %>%
+  filter(complete.cases(.))
+fitb <- sem(modb, drinkcat, ordered = c("DRINKCAT"))
+summary(fitb)
+```
+
+
 
 #### Section D/ Policy and Attitudes
 
