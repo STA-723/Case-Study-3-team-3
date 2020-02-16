@@ -296,7 +296,8 @@ cas97 <- cas97 %>%
   replace_na(list(E13 = 0, E14 = 0, E15 = 0)) %>%
   # Drop E24, E26, E23_answered
   select(-E24, -E26, -E23_answered, -E23)
-
+  #create sexual assault due to drinking variable
+  mutate(sex_assualt_ind = ifelse(D4_H > 0 | D4_I > 0 | E15 > 0, 1, 0))
 
 ```
 
@@ -478,13 +479,18 @@ summary(fitg)
 
 modf <- "
   # Regression
-  DRINKCAT ~ personal_wellbeing + academic_wellbeing + F2 + F3
+  DRINKCAT ~ personal_wellbeing + academic_wellbeing + social_groups + F2 + F3
   # Latent variable definition
   personal_wellbeing =~  F6_A + F6_B + F6_C + F6_D + F6_E + F6_F + F6_G + F6_H + F6_I
-  academic_wellbeing =~ F1 + F4
+  academic_wellbeing =~ F1 + F4 
+  social_groups =~ F5_A + F5_B + F5_C + F5_D + F5_E + F5_F + F5_G + F5_H
   # Factor covariance
   personal_wellbeing ~~ personal_wellbeing
   academic_wellbeing ~~ academic_wellbeing
+  social_groups ~~ social_groups
+  personal_wellbeing ~~ academic_wellbeing
+  social_groups ~~ personal_wellbeing 
+  social_groups ~~ academic_wellbeing
   
 "
 ```
@@ -494,13 +500,12 @@ modf <- "
 ```{r}
 DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
-  select(grep("^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3", colnames(.))) %>%
+  select(grep("^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3", colnames(.))) %>%
   mutate(DRINKCAT = DRINKCAT) %>%
   filter(complete.cases(.))
 fitf <- sem(modf, drinkcat, ordered = c("DRINKCAT"))
 summary(fitf)
 ```
-
 
 
 ## Sensitivity Analysis
