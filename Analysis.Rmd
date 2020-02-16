@@ -52,6 +52,14 @@ cas20 <- read_cas(folder = "Harvard_CAS_2001.zip",
 
 ### Impute missing values
 
+```{r}
+function(df) {
+  na_count <- colSums(apply(df, 2, is.na))
+  data.frame(name = colnames(df), na_pct = na_count/nrow(df)) %>% arrange(desc(na_pct))
+}
+```
+
+
 The survey asks students to skip some questions on purpose. We manually go through the survey to impute these values. We use MICE to impute the remaining missing values.
 
 ### CAS93
@@ -401,30 +409,6 @@ multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) 
 #   mutate(ones=1) %>%
 #   pivot_wider(names_from=A6,values_from=ones, values_fill=list(ones=0),names_prefix = "A6_") %>%  #indicators for housing type
 #   select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8",colnames(.)))
-```
-
-
-```{r}
-myModelG <- ' 
-  # regressions
-  DRINKCAT ~ Back + Fam + HS + Live
-  # latent variable definitions
-  Back =~ G2 + 
-    G3_1 + G3_2 + G3_3 + G3_4 + G3_5 + 
-    G4_1 + G4_2 + G4_3 + G4_4 + G4_5 + G4_6
-  Fam =~ G14 +
-    G15 +
-    G16 +
-    G17
-  HS =~ G8 + G9 + G10
-  Live =~ A8_1 + A8_2 + A8_3 + A8_4 +
-  A6_1 + A6_2 + A6_3 + A6_4 + A6_5 + A6_6
-  # variances and covariances
-  HS ~~ Fam
-  Fam ~~ Back
-  # intercepts
-  HS ~ 1
-'
 ```
 
 ```{r}
