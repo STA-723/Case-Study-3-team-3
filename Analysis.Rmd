@@ -163,7 +163,7 @@ cas97 <- cas97 %>%
   # Some NA in A7 means student lived off campus
   mutate(A7 = ifelse(is.na(A7) & A6_5 == 1, 0, A7)) %>%
   # Drop A4, A5 that are transfer questions, otherwise have to dummify
-  select(-A4, -A5, -A8_answered)
+  select(-A4, -A5, -A8_answered, -A8)
 
 # How many complete cases left?
 cas97 %>%
@@ -251,18 +251,17 @@ cas97 <- cas97 %>%
          E23_2 = ifelse(is.na(E23_2) & E23_answered > 0, 0, E23_2),
          E23_3 = ifelse(is.na(E23_3) & E23_answered > 0, 0, E23_3)) %>%
   # Fill E27 with 0 for people less than 21 years old
-  mutate(E27_A = ifelse(is.na(E27_A) & AGELT21 == 1, 0, E27_A),
-         E27_B = ifelse(is.na(E27_B) & AGELT21 == 1, 0, E27_B),
-         E27_C = ifelse(is.na(E27_C) & AGELT21 == 1, 0, E27_C)) %>%
+  mutate(E27_A = ifelse(is.na(E27_A) & AGELT21 == 1, 0, E27_A)) %>%
+  select(-E27_B, -E27_C) %>%
   # Combine E24, 25, 26: Did you get seriously injured within 6 hours of drinking: fill 0 in NA E25
   replace_na(list(E25 = 0)) %>%
   # E10-12 skipped if never had sex. Can combine E9 and E11, drop E10, E12
   mutate(E9n11 = ifelse(is.na(E11) & E9 == 1, 0, E11 + 1)) %>%
-  select(-E9, -E10, -E12) %>%
+  select(-E9, -E10, -E12, -E11) %>%
   # E13-15 skipped if male
   replace_na(list(E13 = 0, E14 = 0, E15 = 0)) %>%
   # Drop E24, E26, E23_answered
-  select(-E24, -E26, -E23_answered)
+  select(-E24, -E26, -E23_answered, -E23)
 
 
 ```
@@ -295,7 +294,7 @@ cas97 <- cas97 %>%
          G3_4 = ifelse(is.na(G3_4) & G3_answered > 0, 0, G3_4),
          G3_5 = ifelse(is.na(G3_5) & G3_answered > 0, 0, G3_5),
          ) %>%
-  select(-G3_answered) %>%
+  select(-G3_answered, -G3) %>%
   mutate(ones=1) %>%
   pivot_wider(names_from = G4,
               values_from = ones,
@@ -323,7 +322,7 @@ cas97 %>%
   dim()
 ```
 
-We only have about 5100 observations for 220 variables 
+We only have about 7100 observations for 212 variables 
 
 ```{r}
 mean(is.na(cas97$DRINKCAT))
@@ -333,7 +332,42 @@ There are few missing values for the response DRINKCAT
 
 #### Multicolinearity
 
+```{r}
+cas97_noc <- cas97 %>%
+  select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
+  select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
+  filter(complete.cases(.)) %>%
+  select(-A6_NA)
+sort(apply(cas97_noc, 2 , sd))
+```
 
+Drop A6_NA in complete cases, because the standard deviation is 0.
+
+Let's check the correlation between the variables
+
+```{r}
+plot_cormat <- function(X) {
+  cormat <- round(cor(X), 2)
+  melted_cormat <- reshape2::melt(cormat)
+  ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() + scale_fill_gradient2(low = "blue", mid = "white", high = "red")
+}
+
+plot_cormat(cas97_noc)
+```
+
+```{r}
+cormat <- round(cor(cas97_noc), 2)
+covvec <- cormat[upper.tri(cormat, diag = FALSE)]
+hist(covvec, breaks = 50)
+reshape2::melt(cormat) %>%
+  filter(Var1 != Var2) %>%
+  arrange(value)
+```
+
+
+TODO:
+- Remove G16_none?
 
 #### MICE
 
@@ -371,7 +405,8 @@ multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) 
 
 
 ```{r}
-myModelG <- ' # regressions
+myModelG <- ' 
+  # regressions
   DRINKCAT ~ Back + Fam + HS + Live
   # latent variable definitions
   Back =~ G2 + 
@@ -383,25 +418,48 @@ myModelG <- ' # regressions
     G17
   HS =~ G8 + G9 + G10
   Live =~ A8_1 + A8_2 + A8_3 + A8_4 +
-    A6_1 + A6_2 + A6_3 + A6_4 + A6_5 + A6_6
+  A6_1 + A6_2 + A6_3 + A6_4 + A6_5 + A6_6
   # variances and covariances
-  #HS ~~ Fam
+  HS ~~ Fam
+  Fam ~~ Back
   # intercepts
-  #HS ~ 1
+  HS ~ 1
 '
 ```
+
+```{r}
+modg <- "
+  # Regression
+  DRINKCAT ~ G3_1 + G3_2 + G3_3 + G3_45 +  # race
+             G4_1 + G4_2 + G4_3 + G4_4 + G4_5 + G4_6 +
+             Fam + HS
+  # Latent variable definition
+  Fam =~ G14 + G15 + G16 + G17
+  HS =~ G8 + G9 + G10
+  # Variance
+  HS ~~ Fam
+"
+```
+
 
 Right now, this gives output but we need more informative variables. Also, we need to make sure MICE is filling in values in a way which makes sense.
 
 ```{r}
-DRINKCAT <- cas97$DRINKCAT
+DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
-  select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8",colnames(.))) %>%
-  scale(center = TRUE, scale = TRUE) %>%
-  as.data.frame() %>%
+  select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8", colnames(.))) %>%
+  mutate(G15 = scale(G15),
+         G16 = scale(G16),
+         G17 = scale(G17),
+         G10 = scale(G10),
+         G14 = scale(G14),
+         G8 = scale(G8),
+         G9 = scale(G9),
+         G3_45 = I(G3_4 + G3_5 > 0) # Combine native and others
+         ) %>%
   mutate(DRINKCAT = DRINKCAT) %>%
   filter(complete.cases(.))
-fitg <- sem(myModelG, drinkcat)
+fitg <- sem(modg, drinkcat, ordered = c("DRINKCAT"))
 summary(fitg)
 ```
 
