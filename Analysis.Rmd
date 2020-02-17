@@ -70,77 +70,77 @@ The survey asks students to skip some questions on purpose. We manually go throu
 #### Section B
 
 ```{r}
-# Section B
-# If answer yes to B13, skip B14, B15; If answer no to B14, skip B15.
-# We fill in all the skipped rows with 0 ???
-cas93 <- cas93 %>% mutate(B14 = ifelse(B13 == 2, 0, B14),
-                          B15_A = ifelse(B13 == 2 | B14 == 2, 0, B15_A),
-                          B15_B = ifelse(B13 == 2 | B14 == 2, 0, B15_B),
-                          B15_C = ifelse(B13 == 2 | B14 == 2, 0, B15_C),
-                          B15_D = ifelse(B13 == 2 | B14 == 2, 0, B15_D),
-                          B15_E = ifelse(B13 == 2 | B14 == 2, 0, B15_E))
+# # Section B
+# # If answer yes to B13, skip B14, B15; If answer no to B14, skip B15.
+# # We fill in all the skipped rows with 0 ???
+# cas93 <- cas93 %>% mutate(B14 = ifelse(B13 == 2, 0, B14),
+#                           B15_A = ifelse(B13 == 2 | B14 == 2, 0, B15_A),
+#                           B15_B = ifelse(B13 == 2 | B14 == 2, 0, B15_B),
+#                           B15_C = ifelse(B13 == 2 | B14 == 2, 0, B15_C),
+#                           B15_D = ifelse(B13 == 2 | B14 == 2, 0, B15_D),
+#                           B15_E = ifelse(B13 == 2 | B14 == 2, 0, B15_E))
 ```
 
 #### Section E
 
 ```{r}
-cas93 <- cas93 %>% 
-    mutate(E4 = ifelse(E3 == 2, 0, E4)) %>% 
-    mutate(E6 = ifelse(E5== 2, 0, E6)) %>% 
-    mutate(E7 = ifelse(E5 == 2, 0, E7)) %>% 
-    mutate(E8= ifelse(E5 == 2, 0, E8)) 
-```
-
-#### Section C
-
-We first look at missing data in section C:
-\begin{enumerate}
-  \item If the student hasn't had >5 drinks in a row for the past two weeks, they skip C2 and C3
-  \item C6: If the student is alcohol abstinent, then they skip C7-C21. If the student hasn't drank in the past year, they skip C7-C18. If the student hasn't drank in the past month, they skip C7-C11.
-  \item C11: Students skip this question if they are 21 years or older
-  \item C22: Students skip this question if they have not had alcohol within the past year.
-\end{enumerate}
-
-
-```{r}
-#all columns to character columns
-cas93_C<-cas93[,grepl("^C[0-9]",colnames(cas93))]
-
-abs<-"C[7-9]|C1[0-9]|C2[0-1]"
-year<-"C[7-9]|C1[0-8]"
-month<-"C[7-9]|C1[0-1]"
-
-cas93_filled<-cas93_C %>% 
-  mutate_at(vars( starts_with("C2_") ), 
-          list( ~replace_na(.,0) ))  %>%
-  mutate_at(vars( starts_with("C3_") ), 
-          list( ~replace_na(.,0) ))
-
-#imputing infrequent drinking for skipped questions C7-C21
-abs_imp<-cas93_filled[,grep(abs,colnames(cas93_filled))]
-abs_imp[rowSums(is.na(abs_imp))== ncol(abs_imp),]<-0
-
-year_imp<-abs_imp[,grep(year,colnames(abs_imp))]
-abs_imp[rowSums(is.na(year_imp))== ncol(year_imp),grep(year,colnames(abs_imp))]<-0
-
-month_imp<-abs_imp[,grep(month,colnames(year_imp))]
-abs_imp[rowSums(is.na(month_imp)) == ncol(month_imp),grep(month,colnames(year_imp))]<-0
-
-#imputing older students for C11; still need to cross check with age group variable
-q_c11<-abs_imp %>% select(starts_with("C11_"))
-abs_imp[rowSums(is.na(q_c11)) == ncol(q_c11),grep("C11_",colnames(abs_imp))]<-0
-
-#imputing students who didn't drink in the last year for C22; might have to take this with a grain of salt
-q_c22<-cas93_filled %>% select(starts_with("C22_"))
-cas93_filled[rowSums(is.na(q_c22)) == ncol(q_c22),grep("C22_",colnames(cas93_filled))]<-0
-
-
-#bind with rest of C columns
-cas93_C<-cbind(cas93_filled[1:10],abs_imp[1:69],cas93_filled[80:93])
-
-cas93_final<-cas93[,!grepl("^C[0-9]",colnames(cas93))] %>%
-  cbind(cas93_C) %>%
-  select(-COLL_ID)
+# cas93 <- cas93 %>% 
+#     mutate(E4 = ifelse(E3 == 2, 0, E4)) %>% 
+#     mutate(E6 = ifelse(E5== 2, 0, E6)) %>% 
+#     mutate(E7 = ifelse(E5 == 2, 0, E7)) %>% 
+#     mutate(E8= ifelse(E5 == 2, 0, E8)) 
+# ```
+# 
+# #### Section C
+# 
+# We first look at missing data in section C:
+# \begin{enumerate}
+#   \item If the student hasn't had >5 drinks in a row for the past two weeks, they skip C2 and C3
+#   \item C6: If the student is alcohol abstinent, then they skip C7-C21. If the student hasn't drank in the past year, they skip C7-C18. If the student hasn't drank in the past month, they skip C7-C11.
+#   \item C11: Students skip this question if they are 21 years or older
+#   \item C22: Students skip this question if they have not had alcohol within the past year.
+# \end{enumerate}
+# 
+# 
+# ```{r}
+# #all columns to character columns
+# cas93_C<-cas93[,grepl("^C[0-9]",colnames(cas93))]
+# 
+# abs<-"C[7-9]|C1[0-9]|C2[0-1]"
+# year<-"C[7-9]|C1[0-8]"
+# month<-"C[7-9]|C1[0-1]"
+# 
+# cas93_filled<-cas93_C %>% 
+#   mutate_at(vars( starts_with("C2_") ), 
+#           list( ~replace_na(.,0) ))  %>%
+#   mutate_at(vars( starts_with("C3_") ), 
+#           list( ~replace_na(.,0) ))
+# 
+# #imputing infrequent drinking for skipped questions C7-C21
+# abs_imp<-cas93_filled[,grep(abs,colnames(cas93_filled))]
+# abs_imp[rowSums(is.na(abs_imp))== ncol(abs_imp),]<-0
+# 
+# year_imp<-abs_imp[,grep(year,colnames(abs_imp))]
+# abs_imp[rowSums(is.na(year_imp))== ncol(year_imp),grep(year,colnames(abs_imp))]<-0
+# 
+# month_imp<-abs_imp[,grep(month,colnames(year_imp))]
+# abs_imp[rowSums(is.na(month_imp)) == ncol(month_imp),grep(month,colnames(year_imp))]<-0
+# 
+# #imputing older students for C11; still need to cross check with age group variable
+# q_c11<-abs_imp %>% dplyr::select(starts_with("C11_"))
+# abs_imp[rowSums(is.na(q_c11)) == ncol(q_c11),grep("C11_",colnames(abs_imp))]<-0
+# 
+# #imputing students who didn't drink in the last year for C22; might have to take this with a grain of salt
+# q_c22<-cas93_filled %>% dplyr::select(starts_with("C22_"))
+# cas93_filled[rowSums(is.na(q_c22)) == ncol(q_c22),grep("C22_",colnames(cas93_filled))]<-0
+# 
+# 
+# #bind with rest of C columns
+# cas93_C<-cbind(cas93_filled[1:10],abs_imp[1:69],cas93_filled[80:93])
+# 
+# cas93_final<-cas93[,!grepl("^C[0-9]",colnames(cas93))] %>%
+#   cbind(cas93_C) %>%
+#   dplyr::select(-COLL_ID)
 
 ```
 
@@ -151,13 +151,13 @@ cas93_final<-cas93[,!grepl("^C[0-9]",colnames(cas93))] %>%
 ```{r}
 # See which vars have lots of NA's
 cas97 %>% 
-  select(which(grepl("^A", colnames(.)))) %>%
+  dplyr::select(which(grepl("^A", colnames(.)))) %>%
   summary_na()
 
 # Fill in NA's that mean 0
 cas97 <- cas97 %>%
   mutate(A8_answered = cas97 %>%
-                        select(which(grepl("^A8_", colnames(.)))) %>%
+                        dplyr::select(which(grepl("^A8_", colnames(.)))) %>%
                         rowSums(na.rm = TRUE)) %>%
   mutate(A8_1 = ifelse(is.na(A8_1) & A8_answered > 0, 0, A8_1),
          A8_2 = ifelse(is.na(A8_2) & A8_answered > 0, 0, A8_2),
@@ -172,11 +172,11 @@ cas97 <- cas97 %>%
   # Some NA in A7 means student lived off campus
   mutate(A7 = ifelse(is.na(A7) & A6_5 == 1, 0, A7)) %>%
   # Drop A4, A5 that are transfer questions, otherwise have to dummify
-  select(-A4, -A5, -A8_answered, -A8)
+  dplyr::select(-A4, -A5, -A8_answered, -A8)
 
 # How many complete cases left?
 cas97 %>%
-  select(which(grepl("^A", colnames(.)))) %>%
+  dplyr::select(which(grepl("^A", colnames(.)))) %>%
   filter(complete.cases(.)) %>%
   nrow()
 ```
@@ -191,13 +191,13 @@ For B10, an indicator is an option, fill in zero for than NA
 ```{r}
 # Which columns in this section have lots of NA?
 cas97 %>% 
-  select(which(grepl("^B", colnames(.)))) %>%
+  dplyr::select(which(grepl("^B", colnames(.)))) %>%
   summary_na()
 
 # Fill in NA that actually means 0
 cas97 <- cas97 %>%
   mutate(B10_answered = cas97 %>%
-                        select(which(grepl("^B10_", colnames(.)))) %>%
+                        dplyr::select(which(grepl("^B10_", colnames(.)))) %>%
                         rowSums(na.rm = TRUE)) %>%
   mutate(B10_1 = ifelse(is.na(B10_1) & B10_answered > 0, 0, B10_1),
          B10_2 = ifelse(is.na(B10_2) & B10_answered > 0, 0, B10_2),
@@ -207,11 +207,11 @@ cas97 <- cas97 %>%
          B10_6 = ifelse(is.na(B10_6) & B10_answered > 0, 0, B10_6),
          B10_7 = ifelse(is.na(B10_7) & B10_answered > 0, 0, B10_7),
          B10_8 = ifelse(is.na(B10_8) & B10_answered > 0, 0, B10_8)) %>%
-  select(-B10_answered)
+  dplyr::select(-B10_answered)
 
 # How many complete cases left?
 cas97 %>%
-  select(which(grepl("^B", colnames(.)))) %>%
+  dplyr::select(which(grepl("^B", colnames(.)))) %>%
   filter(complete.cases(.)) %>%
   nrow()
 ```
@@ -227,15 +227,15 @@ cas97 %>%
 ```{r}
 # Which columns in this section have lots of NA?
 cas97 %>% 
-  select(which(grepl("^D\\d", colnames(.)))) %>%
+  dplyr::select(which(grepl("^D\\d", colnames(.)))) %>%
   summary_na()
 
 cas97 <- cas97 %>%
-  select(-D7_1, -D7_2, -D7_3, -D7_4)
+  dplyr::select(-D7_1, -D7_2, -D7_3, -D7_4)
 
 # How many complete cases left?
 cas97 %>%
-  select(which(grepl("^D\\d", colnames(.)))) %>%
+  dplyr::select(which(grepl("^D\\d", colnames(.)))) %>%
   filter(complete.cases(.)) %>%
   nrow()
 ```
@@ -251,34 +251,34 @@ Possible groups to consider: Female vs Male, Younger vs Older than 21 years old
 ```{r}
 # Which columns in this section have lots of NA?
 cas97 %>% 
-  select(which(grepl("^E\\d", colnames(.)))) %>%
+  dplyr::select(which(grepl("^E\\d", colnames(.)))) %>%
   summary_na()
 
 cas97 <- cas97 %>%
   # Fill NA resulted from dummifying vars E23
   mutate(E23_answered = cas97 %>%
-                        select(which(grepl("^E23_", colnames(.)))) %>%
+                        dplyr::select(which(grepl("^E23_", colnames(.)))) %>%
                         rowSums(na.rm = TRUE)) %>%
   mutate(E23_1 = ifelse(is.na(E23_1) & E23_answered > 0, 0, E23_1),
          E23_2 = ifelse(is.na(E23_2) & E23_answered > 0, 0, E23_2),
          E23_3 = ifelse(is.na(E23_3) & E23_answered > 0, 0, E23_3)) %>%
   # Fill E27 with 0 for people less than 21 years old
   mutate(E27_A = ifelse(is.na(E27_A) & AGELT21 == 1, 0, E27_A)) %>%
-  select(-E27_B, -E27_C) %>%
+  dplyr::select(-E27_B, -E27_C) %>%
   # Combine E24, 25, 26: Did you get seriously injured within 6 hours of drinking: fill 0 in NA E25
   replace_na(list(E25 = 0)) %>%
   # E10-12 skipped if never had sex. Can combine E9 and E11, drop E10, E12
   mutate(E9n11 = ifelse(is.na(E11) & E9 == 1, 0, E11 + 1)) %>%
-  select(-E9, -E10, -E12, -E11) %>%
+  dplyr::select(-E9, -E10, -E12, -E11) %>%
   # E13-15 skipped if male
   replace_na(list(E13 = 0, E14 = 0, E15 = 0)) %>%
   # Drop E24, E26, E23_answered
-  #select(-E24, -E26, -E23_answered, -E23) %>% 
+  #dplyr::select(-E24, -E26, -E23_answered, -E23) %>% 
   #create sexual assault due to drinking variable
   #rowwise() %>% 
   #mutate(E15 = E15 + 1) %>% 
   #mutate(sex_assualt = ifelse(D4_H > 1 | D4_I > 1 | E15 > 1,max(D4_H,D4_I,E15, na.rm = TRUE), 1))
-  select(-E24, -E26, -E23_answered, -E23) %>%
+  dplyr::select(-E24, -E26, -E23_answered, -E23) %>%
   #create sexual assault due to drinking variable
   mutate(sex_assualt_ind = ifelse(D4_H > 1 | D4_I > 1 | E15 > 0, 1, 0))
 
@@ -291,12 +291,12 @@ Everything seems fine
 ```{r}
 # Which columns in this section have lots of NA?
 cas97 %>% 
-  select(which(grepl("^F", colnames(.)))) %>%
+  dplyr::select(which(grepl("^F", colnames(.)))) %>%
   summary_na()
 
 # Remove F70/30FRND
 cas97 <- cas97 %>%
-  select(-F70FRND, -F30FRND)
+  dplyr::select(-F70FRND, -F30FRND)
 ```
 
 #### Section G
@@ -304,7 +304,7 @@ cas97 <- cas97 %>%
 ```{r}
 cas97 <- cas97 %>% 
   mutate(G3_answered = cas97 %>%
-                        select(which(grepl("^G3_", colnames(.)))) %>%
+                        dplyr::select(which(grepl("^G3_", colnames(.)))) %>%
                         rowSums(na.rm = TRUE)) %>%
   mutate(G3_1 = ifelse(is.na(G3_1) & G3_answered > 0, 0, G3_1),
          G3_2 = ifelse(is.na(G3_2) & G3_answered > 0, 0, G3_2),
@@ -312,7 +312,7 @@ cas97 <- cas97 %>%
          G3_4 = ifelse(is.na(G3_4) & G3_answered > 0, 0, G3_4),
          G3_5 = ifelse(is.na(G3_5) & G3_answered > 0, 0, G3_5),
          ) %>%
-  select(-G3_answered, -G3) %>%
+  dplyr::select(-G3_answered, -G3) %>%
   mutate(ones=1) %>%
   pivot_wider(names_from = G4,
               values_from = ones,
@@ -326,7 +326,7 @@ cas97 <- cas97 %>%
   
 # Which columns in this section have lots of NA?
 cas97 %>% 
-  select(which(grepl("^G\\d", colnames(.)))) %>%
+  dplyr::select(which(grepl("^G\\d", colnames(.)))) %>%
   summary_na()
 ```
 
@@ -334,8 +334,8 @@ Here we check for the number of complete cases after the preprocessing step abov
 
 ```{r}
 cas97 %>%
-  select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
-  select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
+  dplyr::select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
+  dplyr::select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
   filter(complete.cases(.)) %>%
   dim()
 ```
@@ -352,10 +352,10 @@ There are few missing values for the response DRINKCAT
 
 ```{r}
 cas97_noc <- cas97 %>%
-  select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
-  select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
+  dplyr::select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
+  dplyr::select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
   filter(complete.cases(.)) %>%
-  select(-A6_NA)
+  dplyr::select(-A6_NA)
 sort(apply(cas97_noc, 2 , sd))
 ```
 
@@ -415,7 +415,7 @@ We impute the rest of the missing values with MICE:
 ```{r}
 # MICEd_impute_C<-readRDS("MICEd_cas93.rds")
 # #saveRDS(MICEd_impute_C,file="MICEd_cas93.rds")
-# multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
+# multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% dplyr::select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% dplyr::select(C8) %>% as.matrix(), family="multinomial")
 ```
 
 
@@ -427,13 +427,13 @@ We first check for linearity between variables and the predictor.
 We run a multinomial regression model (we could do ordinal regression; look this up!)
 
 ```{r}
-cas97_glm_full<-cas97 %>% select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^DRINKCAT",colnames(.))) %>%
+cas97_glm_full<-cas97 %>% dplyr::select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G11|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^DRINKCAT",colnames(.))) %>%
   mutate(G15 = scale(G15),
          G16 = scale(G16),
          G17 = scale(G17),
          G10 = scale(G10),
          G14 = scale(G14),
-         G8 = scale(G8),
+         G11 = scale(G11),
          G9 = scale(G9),
          G3_45 = I(G3_4 + G3_5 > 0)) %>%
   mutate(DRINKCAT=case_when(DRINKCAT==0 ~ "nondrinker",
@@ -455,7 +455,7 @@ We can fit a naive glm multinomial model:
 
 
 ```{r}
-cas97_glm<-cas97 %>% select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|
+cas97_glm<-cas97 %>% dplyr::select(grep("^G2|^G3|^G4|^G11|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|
                       ^D2|^D8|^D9|^D3|^D1|
                       ^F5|^F6|^F1|^F4|^F2|^F3|^DRINKCAT",colnames(.))) %>%
   mutate(G15 = scale(G15),
@@ -463,7 +463,7 @@ cas97_glm<-cas97 %>% select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^
          G17 = scale(G17),
          G10 = scale(G10),
          G14 = scale(G14),
-         G8 = scale(G8),
+         G11 = scale(G11),
          G9 = scale(G9),
          G3_45 = I(G3_4 + G3_5 > 0)) %>%
   mutate(DRINKCAT=case_when(DRINKCAT==0 ~ "nondrinker",
@@ -482,16 +482,15 @@ summary(naive_glm)
 
 We also fit an elastic net model, which allows for correlated covariates (unlike LASSO) and choosing the regularization parameter optimally:
 
-**cas97_glm should be run only after data-cleaning (don't run the DRINKCAT order things)**
 ```{r}
-cas97_glm<-cas97 %>% select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^DRINKCAT",colnames(.))) %>%
+cas97_glm<-cas97 %>% dplyr::select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G9|^G10|^G11|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^DRINKCAT",colnames(.))) %>%
   mutate_all(function(x) scale(as.numeric(x))) %>%
   # mutate(G15 = scale(G15),
   #        G16 = scale(G16),
   #        G17 = scale(G17),
   #        G10 = scale(G10),
   #        G14 = scale(G14),
-  #        G8 = scale(G8),
+  #        G11 = scale(G11),
   #        G9 = scale(G9),
   #        G3_45 = I(G3_4 + G3_5 > 0)) %>%
   mutate(DRINKCAT=case_when(DRINKCAT<=1 ~ "light",
@@ -500,24 +499,31 @@ cas97_glm<-cas97 %>% select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7
   drop_na()
 
 naive_lasso<-cv.glmnet(x=cas97_glm %>%
-                         select(-DRINKCAT) %>% 
+                         dplyr::select(-DRINKCAT) %>% 
                          mutate_each(as.numeric) %>% 
                          as.matrix(), 
                       y=cas97_glm %>% 
-                        select(DRINKCAT) %>% 
+                        dplyr::select(DRINKCAT) %>% 
                         mutate_each(as.factor) %>% 
                         as.matrix(),
                       family="multinomial")
 
 coef(naive_lasso)
+
+#the most important predictors for heavy drinkers: A10_F(parties, neg), B6_D (drinking group which was asked to be quieter/less disruptive, positive), D1_B (opinion on appropriate amount for off-campus bar drinking, pos), D9_B (percentage of friends who are binge drinkers, pos), G11 (HS number of binges, pos)
 ```
 
 
 ```{r}
-long_cas97_glm<-cas97_glm %>% select(grep("^A|^DRINK",colnames(.))) %>% pivot_longer(cols=-DRINKCAT,names_to = "value",names_repair="unique")
+long_cas97_glm<-cas97_glm %>% dplyr::select(grep("^A|^DRINK",colnames(.))) %>% pivot_longer(cols=-DRINKCAT,names_to = "value",names_repair="unique")
 colnames(long_cas97_glm)<-c("DRINKCAT","var","value")
 
 cas97_glm %>% group_by(DRINKCAT) %>% summarise_all(funs(mean=mean))
+```
+
+```{r}
+library(MASS)
+polr(DRINKCAT ~ ., data=cas97_glm_full)
 ```
 
 
@@ -537,7 +543,7 @@ moda <- "
 ```{r}
 DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
-  select(grep("^A9|^A10", colnames(.))) %>%
+  dplyr::select(grep("^A9|^A10", colnames(.))) %>%
   mutate(DRINKCAT = DRINKCAT) %>%
   filter(complete.cases(.))
 fita <- sem(moda, drinkcat, ordered = c("DRINKCAT"))
@@ -564,7 +570,7 @@ modb <- "
 ```{r}
 DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
-  select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$", colnames(.))) %>%
+  dplyr::select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$", colnames(.))) %>%
   mutate(
     B12 = B12_A + B12_B,
     B8 = B8_B + B8_C + B8_D,
@@ -596,7 +602,7 @@ modd <- '
 ```{r}
 DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
-  select(grep("^D2|^D8|^D9|^D3|^D1", colnames(.))) %>%
+  dplyr::select(grep("^D2|^D8|^D9|^D3|^D1", colnames(.))) %>%
   mutate(DRINKCAT = DRINKCAT) %>%
   mutate(D9 = D9_A + D9_B,
          D8 = D8_A + D8_B) %>%
@@ -617,7 +623,7 @@ modg <- "
              Fam + HS
   # Latent variable definition
   Fam =~ G14 + G15 + G16 + G17
-  HS =~ G8 + G9 + G10
+  HS =~ G11 + G9 + G10
   # Variance
   HS ~~ Fam
 "
@@ -629,13 +635,13 @@ Right now, this gives output but we need more informative variables. Also, we ne
 ```{r}
 DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
-  select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8", colnames(.))) %>%
+  dplyr::select(grep("^G2|^G3|^G4|^G11|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8", colnames(.))) %>%
   mutate(G15 = scale(G15),
          G16 = scale(G16),
          G17 = scale(G17),
          G10 = scale(G10),
          G14 = scale(G14),
-         G8 = scale(G8),
+         G11 = scale(G11),
          G9 = scale(G9),
          G3_45 = I(G3_4 + G3_5 > 0) # Combine native and others
          ) %>%
@@ -672,7 +678,7 @@ modf <- "
 ```{r}
 DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
-  select(grep("^F5|^F6|^F1|^F4|^F2|^F3", colnames(.))) %>%
+  dplyr::select(grep("^F5|^F6|^F1|^F4|^F2|^F3", colnames(.))) %>%
   mutate(DRINKCAT = DRINKCAT) %>%
   filter(complete.cases(.))
 fitf <- sem(modf, drinkcat, ordered = c("DRINKCAT"))
@@ -701,7 +707,7 @@ fullmod <-'
   Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J  
   Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D +D1_E
   Fam =~ G14 + G15 + G16 + G17
-  HS =~ G8 + G9 + G10
+  HS =~ G11 + G9 + G10
   personal_wellbeing =~  F6_A + F6_B + F6_C + F6_D + F6_E + F6_F + F6_G + F6_H + F6_I
   academic_wellbeing =~ F1 + F4 
   social_groups =~ F5_A + F5_B + F5_C + F5_D + F5_E + F5_F + F5_G + F5_H
@@ -724,13 +730,13 @@ fullmod <-'
 ```{r}
 DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
-  select(grep("^F5|^F6|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^sex_assualt", colnames(.))) %>%
+  dplyr::select(grep("^F5|^F6|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G11|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^sex_assualt", colnames(.))) %>%
   mutate(G15 = scale(G15),
          G16 = scale(G16),
          G17 = scale(G17),
          G10 = scale(G10),
          G14 = scale(G14),
-         G8 = scale(G8),
+         G11 = scale(G11),
          G9 = scale(G9),
          G3_45 = I(G3_4 + G3_5 > 0),# Combine native and others
          B11 = scale(B11),
@@ -769,7 +775,7 @@ fullmod <-'
   Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J  
   Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D +D1_E
   Fam =~ G14 + G15 + G16 + G17
-  HS =~ G8 + G9 + G10
+  HS =~ G11 + G9 + G10
   personal_wellbeing =~  F6_A + F6_B + F6_C + F6_D + F6_E + F6_F + F6_G + F6_H + F6_I
   academic_wellbeing =~ F1 + F4 
   social_groups =~ F5_A + F5_B + F5_C + F5_D + F5_E + F5_F + F5_G + F5_H
@@ -786,11 +792,11 @@ fullmod <-'
 
 
 ```{r, cache=TRUE}
-indep_vars_patterns <- "^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10"
+indep_vars_patterns <- "^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G11|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10"
 DRINKCAT <- ordered(cas97$DRINKCAT)
 SEXASSAULT <- ordered(cas97$sex_assualt_ind)
 drinkcat <- cas97 %>%
-  select(grep(indep_vars_patterns, colnames(.))) %>%
+  dplyr::select(grep(indep_vars_patterns, colnames(.))) %>%
   mutate(
     G3_45 = I(G3_4 + G3_5 > 0), # Combine native and     others
     B12 = B12_A + B12_B,
