@@ -273,9 +273,14 @@ cas97 <- cas97 %>%
   # E13-15 skipped if male
   replace_na(list(E13 = 0, E14 = 0, E15 = 0)) %>%
   # Drop E24, E26, E23_answered
+  #select(-E24, -E26, -E23_answered, -E23) %>% 
+  #create sexual assault due to drinking variable
+  #rowwise() %>% 
+  #mutate(E15 = E15 + 1) %>% 
+  #mutate(sex_assualt = ifelse(D4_H > 1 | D4_I > 1 | E15 > 1,max(D4_H,D4_I,E15, na.rm = TRUE), 1))
   select(-E24, -E26, -E23_answered, -E23) %>%
   #create sexual assault due to drinking variable
-  mutate(sex_assualt_ind = ifelse(D4_H > 0 | D4_I > 0 | E15 > 0, 1, 0))
+  mutate(sex_assualt_ind = ifelse(D4_H > 1 | D4_I > 1 | E15 > 0, 1, 0))
 
 ```
 
@@ -568,13 +573,10 @@ summary(fitb)
 ```{r}
 modd <- '
   # Regression
-  DRINKCAT ~ D2 +  
-            D8_A + D8_B +
-            D9_A + D9_B +
-            Policy + Approp_Drinks
+  DRINKCAT ~ Policy + Approp_Drinks + D2 + D8 + D9
   # Latent variable definition
-  Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J  
-  Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D +D1_E
+  Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J
+  Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D + D1_E
   # Variance
   Policy ~~ Approp_Drinks
 '
@@ -585,6 +587,8 @@ DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
   select(grep("^D2|^D8|^D9|^D3|^D1", colnames(.))) %>%
   mutate(DRINKCAT = DRINKCAT) %>%
+  mutate(D9 = D9_A + D9_B,
+         D8 = D8_A + D8_B) %>%
   filter(complete.cases(.))
 fitd <- sem(modd, drinkcat, ordered = c("DRINKCAT"))
 summary(fitd)
@@ -598,7 +602,7 @@ summary(fitd)
 modg <- "
   # Regression
   DRINKCAT ~ G3_1 + G3_2 + G3_3 + G3_45 +  # race
-             G4_1 + G4_2 + G4_3 + G4_4 + G4_5 + G4_6 +
+             G4_1 + G4_2 + G4_3 + G4_4 + G4_5 + G4_6 +  # religion
              Fam + HS
   # Latent variable definition
   Fam =~ G14 + G15 + G16 + G17
@@ -657,7 +661,7 @@ modf <- "
 ```{r}
 DRINKCAT <- ordered(cas97$DRINKCAT)
 drinkcat <- cas97 %>%
-  select(grep("^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3", colnames(.))) %>%
+  select(grep("^F5|^F6|^F1|^F4|^F2|^F3", colnames(.))) %>%
   mutate(DRINKCAT = DRINKCAT) %>%
   filter(complete.cases(.))
 fitf <- sem(modf, drinkcat, ordered = c("DRINKCAT"))
@@ -666,24 +670,90 @@ summary(fitf)
 ```
 
 
-#### Combined Model
+#### Combined Models
+
+
+## Old Version
+
+```{r}
+fullmod <-'
+  # Regression
+  DRINKCAT ~ comms +
+            #CollegePolicy + CollegeEdu + Policy + CityPolicy
+            Approp_Drinks + Fam + HS +
+            personal_wellbeing + academic_wellbeing + social_groups 
+            
+  sexual_assault ~ DRINKCAT + social_groups + comms
+  
+  # Latent variable definition
+  comms =~ A10_A + A10_B +A10_C + A10_D + A10_E + A 10_F +A10_G + A10_H
+  Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J  
+  Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D +D1_E
+  Fam =~ G14 + G15 + G16 + G17
+  HS =~ G8 + G9 + G10
+  personal_wellbeing =~  F6_A + F6_B + F6_C + F6_D + F6_E + F6_F + F6_G + F6_H + F6_I
+  academic_wellbeing =~ F1 + F4 
+  social_groups =~ F5_A + F5_B + F5_C + F5_D + F5_E + F5_F + F5_G + F5_H
+  #CollegePolicy =~ B1 + B2 + 
+  #                 B9_A + B9_B + B9_C + B9_D + B9_E + B9_F + B9_G
+  #CityPolicy =~ B11 + B12 +
+  #              B13_A + B13_B + B13_C + B13_D + B13_E
+  #CollegeEdu =~ B7 + B8
+  
+  # Variance
+  #CollegePolicy ~~ CollegeEdu 
+  Policy ~~ Approp_Drinks
+  HS ~~ Fam
+  personal_wellbeing ~~ academic_wellbeing
+  social_groups ~~ personal_wellbeing 
+  social_groups ~~ academic_wellbeing
+'
+```
+
+```{r}
+DRINKCAT <- ordered(cas97$DRINKCAT)
+drinkcat <- cas97 %>%
+  select(grep("^F5|^F6|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^sex_assualt", colnames(.))) %>%
+  mutate(G15 = scale(G15),
+         G16 = scale(G16),
+         G17 = scale(G17),
+         G10 = scale(G10),
+         G14 = scale(G14),
+         G8 = scale(G8),
+         G9 = scale(G9),
+         G3_45 = I(G3_4 + G3_5 > 0),# Combine native and others
+         B11 = scale(B11),
+         B13_E = scale(B13_E),
+         B13_D = scale(B13_D),
+         B13_C = scale(B13_C),
+         B13_B = scale(B13_B),
+         B13_A = scale(B13_A),
+         B2 = scale(B2),
+         B12 = scale(B12_A + B12_B),
+         B8 = scale(B8_B + B8_C + B8_D),
+         B7 = scale(B7_A + B7_B + B7_C + B7_D + B7_E + B7_F)
+         ) %>% 
+  mutate(DRINKCAT = DRINKCAT) %>% 
+  drop_na()
+fit_full<- sem(fullmod, drinkcat, ordered = c("DRINKCAT"))
+summary(fit_full)
+```
+
+## New Version
 
 ```{r}
 fullmod <-'
   # Regression
   DRINKCAT ~ 1*comms +
-            CollegePolicy + CityPolicy + CollegeEdu +
+              CollegePolicy + CollegeEdu +
             Policy + Approp_Drinks + 
             Fam + HS +
             personal_wellbeing + academic_wellbeing + social_groups
   
-  #sex_assault_ind ~ DRINKCAT + social_groups + comms          
   # Latent variable definition
-  comms =~ A10_A + A10_B +A10_C + A10_D +A10_E + A10_F +A10_G + A10_H
+  comms =~ A10_A + A10_B +A10_C + A10_D + A10_E + A 10_F +A10_G + A10_H
   CollegePolicy =~ B1 + B2 + 
                    B9_A + B9_B + B9_C + B9_D + B9_E + B9_F + B9_G
-  CityPolicy =~ B11 + B12 +
-                B13_A + B13_B + B13_C + B13_D + B13_E
   CollegeEdu =~ B7 + B8
   Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J  
   Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D +D1_E
@@ -697,9 +767,6 @@ fullmod <-'
   CollegePolicy ~~ CollegeEdu 
   Policy ~~ Approp_Drinks
   HS ~~ Fam
-  personal_wellbeing ~~ personal_wellbeing
-  academic_wellbeing ~~ academic_wellbeing
-  social_groups ~~ social_groups
   personal_wellbeing ~~ academic_wellbeing
   social_groups ~~ personal_wellbeing 
   social_groups ~~ academic_wellbeing
@@ -707,29 +774,20 @@ fullmod <-'
 ```
 
 
-
-```{r}
+```{r, cache=TRUE}
 indep_vars_patterns <- "^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10"
 DRINKCAT <- ordered(cas97$DRINKCAT)
 SEXASSAULT <- ordered(cas97$sex_assualt_ind)
 drinkcat <- cas97 %>%
   select(grep(indep_vars_patterns, colnames(.))) %>%
-  mutate(G15 = scale(G15),
-         G16 = scale(G16),
-         G17 = scale(G17),
-         G10 = scale(G10),
-         G14 = scale(G14),
-         G8 = scale(G8),
-         G9 = scale(G9),
-         G3_45 = I(G3_4 + G3_5 > 0) # Combine native and others
-         ) %>%
   mutate(
+    G3_45 = I(G3_4 + G3_5 > 0), # Combine native and     others
     B12 = B12_A + B12_B,
     B8 = B8_B + B8_C + B8_D,
-    B7 = B7_A + B7_B + B7_C + B7_D + B7_E + B7_F
+    B7 = B7_A + B7_B + B7_C + B7_D + B7_E + B7_F,
+    D9 = D9_A + D9_B,
+    D8 = D8_A + D8_B
   ) %>%
-  scale() %>%
-  as.data.frame() %>%
   mutate(DRINKCAT = DRINKCAT,
          SEXASSAULT = SEXASSAULT) %>%
   filter(complete.cases(.))
@@ -744,6 +802,45 @@ lavInspect(fit_full, "cov.lv")
 ```{r}
 fitMeasures(fit_full)
 ```
+
+Using RMSEA we would accept this model
+
+# Mediation Analysis
+
+```{r}
+medmod <- "
+  # Direct effect
+  SEXASSAULT ~ a1 * social_groups + a2 * comms
+  
+  # Mediator
+  DRINKCAT ~ b1 * social_groups + b2 * comms
+  SEXASSAULT ~ c * DRINKCAT
+  
+  # Indirect effect
+  bc1 := b1 * c
+  bc2 := b2 * c
+  
+  # Total effect
+  total1 := a1 + (b1 * c)
+  total2 := a2 + (b2 * c)
+  
+  # Latent variable definitions
+  comms =~ A10_A + A10_B +A10_C + A10_D + A10_E + A 10_F +A10_G + A10_H
+  social_groups =~ F5_A + F5_B + F5_C + F5_D + F5_E + F5_F + F5_G + F5_H
+"
+```
+
+```{r}
+fit_med <- sem(medmod, drinkcat, ordered = c("DRINKCAT", "SEXASSAULT"))
+summary(fit_med)
+```
+
+
+
+## Sensitivity Analysis
+
+We can fit a naive glm multinomial model:
+
 
 
 
