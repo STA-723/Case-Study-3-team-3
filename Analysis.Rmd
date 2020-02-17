@@ -531,8 +531,27 @@ summary(fitf)
 
 We can fit a naive glm multinomial model:
 
+
 ```{r}
-cas97 %>% select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|
-                      ^D2|^D8|^D9|^D3|^D1",colnames(.)))
+cas97_glm<-cas97 %>% select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|
+                      ^D2|^D8|^D9|^D3|^D1|
+                      ^F5|^F6|^F1|^F4|^F2|^F3|
+                      ^DRINKCAT",colnames(.)))
+naive_glm<-multinom(DRINKCAT ~ ., data=cas97_glm)
+summary(naive_glm)
+```
+
+
+We also fit a LASSO model:
+
+**cas97_glm should be run only after data-cleaning (don't run the DRINKCAT order things)**
+```{r}
+cas97_glm<-cas97 %>% select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|
+                      ^D2|^D8|^D9|^D3|^D1|
+                      ^F5|^F6|^F1|^F4|^F2|^F3|^DRINKCAT",colnames(.))) %>%
+  drop_na()
+naive_lasso<-glmnet(x=cas97_glm %>% select(-DRINKCAT) %>% mutate_each(as.numeric) %>% as.matrix(), 
+       y=cas97_glm %>% select(DRINKCAT) %>% mutate_each(as.factor) %>% as.matrix(),family="multinomial")
+coef(naive_lasso)
 ```
 
