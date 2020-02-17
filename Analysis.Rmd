@@ -419,26 +419,26 @@ We impute the rest of the missing values with MICE:
 
 
 ```{r}
-cas97_glm_full<-cas97 %>% select(grep("^[A-Z][1-9]|^DRINKCAT",colnames(.))) %>%
-  mutate(G15 = scale(G15),
-         G16 = scale(G16),
-         G17 = scale(G17),
-         G10 = scale(G10),
-         G14 = scale(G14),
-         G8 = scale(G8),
-         G9 = scale(G9),
-         G3_45 = I(G3_4 + G3_5 > 0)) %>%
-  mutate(DRINKCAT=case_when(DRINKCAT==0 ~ "nondrinker",
-                            DRINKCAT==1 ~ "light",
-                            DRINKCAT==2 ~ "med",
-                            DRINKCAT==3 ~ "heavy")) %>%
-  mutate(DRINKCAT=as.factor(DRINKCAT)) 
-
-
-cas97_glm_full$DRINKCAT <- relevel(cas97_glm_full$DRINKCAT, ref = "nondrinker")
-
-naive_glm_full<-multinom(DRINKCAT ~ ., data=cas97_glm_full)
-summary(naive_glm_full)
+# cas97_glm_full<-cas97 %>% select(grep("^[A-Z][1-9]|^DRINKCAT",colnames(.))) %>%
+#   mutate(G15 = scale(G15),
+#          G16 = scale(G16),
+#          G17 = scale(G17),
+#          G10 = scale(G10),
+#          G14 = scale(G14),
+#          G8 = scale(G8),
+#          G9 = scale(G9),
+#          G3_45 = I(G3_4 + G3_5 > 0)) %>%
+#   mutate(DRINKCAT=case_when(DRINKCAT==0 ~ "nondrinker",
+#                             DRINKCAT==1 ~ "light",
+#                             DRINKCAT==2 ~ "med",
+#                             DRINKCAT==3 ~ "heavy")) %>%
+#   mutate(DRINKCAT=as.factor(DRINKCAT)) 
+# 
+# 
+# cas97_glm_full$DRINKCAT <- relevel(cas97_glm_full$DRINKCAT, ref = "nondrinker")
+# 
+# naive_glm_full<-multinom(DRINKCAT ~ ., data=cas97_glm_full)
+# summary(naive_glm_full)
 
 ```
 
@@ -492,8 +492,17 @@ cas97_glm<-cas97 %>% select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^
                             DRINKCAT<=3 ~ "heavy")) %>%
   mutate(DRINKCAT=as.factor(DRINKCAT)) %>%
   drop_na()
-naive_lasso<-cv.glmnet(x=cas97_glm %>% select(-DRINKCAT) %>% mutate_each(as.numeric) %>% as.matrix(), 
-       y=cas97_glm %>% select(DRINKCAT) %>% mutate_each(as.factor) %>% as.matrix(),family="multinomial")
+
+naive_lasso<-cv.glmnet(x=cas97_glm %>%
+                         select(-DRINKCAT) %>% 
+                         mutate_each(as.numeric) %>% 
+                         as.matrix(), 
+                      y=cas97_glm %>% 
+                        select(DRINKCAT) %>% 
+                        mutate_each(as.factor) %>% 
+                        as.matrix(),
+                      family="multinomial")
+
 coef(naive_lasso)
 ```
 
