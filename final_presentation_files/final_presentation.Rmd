@@ -14,21 +14,29 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
+## Data Cleaning
+
+- Indicator Variables for NA answers to categorical data
+- Zero-imputation for NA answers to ordinal data (if sensible)
+
 ## EDA: Drinking Habits
+
+
 
 ## EDA: Elastic Net 
 
 - $\textbf{Heavy Drinking (+)}$
-    - importance of parties
-    - disruptive/loud drinking
-    - opinion on off-campus bar (# acceptable drinks)
+    - Importance of parties in college experience
+    - Disruptive/loud drinking
+    - Opinion on off-campus bar (# acceptable drinks)
     - \% friends who are binge drinkers
     - HS binge behavior in senior year
 
 ## Dimension Reduction
 
 - Grouping into Latent Factors
-- Correlated and Interpretable
+- Factors: Correlated and Interpretable
+- Ordinal predictors for each factor
 
 ## SEM
 
