@@ -669,8 +669,8 @@ summary(fit_full)
 fullmod <-'
   # Regression
   DRINKCAT ~ 1*comms +
-              CollegePolicy + CollegeEdu +
             Policy + Approp_Drinks + 
+            CollegePolicy + CollegeEdu + CityPolicy +
             Fam + HS +
             personal_wellbeing + academic_wellbeing + social_groups
   
@@ -678,7 +678,9 @@ fullmod <-'
   comms =~ A10_A + A10_B +A10_C + A10_D + A10_E + A 10_F +A10_G + A10_H
   CollegePolicy =~ B1 + B2 + 
                    B9_A + B9_B + B9_C + B9_D + B9_E + B9_F + B9_G
-  CollegeEdu =~ B7 + B8
+  CollegeEdu =~ B8 + B7
+  CityPolicy =~ B11 + B12 +
+                B13_A + B13_B + B13_C + B13_D + B13_E
   Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J  
   Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D +D1_E
   Fam =~ G14 + G15 + G16 + G17
@@ -712,6 +714,8 @@ drinkcat <- cas97 %>%
     D9 = D9_A + D9_B,
     D8 = D8_A + D8_B
   ) %>%
+  scale() %>%
+  as.data.frame() %>%
   mutate(DRINKCAT = DRINKCAT,
          SEXASSAULT = SEXASSAULT) %>%
   filter(complete.cases(.))
@@ -734,23 +738,26 @@ Using RMSEA we would accept this model
 ```{r}
 medmod <- "
   # Direct effect
-  SEXASSAULT ~ a1 * social_groups + a2 * comms
+  SEXASSAULT ~ a1 * parties + a2 * fam_drink + a3 * hs_drink 
   
   # Mediator
-  DRINKCAT ~ b1 * social_groups + b2 * comms
+  DRINKCAT ~ b1 * parties + b2 * fam_drink + b3 * hs_drink 
   SEXASSAULT ~ c * DRINKCAT
   
   # Indirect effect
   bc1 := b1 * c
   bc2 := b2 * c
+  bc3 := b3 * c
   
   # Total effect
   total1 := a1 + (b1 * c)
   total2 := a2 + (b2 * c)
+  total3 := a3 + (b3 * c)
   
   # Latent variable definitions
-  comms =~ A10_A + A10_B +A10_C + A10_D + A10_E + A 10_F +A10_G + A10_H
-  social_groups =~ F5_A + F5_B + F5_C + F5_D + F5_E + F5_F + F5_G + F5_H
+  fam_drink =~ G14 + G15 + G16 + G17
+  hs_drink =~ G8 + G9 + G10
+  parties =~ A10_D + A 10_F
 "
 ```
 
