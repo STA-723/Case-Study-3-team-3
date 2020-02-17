@@ -19,7 +19,7 @@ library(lavaan)
 
 ```{r cars}
 cas93<-readRDS("cas93.rds")
-cas93 %>% mutate_at(vars(starts_with("B1_")),funs(factor)) %>% select(starts_with("B1_")) %>% count(B1_E)
+cas93 %>% mutate_at(vars(starts_with("B1_")),funs(factor)) %>% dplyr::select(starts_with("B1_")) %>% count(B1_E)
 ```
 
 We first look at missing data in section C:
@@ -57,12 +57,12 @@ abs_imp[rowSums(is.na(month_imp)) == ncol(month_imp),grep(month,colnames(year_im
 
 #imputing older students for C11; still need to cross check with age group variable
 
-q_c11<-abs_imp %>% select(starts_with("C11_"))
+q_c11<-abs_imp %>% dplyr::select(starts_with("C11_"))
 abs_imp[rowSums(is.na(q_c11)) == ncol(q_c11),grep("C11_",colnames(abs_imp))]<-0
 
 #imputing students who didn't drink in the last year for C22; might have to take this with a grain of salt
 
-q_c22<-cas93_filled %>% select(starts_with("C22_"))
+q_c22<-cas93_filled %>% dplyr::select(starts_with("C22_"))
 cas93_filled[rowSums(is.na(q_c22)) == ncol(q_c22),grep("C22_",colnames(cas93_filled))]<-0
 
 
@@ -80,7 +80,7 @@ write.mice.imputation(mi.res=mice_data, name="mice_C" )
 
 # #original data frame with imputed C
 # cas93_w_final_c<-cbind(cas93[,!grepl("^C[0-9]",colnames(cas93))],mic) %>%
-#   select(-COLL_ID,-STUDY_ID,-A1)
+#   dplyr::select(-COLL_ID,-STUDY_ID,-A1)
 # 
 # cas93_survey_only<-cas93_w_final_c[,grep("^[A-Z][1-9]",colnames(cas93_w_final_c))] 
 ```
@@ -115,12 +115,12 @@ abs_imp[rowSums(is.na(month_imp)) == ncol(month_imp),grep(month,colnames(year_im
 
 #imputing older students for C11; still need to cross check with age group variable
 
-q_c11<-abs_imp %>% select(starts_with("C11_"))
+q_c11<-abs_imp %>% dplyr::select(starts_with("C11_"))
 abs_imp[rowSums(is.na(q_c11)) == ncol(q_c11),grep("C11_",colnames(abs_imp))]<-">21"
 
 #imputing students who didn't drink in the last year for C22; might have to take this with a grain of salt
 
-q_c22<-cas93_filled %>% select(starts_with("C22_"))
+q_c22<-cas93_filled %>% dplyr::select(starts_with("C22_"))
 cas93_filled[rowSums(is.na(q_c22)) == ncol(q_c22),grep("C22_",colnames(cas93_filled))]<-">year"
 
 
@@ -131,7 +131,7 @@ cas93_filled<-cbind(cas93_filled[1:10],abs_imp[1:69],cas93_filled[80:93])
 cas93_w_final_c<-cbind(cas93[,!grepl("^C[0-9]",colnames(cas93))],cas93_filled)  %>%
   mutate_if(sapply(., is.character), as.factor) %>%
   mutate_if(sapply(., is.numeric), as.factor) %>%
-  select(-COLL_ID,-STUDY_ID,-A1)
+  dplyr::select(-COLL_ID,-STUDY_ID,-A1)
 
 cas93_survey_only<-cas93_w_final_c[,grep("^[A-Z][1-9]",colnames(cas93_w_final_c))] 
 
@@ -149,25 +149,32 @@ cas93_G<-cas93[,grepl("G[0-9]",colnames(cas93))]
 ```{r}
 MICEd_impute_C<-readRDS("MICEd_cas93.rds")
 # saveRDS(MICE_cas93_dataset
-# multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
+# multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% dplyr::select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% dplyr::select(C8) %>% as.matrix(), family="multinomial")
 ```
 ```{r}
-C_potential_qs<-MICEd_impute_C %>% select(grep("C10|C14|C16|C17|C21",colnames(MICEd_impute_C)))
-G_potential_qs<-MICEd_impute_C %>% select(grep("G2|G3|G8|G11|G12",colnames(MICEd_impute_C)))
+C_potential_qs<-MICEd_impute_C %>% dplyr::select(grep("C10|C14|C16|C17|C21",colnames(MICEd_impute_C)))
+G_potential_qs<-MICEd_impute_C %>% dplyr::select(grep("G2|G3|G8|G11|G12",colnames(MICEd_impute_C)))
 
-plot_cats<-function(filt,name_col,title) {
+C_potential_qs<-cas97 %>% dplyr::select(grep("C10|C14|C16|C17|C21",colnames(.))) %>% drop_na()
+colnames(C_potential_qs)<- c("last_drink","Dorm_party","Frat_Sor","On_campus_dance","Home_athletic","Away_athletic","On_campus_pub","Off_campus_party","Off_campus_bar",
+                             "Hangover","miss-class","behind_schoolwork","regret","forgot", "argue", "uplanned_sex", "unprotected_sex","damage_property","police_trouble","hurt","alcohol_overdose","victim_on_campus","victim_off_campus",
+                             "warning","fine","alc_education","community_service","alcohol_treatment","other",
+                             "get_away","drunk","friends","dating","reward","peer_pressure")
+
+plot_cats<-function(filt,name_col,title,col_names) {
   C<-C_potential_qs %>% 
-  select(grep(filt,colnames(.))) %>%
+  dplyr::select(grep(filt,colnames(.))) %>%
   pivot_longer(cols=everything(),names_to=name_col)
-  var_name_to_plot<- name_col
 
 ggplot(C,aes_string(x=name_col))+geom_bar()+
   facet_wrap(value~.,scales="free") +
   ggtitle(title) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_x_discrete(labels=col_names)
 }
 
-plot_cats("C16","reasons","Reasons for Drinking Faceted by Importance")
+reasons_plot<-plot_cats("C21","reasons","Reasons for Drinking Faceted by Importance", c("C21_A"="get_away","C21_B"="drunk","C21_C"="friends","C21_D"="dating","C21_E"="reward","C21_F"="peer_pressure"))
+
+ggsave("reasons_plot.png",reasons_plot)
 ```
 One means very important, 4 means not important. 
 ```{r}
@@ -177,7 +184,7 @@ plot_cats("C10","events","Event Types attended, Faceted by #Drinks")
 
 ```{r}
 C14<-C_potential_qs %>% 
-  select(grep("C14",colnames(.))) 
+  dplyr::select(grep("C14",colnames(.))) 
 colnames(C14)<-"type_drink"
 
 ggplot(C14,aes_string(x="type_drink"))+geom_bar()+
@@ -194,7 +201,7 @@ One indicates not at all, 3 means 2x or more. Hangovers are pretty common, as is
 
 ```{r}
 C21<-C_potential_qs %>% 
-  select(grep("C21",colnames(.))) 
+  dplyr::select(grep("C21",colnames(.))) 
 colnames(C21)<-"change"
 
 ggplot(C21,aes_string(x="change"))+geom_bar()+
@@ -205,7 +212,7 @@ One means never drank, 2: drinks a lot more, 3: drinks more, 4: drinks same, 5: 
 
 ```{r PCA-attempt}
 A<-MICEd_impute_C %>%
-  select(grep("^A[0-9]",colnames(.)))
+  dplyr::select(grep("^A[0-9]",colnames(.)))
 A_PCA<-prcomp(A,center=TRUE,scale=TRUE)
 A_PCA$x
 ```
@@ -250,7 +257,7 @@ MICEd_impute<-cas93 %>%
   pivot_wider(names_from=A5,values_from=ones, values_fill=list(ones=0),names_prefix = "A5_") %>%  #indicators for housing type
   mutate(ones=1) %>%
   pivot_wider(names_from=A6,values_from=ones, values_fill=list(ones=0),names_prefix = "A6_")  %>%  #indicators for roommates  
-  select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G11|^G12|^G13|^A5|^A6",colnames(.)))
+  dplyr::select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G11|^G12|^G13|^A5|^A6",colnames(.)))
 
 ```
 
