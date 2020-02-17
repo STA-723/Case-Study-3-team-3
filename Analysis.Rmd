@@ -16,6 +16,7 @@ library(mice)
 library(glmnet)
 library(miceadds)
 library(lavaan)
+library(nnet)
 ```
 
 # Data Cleaning
@@ -36,18 +37,18 @@ read_cas <- function(folder, file, recordfile) {
                   col.names = record_layout$variable_name)
   return(cas)
 }
-cas93 <- read_cas(folder = "Harvard_CAS_1993.zip", 
-                  file = "Harvard_CAS_1993/DS0001/06577-0001-Data.txt",
-                  recordfile = "Harvard_CAS_1993/DS0001/06577-0001-Record_layout.txt")
+# cas93 <- read_cas(folder = "Harvard_CAS_1993.zip", 
+#                   file = "Harvard_CAS_1993/DS0001/06577-0001-Data.txt",
+#                   recordfile = "Harvard_CAS_1993/DS0001/06577-0001-Record_layout.txt")
 cas97 <- read_cas(folder = "Harvard_CAS_1997.zip", 
                   file = "Harvard_CAS_1997/DS0001/03163-0001-Data.txt",
                   recordfile = "Harvard_CAS_1997/DS0001/03163-0001-Record_layout.txt")
-cas99 <- read_cas(folder = "Harvard_CAS_1999.zip", 
-                  file = "Harvard_CAS_1999/DS0001/03818-0001-Data.txt",
-                  recordfile = "Harvard_CAS_1999/DS0001/03818-0001-Record_layout.txt")
-cas20 <- read_cas(folder = "Harvard_CAS_2001.zip", 
-                  file = "Harvard_CAS_2001/DS0001/04291-0001-Data.txt",
-                  recordfile = "Harvard_CAS_2001/DS0001/04291-0001-Record_layout.txt")
+# cas99 <- read_cas(folder = "Harvard_CAS_1999.zip", 
+#                   file = "Harvard_CAS_1999/DS0001/03818-0001-Data.txt",
+#                   recordfile = "Harvard_CAS_1999/DS0001/03818-0001-Record_layout.txt")
+# cas20 <- read_cas(folder = "Harvard_CAS_2001.zip", 
+#                   file = "Harvard_CAS_2001/DS0001/04291-0001-Data.txt",
+#                   recordfile = "Harvard_CAS_2001/DS0001/04291-0001-Record_layout.txt")
 ```
 
 ### Impute missing values
@@ -412,26 +413,112 @@ We impute the rest of the missing values with MICE:
 ```
 
 ```{r}
-MICEd_impute_C<-readRDS("MICEd_cas93.rds")
-#saveRDS(MICEd_impute_C,file="MICEd_cas93.rds")
-multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
+# MICEd_impute_C<-readRDS("MICEd_cas93.rds")
+# #saveRDS(MICEd_impute_C,file="MICEd_cas93.rds")
+# multinom_fit<-glmnet(MICEd_impute_C %>% mutate_each(as.numeric) %>% select(-C8) %>% as.matrix(), MICEd_impute_C %>% mutate_each(as.numeric) %>% select(C8) %>% as.matrix(), family="multinomial")
 ```
 
 
 
-1997 UnMICEd data
+## Sensitivity Analysis
+
+We first check for linearity between variables and the predictor.
+
+We run a multinomial regression model (we could do ordinal regression; look this up!)
 
 ```{r}
-# cas97 <- cas97 %>% 
-#   mutate(ones=1) %>%
-#   pivot_wider(names_from=G4,values_from=ones, values_fill=list(ones=0),names_prefix = "G4_") %>%  #indicators for religion
-#   mutate(G14_NA=as.numeric(G14==5),G14_none=as.numeric(G14==6),G15_NA=as.numeric(G15==5),G15_none=as.numeric(G15==6)) %>% #indicators for don't know/NA, parental drinking
-#   mutate(G16_none=as.numeric(G16==4)) %>% #indicator for no family agreement about drinking
-#   mutate(ones=1) %>%
-#   pivot_wider(names_from=A6,values_from=ones, values_fill=list(ones=0),names_prefix = "A6_") %>%  #indicators for housing type
-#   select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8",colnames(.)))
+cas97_glm_full<-cas97 %>% select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^DRINKCAT",colnames(.))) %>%
+  mutate(G15 = scale(G15),
+         G16 = scale(G16),
+         G17 = scale(G17),
+         G10 = scale(G10),
+         G14 = scale(G14),
+         G8 = scale(G8),
+         G9 = scale(G9),
+         G3_45 = I(G3_4 + G3_5 > 0)) %>%
+  mutate(DRINKCAT=case_when(DRINKCAT==0 ~ "nondrinker",
+                            DRINKCAT==1 ~ "light",
+                            DRINKCAT==2 ~ "med",
+                            DRINKCAT==3 ~ "heavy")) %>%
+  mutate(DRINKCAT=as.factor(DRINKCAT))
+
+
+cas97_glm_full$DRINKCAT <- relevel(cas97_glm_full$DRINKCAT, ref = "nondrinker")
+
+naive_glm_full<-multinom(DRINKCAT ~ ., data=cas97_glm_full)
+summary(naive_glm_full)
+
 ```
 
+
+We can fit a naive glm multinomial model:
+
+
+```{r}
+cas97_glm<-cas97 %>% select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|
+                      ^D2|^D8|^D9|^D3|^D1|
+                      ^F5|^F6|^F1|^F4|^F2|^F3|^DRINKCAT",colnames(.))) %>%
+  mutate(G15 = scale(G15),
+         G16 = scale(G16),
+         G17 = scale(G17),
+         G10 = scale(G10),
+         G14 = scale(G14),
+         G8 = scale(G8),
+         G9 = scale(G9),
+         G3_45 = I(G3_4 + G3_5 > 0)) %>%
+  mutate(DRINKCAT=case_when(DRINKCAT==0 ~ "nondrinker",
+                            DRINKCAT==1 ~ "light",
+                            DRINKCAT==2 ~ "med",
+                            DRINKCAT==3 ~ "heavy")) %>%
+  mutate(DRINKCAT=as.factor(DRINKCAT)) 
+
+cas97_glm$DRINKCAT <- relevel(cas97_glm$DRINKCAT, ref = "nondrinker")
+
+naive_glm<-multinom(DRINKCAT ~ ., data=cas97_glm)
+summary(naive_glm)
+
+```
+
+
+We also fit an elastic net model, which allows for correlated covariates (unlike LASSO) and choosing the regularization parameter optimally:
+
+**cas97_glm should be run only after data-cleaning (don't run the DRINKCAT order things)**
+```{r}
+cas97_glm<-cas97 %>% select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^DRINKCAT",colnames(.))) %>%
+  mutate_all(function(x) scale(as.numeric(x))) %>%
+  # mutate(G15 = scale(G15),
+  #        G16 = scale(G16),
+  #        G17 = scale(G17),
+  #        G10 = scale(G10),
+  #        G14 = scale(G14),
+  #        G8 = scale(G8),
+  #        G9 = scale(G9),
+  #        G3_45 = I(G3_4 + G3_5 > 0)) %>%
+  mutate(DRINKCAT=case_when(DRINKCAT<=1 ~ "light",
+                            DRINKCAT<=3 ~ "heavy")) %>%
+  mutate(DRINKCAT=as.factor(DRINKCAT)) %>%
+  drop_na()
+
+naive_lasso<-cv.glmnet(x=cas97_glm %>%
+                         select(-DRINKCAT) %>% 
+                         mutate_each(as.numeric) %>% 
+                         as.matrix(), 
+                      y=cas97_glm %>% 
+                        select(DRINKCAT) %>% 
+                        mutate_each(as.factor) %>% 
+                        as.matrix(),
+                      family="multinomial")
+
+coef(naive_lasso)
+```
+
+
+```{r}
+long_cas97_glm<-cas97_glm %>% select(grep("^A|^DRINK",colnames(.))) %>% pivot_longer(cols=-DRINKCAT,names_to = "value",names_repair="unique")
+colnames(long_cas97_glm)<-c("DRINKCAT","var","value")
+
+cas97_glm %>% group_by(DRINKCAT) %>% summarise_all(funs(mean=mean))
+```
 
 
 ### Lavaan Model
@@ -773,26 +860,5 @@ summary(fit_med)
 We can fit a naive glm multinomial model:
 
 
-```{r}
-cas97_glm<-cas97 %>% select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|
-                      ^D2|^D8|^D9|^D3|^D1|
-                      ^F5|^F6|^F1|^F4|^F2|^F3|
-                      ^DRINKCAT",colnames(.)))
-naive_glm<-multinom(DRINKCAT ~ ., data=cas97_glm)
-summary(naive_glm)
-```
 
-
-We also fit a LASSO model:
-
-**cas97_glm should be run only after data-cleaning (don't run the DRINKCAT order things)**
-```{r}
-cas97_glm<-cas97 %>% select(grep("^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|
-                      ^D2|^D8|^D9|^D3|^D1|
-                      ^F5|^F6|^F1|^F4|^F2|^F3|^DRINKCAT",colnames(.))) %>%
-  drop_na()
-naive_lasso<-glmnet(x=cas97_glm %>% select(-DRINKCAT) %>% mutate_each(as.numeric) %>% as.matrix(), 
-       y=cas97_glm %>% select(DRINKCAT) %>% mutate_each(as.factor) %>% as.matrix(),family="multinomial")
-coef(naive_lasso)
-```
 
