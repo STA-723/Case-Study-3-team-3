@@ -1,10 +1,11 @@
 ---
-title: "Case Study 3: Team 3"
+title: 'Case Study 3: Team 3'
 author: "Phuc Nyugen, Ezinne Nwankwo, Frances Hung"
 date: "2/16/2020"
 output:
   ioslides_presentation: default
   beamer_presentation: default
+  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE}
@@ -13,11 +14,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-## EDA
+## EDA: Drinking Habits
 
--check 
+## EDA: Elastic Net 
+
+- $\textbf{Heavy Drinking (+)}$
+    - importance of parties
+    - disruptive/loud drinking
+    - opinion on off-campus bar (# acceptable drinks)
+    - \% friends who are binge drinkers
+    - HS binge behavior in senior year
 
 ## Dimension Reduction
+
+- Grouping into Latent Factors
+- Correlated and Interpretable
 
 ## SEM
 
