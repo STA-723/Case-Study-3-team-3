@@ -42,6 +42,12 @@ knitr::include_graphics("plots/reasons_plot.png")
 - Factors: Correlated and Interpretable
 - Ordinal predictors for each factor
 
+## Dimension Reduction
+```{r, out.width = "500px"}
+knitr::include_graphics("plots/latent_vars.png")
+```
+
+
 ## SEM
 
 ## Discussion
