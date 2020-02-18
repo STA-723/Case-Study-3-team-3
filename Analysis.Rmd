@@ -773,12 +773,38 @@ Regression coefficients
 full_estimates <- parameterEstimates(fit_full)
 full_estimates %>%
   filter(op == "~") %>%
-  arrange(desc(est)) %>%
-  ggplot(aes(x = est, y = rhs)) + 
+  ggplot(aes(x = est, y = rhs)) +
   geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper)) +
   geom_vline(xintercept = 0, linetype="dashed") +
   labs(x = "Estimate", y = "") + 
   geom_point()
+ggsave("final_presentation_files/plots/full_model_estimates.png")
+```
+
+```{r}
+full_estimates %>%
+  filter(op == "=~" & lhs == "communities") %>%
+  mutate(rhs = recode(rhs, "A10_H" = "religion", "A10_A" = "athletics",
+         "A10_B" = "arts", "A10_C" = "academic", "A10_D" = "greek life",
+         "A10_E" = "activism", "A10_F" = "parties", "A10_G" = "volunteer")) %>%
+  ggplot(aes(x = est, y = rhs)) +
+  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper), height=.3, size = 0.75) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  labs(x = "Estimate", y = "") + 
+  geom_point() +
+  facet_grid(cols = vars(lhs))
+ggsave("final_presentation_files/plots/latent_communities_estimates.png")
+
+full_estimates %>%
+  filter(op == "=~" & lhs == "personal_wellbeing") %>%
+  mutate(rhs = recode(rhs, "F6_A" = "pep", "F6_B" = "nervous", "F6_C" = "down", "F6_D" = "calm", "F6_E" = "energetic", "F6_F" = "blue", "F6_G" = "worn-out", "F6_H" = "happy", "F6_I" = "tired")) %>%
+  ggplot(aes(x = est, y = rhs)) +
+  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper), height=.3, size = 0.75) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  labs(x = "Estimate", y = "") + 
+  geom_point() +
+  facet_grid(cols = vars(lhs))
+ggsave("final_presentation_files/plots/latent_personal_estimates.png")
 ```
 
 
@@ -789,6 +815,18 @@ fit_full_age <- sem(fullmod, drinkcat, ordered = c("DRINKCAT"), group = "AGELT21
 summary(fit_full_age)
 ```
 
+
+```{r}
+full_age_estimates <- parameterEstimates(fit_full_age)
+full_age_estimates %>%
+  filter(op == "~") %>%
+  mutate(age_group = ifelse(group == 2, "under_21", "atleast_21")) %>%
+  ggplot(aes(x = est, y = rhs, colour = age_group)) +
+  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper)) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  labs(x = "Estimate", y = "") + 
+  geom_point()
+```
 
 # Mediation Analysis
 
@@ -802,14 +840,14 @@ medmod <- "
   SEXASSAULT ~ c * DRINKCAT
   
   # Indirect effect
-  bc1 := b1 * c
-  bc2 := b2 * c
-  bc3 := b3 * c
+  med_parties := b1 * c
+  med_family := b2 * c
+  med_highschool := b3 * c
   
   # Total effect
-  total1 := a1 + (b1 * c)
-  total2 := a2 + (b2 * c)
-  total3 := a3 + (b3 * c)
+  total_parties := a1 + (b1 * c)
+  total_family := a2 + (b2 * c)
+  total_highschool := a3 + (b3 * c)
   
   # Latent variable definitions
   family_drink =~ G14 + G15 + G16 + G17
@@ -826,14 +864,14 @@ med_others_mod <- "
   SEXASSAULT_others ~ c * DRINKCAT
   
   # Indirect effect
-  bc1 := b1 * c
-  bc2 := b2 * c
-  bc3 := b3 * c
+  med_parties := b1 * c
+  med_family := b2 * c
+  med_highschool := b3 * c
   
   # Total effect
-  total1 := a1 + (b1 * c)
-  total2 := a2 + (b2 * c)
-  total3 := a3 + (b3 * c)
+  total_parties := a1 + (b1 * c)
+  total_family := a2 + (b2 * c)
+  total_highschool := a3 + (b3 * c)
   
   # Latent variable definitions
   family_drink =~ G14 + G15 + G16 + G17
@@ -850,14 +888,14 @@ med_them_mod <- "
   SEXASSAULT_them ~ c * DRINKCAT
   
   # Indirect effect
-  bc1 := b1 * c
-  bc2 := b2 * c
-  bc3 := b3 * c
+  med_parties := b1 * c
+  med_family := b2 * c
+  med_highschool := b3 * c
   
   # Total effect
-  total1 := a1 + (b1 * c)
-  total2 := a2 + (b2 * c)
-  total3 := a3 + (b3 * c)
+  total_parties := a1 + (b1 * c)
+  total_family := a2 + (b2 * c)
+  total_highschool := a3 + (b3 * c)
   
   # Latent variable definitions
   family_drink =~ G14 + G15 + G16 + G17
@@ -876,6 +914,39 @@ summary(fit_med_others)
 summary(fit_med_them)
 ```
 
+```{r}
+med_estimates <- parameterEstimates(fit_med)
+dodge <- ggstance::position_dodgev(height=0.3)
+med_estimates %>%
+  filter(op == ":=") %>%
+  separate(label, c("type", "vars")) %>%
+  ggplot(aes(x = est, y = vars, colour = type)) +
+  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper), height=.1, size =1, position = dodge) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  labs(x = "Estimate", y = "") + 
+  geom_point(position = dodge)
+ggsave("final_presentation_files/plots/mediation_both.png")
+
+parameterEstimates(fit_med_others) %>%
+  filter(op == ":=") %>%
+  separate(label, c("type", "vars")) %>%
+  ggplot(aes(x = est, y = vars, colour = type)) +
+  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper), height=.1,  size =1,position = dodge) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  labs(x = "Estimate", y = "", title = "Assault: others drunk") + 
+  geom_point(position = dodge)
+ggsave("final_presentation_files/plots/mediation_others.png")
+
+parameterEstimates(fit_med_them) %>%
+  filter(op == ":=") %>%
+  separate(label, c("type", "vars")) %>%
+  ggplot(aes(x = est, y = vars, colour = type)) +
+  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper), height=.1, size =1, position = dodge) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  labs(x = "Estimate", y = "", title = "Assault: self drunk") + 
+  geom_point(position = dodge)
+ggsave("final_presentation_files/plots/mediation_self.png")
+```
 
 
 ## Sensitivity Analysis
