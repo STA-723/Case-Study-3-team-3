@@ -3,8 +3,8 @@ title: 'Case Study 3: Team 3'
 author: "Phuc Nyugen, Ezinne Nwankwo, Frances Hung"
 date: "2/16/2020"
 output:
-  ioslides_presentation: default
   beamer_presentation: default
+  ioslides_presentation: default
   slidy_presentation: default
 ---
 
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## EDA: Drinking Habits
 
 
-```{r, out.width = "500px"}
+```{r, echo = FALSE, out.width = "250px", fig.align="center"}
 knitr::include_graphics("plots/reasons_plot.png")
 ```
 
@@ -42,6 +42,17 @@ knitr::include_graphics("plots/reasons_plot.png")
 - Factors: Correlated and Interpretable
 - Ordinal predictors for each factor
 
-## SEM
+## Latent Variable Model
+
+```{r, echo = FALSE, out.width = "250px", fig.align="center"}
+knitr::include_graphics("plots/latent_variable_model.png")
+```
+
+## SEM 
+
+```{r, echo = FALSE, out.width = "250px", fig.align="center"}
+knitr::include_graphics("plots/mediation_analysis.png")
+```
+
 
 ## Discussion
