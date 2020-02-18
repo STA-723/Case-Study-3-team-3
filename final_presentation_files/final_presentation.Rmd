@@ -3,8 +3,8 @@ title: 'Case Study 3: Team 3'
 author: "Phuc Nyugen, Ezinne Nwankwo, Frances Hung"
 date: "2/16/2020"
 output:
-  ioslides_presentation: default
   beamer_presentation: default
+  ioslides_presentation: default
   slidy_presentation: default
 ---
 
@@ -97,6 +97,10 @@ knitr::include_graphics("plots/mediation_analysis.png")
 
 ## Mediation Results
 
+drinkcat ~ communities + family + highschool
+
+sexualassault ~ communities + family + highschool + drinkcat
+
 ```{r message=FALSE, echo=FALSE, out.width = "330px",fig.align = "center"}
 p1 <- ggdraw() + draw_image("plots/mediation_others_2.png")
 p2 <- ggdraw() + draw_image("plots/mediation_self_2.png")
@@ -110,7 +114,7 @@ ggdraw(pp1)
   * High high school drinking habits is associated with increased college drinking behavior
   * Worse academic well-being is associated with increased college drinking, while better personal wellbeing is associated with a decrease in college drinking
 - Policies: 
-  * Both school and local policies did not have a significant effect on college drinking behavior
+  * No evidence of a relationship between strictness of college or city drinking policy and drinking behaviors
   * Less education material on drinking is associated with less drinking 
 - Sexual Assault: 
   * High school drinking habits alone and through mediator contributes the most to incidences of sexual assault
