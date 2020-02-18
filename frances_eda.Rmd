@@ -178,7 +178,9 @@ ggsave("reasons_plot.png",reasons_plot)
 ```
 One means very important, 4 means not important. 
 ```{r}
-plot_cats("C10","events","Event Types attended, Faceted by #Drinks")
+c("C14_A"="Dorm_party","C14_B"="Frat_Sor","C14_C"="On_campus_dance","C14_D"="Home_athletic","C14_E"="Away_athletic","C14_F"="On_campus_pub","C14_G"="Off_campus_party","C14_H"="Off_campus_bar")
+num_drink_plot<-plot_cats("C14","events","Event Types attended, Faceted by #Drinks",c("C14_A"="Dorm_party","C14_B"="Frat_Sor","C14_C"="On_campus_dance","C14_D"="Home_athletic","C14_E"="Away_athletic","C14_F"="On_campus_pub","C14_G"="Off_campus_party","C14_H"="Off_campus_bar"))
+ggsave("num_drink_plot.png",num_drink_plot)
 
 ```
 
