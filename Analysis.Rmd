@@ -322,8 +322,14 @@ cas97 <- cas97 %>%
          G14_none = as.numeric(G14==6),
          G15_NA = as.numeric(G15==5),
          G15_none = as.numeric(G15==6)) %>% #indicators for don't know/NA, parental drinking
-  mutate(G16_none=as.numeric(G16==4)) #indicator for no family agreement about drinking
-  
+  #indicator for no family agreement about drinking
+  mutate(G16_none=as.numeric(G16==4)) %>%
+  # Change "I don't know" into 0
+  mutate(G14 = ifelse(G14 == 8, 0, G14),
+         G15 = ifelse(G14 == 8, 0, G15),
+         G16 = ifelse(G16 == 1, 0, G16),
+         G16 = ifelse(G16 == 4, 1, G16)
+         )
 # Which columns in this section have lots of NA?
 cas97 %>% 
   dplyr::select(which(grepl("^G\\d", colnames(.)))) %>%
@@ -534,9 +540,9 @@ polr(DRINKCAT ~ ., data=cas97_glm_full)
 ```{r}
 moda <- "
   # Regression
-  DRINKCAT ~ A9 + comms
+  DRINKCAT ~ A9 + communities
   # Latent variable definition
-  comms =~ A10_A + A10_B +A10_C + A10_D +A10_E + A10_F +A10_G + A10_H
+  communities =~ A10_A + A10_B +A10_C + A10_D +A10_E + A10_F +A10_G + A10_H
 "
 ```
 
@@ -555,15 +561,15 @@ summary(fita)
 ```{r}
 modb <- "
   # Regression
-  DRINKCAT ~ CollegePolicy + CityPolicy + CollegeEdu
+  DRINKCAT ~ college_policy + city_policy + college_edu
   # Latent variable definition
-  CollegePolicy =~ B1 + B2 + 
+  college_policy =~ B1 + B2 + 
                    B9_A + B9_B + B9_C + B9_D + B9_E + B9_F + B9_G
-  CityPolicy =~ B11 + B12 +
+  city_policy =~ B11 + B12 +
                 B13_A + B13_B + B13_C + B13_D + B13_E
-  CollegeEdu =~ B7 + B8
+  college_edu =~ B7 + B8
   # Variance
-  CollegePolicy ~~ CollegeEdu          
+  college_policy ~~ college_edu          
 "
 ```
 
@@ -584,18 +590,18 @@ summary(fitb)
 
 
 
-#### Section D/ Policy and Attitudes
+#### Section D/ attitude_policy and Attitudes
 
 
 ```{r}
 modd <- '
   # Regression
-  DRINKCAT ~ Policy + Approp_Drinks + D2 + D8 + D9
+  DRINKCAT ~ attitude_policy + attitude_drink + D2 + D8 + D9
   # Latent variable definition
-  Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J
-  Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D + D1_E
+  attitude_policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J
+  attitude_drink =~ D1_A + D1_B + D1_C + D1_D + D1_E
   # Variance
-  Policy ~~ Approp_Drinks
+  attitude_policy ~~ attitude_drink
 '
 ```
 
@@ -620,12 +626,12 @@ modg <- "
   # Regression
   DRINKCAT ~ G3_1 + G3_2 + G3_3 + G3_45 +  # race
              G4_1 + G4_2 + G4_3 + G4_4 + G4_5 + G4_6 +  # religion
-             Fam + HS
+             family_drink + HS
   # Latent variable definition
-  Fam =~ G14 + G15 + G16 + G17
-  HS =~ G11 + G9 + G10
+  family_drink =~ G14 + G15 + G16 + G17
+  HS =~ G8 + G9 + G10
   # Variance
-  HS ~~ Fam
+  HS ~~ family_drink
 "
 ```
 
@@ -669,7 +675,6 @@ modf <- "
   personal_wellbeing ~~ academic_wellbeing
   social_groups ~~ personal_wellbeing 
   social_groups ~~ academic_wellbeing
-  
 "
 ```
   
@@ -688,104 +693,36 @@ summary(fitf)
 
 
 #### Combined Models
-
-
-## Old Version
-
-```{r}
-fullmod <-'
-  # Regression
-  DRINKCAT ~ comms +
-            #CollegePolicy + CollegeEdu + Policy + CityPolicy
-            Approp_Drinks + Fam + HS +
-            personal_wellbeing + academic_wellbeing + social_groups 
-            
-  sexual_assault ~ DRINKCAT + social_groups + comms
-  
-  # Latent variable definition
-  comms =~ A10_A + A10_B +A10_C + A10_D + A10_E + A 10_F +A10_G + A10_H
-  Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J  
-  Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D +D1_E
-  Fam =~ G14 + G15 + G16 + G17
-  HS =~ G11 + G9 + G10
-  personal_wellbeing =~  F6_A + F6_B + F6_C + F6_D + F6_E + F6_F + F6_G + F6_H + F6_I
-  academic_wellbeing =~ F1 + F4 
-  social_groups =~ F5_A + F5_B + F5_C + F5_D + F5_E + F5_F + F5_G + F5_H
-  #CollegePolicy =~ B1 + B2 + 
-  #                 B9_A + B9_B + B9_C + B9_D + B9_E + B9_F + B9_G
-  #CityPolicy =~ B11 + B12 +
-  #              B13_A + B13_B + B13_C + B13_D + B13_E
-  #CollegeEdu =~ B7 + B8
-  
-  # Variance
-  #CollegePolicy ~~ CollegeEdu 
-  Policy ~~ Approp_Drinks
-  HS ~~ Fam
-  personal_wellbeing ~~ academic_wellbeing
-  social_groups ~~ personal_wellbeing 
-  social_groups ~~ academic_wellbeing
-'
-```
-
-```{r}
-DRINKCAT <- ordered(cas97$DRINKCAT)
-drinkcat <- cas97 %>%
-  dplyr::select(grep("^F5|^F6|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G11|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A6|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^sex_assualt", colnames(.))) %>%
-  mutate(G15 = scale(G15),
-         G16 = scale(G16),
-         G17 = scale(G17),
-         G10 = scale(G10),
-         G14 = scale(G14),
-         G11 = scale(G11),
-         G9 = scale(G9),
-         G3_45 = I(G3_4 + G3_5 > 0),# Combine native and others
-         B11 = scale(B11),
-         B13_E = scale(B13_E),
-         B13_D = scale(B13_D),
-         B13_C = scale(B13_C),
-         B13_B = scale(B13_B),
-         B13_A = scale(B13_A),
-         B2 = scale(B2),
-         B12 = scale(B12_A + B12_B),
-         B8 = scale(B8_B + B8_C + B8_D),
-         B7 = scale(B7_A + B7_B + B7_C + B7_D + B7_E + B7_F)
-         ) %>% 
-  mutate(DRINKCAT = DRINKCAT) %>% 
-  drop_na()
-fit_full<- sem(fullmod, drinkcat, ordered = c("DRINKCAT"))
-summary(fit_full)
-```
-
 ## New Version
 
 ```{r}
 fullmod <-'
   # Regression
-  DRINKCAT ~ 1*comms +
-            Policy + Approp_Drinks + 
-            CollegePolicy + CollegeEdu + CityPolicy +
-            Fam + HS +
+  DRINKCAT ~ 1*communities +
+            attitude_policy + attitude_drink + 
+            college_policy + college_edu + city_policy +
+            family_drink + highschool_drink +
             personal_wellbeing + academic_wellbeing + social_groups
   
   # Latent variable definition
-  comms =~ A10_A + A10_B +A10_C + A10_D + A10_E + A 10_F +A10_G + A10_H
-  CollegePolicy =~ B1 + B2 + 
+  communities =~ A10_A + A10_B +A10_C + A10_D + A10_E + A10_F +A10_G + A10_H
+  college_policy =~ B1 + B2 + 
                    B9_A + B9_B + B9_C + B9_D + B9_E + B9_F + B9_G
-  CollegeEdu =~ B8 + B7
-  CityPolicy =~ B11 + B12 +
+  college_edu =~ B8 + B7
+  city_policy =~ B11 + B12 +
                 B13_A + B13_B + B13_C + B13_D + B13_E
-  Policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J  
-  Approp_Drinks =~ D1_A + D1_B + D1_C + D1_D +D1_E
-  Fam =~ G14 + G15 + G16 + G17
-  HS =~ G11 + G9 + G10
+  attitude_policy =~ D3_A + D3_B + D3_C + D3_D +D3_E + D3_F + D3_G + D3_H + D3_I + D3_J  
+  attitude_drink =~ D1_A + D1_B + D1_C + D1_D +D1_E
+  family_drink =~ G14 + G15 + G16 + G17
+  highschool_drink =~ G8 + G9 + G10
   personal_wellbeing =~  F6_A + F6_B + F6_C + F6_D + F6_E + F6_F + F6_G + F6_H + F6_I
   academic_wellbeing =~ F1 + F4 
   social_groups =~ F5_A + F5_B + F5_C + F5_D + F5_E + F5_F + F5_G + F5_H
   
   # Variance
-  CollegePolicy ~~ CollegeEdu 
-  Policy ~~ Approp_Drinks
-  HS ~~ Fam
+  college_policy ~~ college_edu 
+  attitude_policy ~~ attitude_drink
+  highschool_drink ~~ family_drink
   personal_wellbeing ~~ academic_wellbeing
   social_groups ~~ personal_wellbeing 
   social_groups ~~ academic_wellbeing
@@ -794,9 +731,7 @@ fullmod <-'
 
 
 ```{r, cache=TRUE}
-
-indep_vars_patterns <- "^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G11|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^D4_H|^D4_I|^E15"
-
+indep_vars_patterns <- "^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^D4_H|^D4_I|^E15|AGELT21"
 DRINKCAT <- ordered(cas97$DRINKCAT)
 SEXASSAULT <- ordered(cas97$sex_assualt_ind)
 drinkcat <- cas97 %>%
@@ -816,7 +751,7 @@ drinkcat <- cas97 %>%
          SEXASSAULT_others = I(D4_H > 1 | D4_I > 1),
          SEXASSAULT_them = I(E15 > 0)) %>%
   filter(complete.cases(.))
-fit_full <- sem(fullmod, drinkcat, ordered = c("DRINKCAT"))
+fit_full_neg <- sem(fullmod, drinkcat, ordered = c("DRINKCAT"))
 summary(fit_full)
 ```
 
@@ -830,15 +765,40 @@ fitMeasures(fit_full, c("rmsea", "rmsea.ci.lower", "rmsea.ci.upper"))
 
 Using RMSEA we would accept this model
 
+#### Vizualize the coefficients
+
+Regression coefficients
+
+```{r}
+full_estimates <- parameterEstimates(fit_full)
+full_estimates %>%
+  filter(op == "~") %>%
+  arrange(desc(est)) %>%
+  ggplot(aes(x = est, y = rhs)) + 
+  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper)) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  labs(x = "Estimate", y = "") + 
+  geom_point()
+```
+
+
+Try adding two groups of students under and over 21 years old
+
+```{r}
+fit_full_age <- sem(fullmod, drinkcat, ordered = c("DRINKCAT"), group = "AGELT21")
+summary(fit_full_age)
+```
+
+
 # Mediation Analysis
 
 ```{r}
 medmod <- "
   # Direct effect
-  SEXASSAULT ~ a1 * parties + a2 * fam_drink + a3 * hs_drink 
+  SEXASSAULT ~ a1 * parties + a2 * family_drink + a3 * highschool_drink 
   
   # Mediator
-  DRINKCAT ~ b1 * parties + b2 * fam_drink + b3 * hs_drink 
+  DRINKCAT ~ b1 * parties + b2 * family_drink + b3 * highschool_drink 
   SEXASSAULT ~ c * DRINKCAT
   
   # Indirect effect
@@ -852,17 +812,17 @@ medmod <- "
   total3 := a3 + (b3 * c)
   
   # Latent variable definitions
-  fam_drink =~ G14 + G15 + G16 + G17
-  hs_drink =~ G8 + G9 + G10
+  family_drink =~ G14 + G15 + G16 + G17
+  highschool_drink =~ G8 + G9 + G10
   parties =~ A10_D + A 10_F
 "
 
 med_others_mod <- "
   # Direct effect
-  SEXASSAULT_others ~ a1 * parties + a2 * fam_drink + a3 * hs_drink 
+  SEXASSAULT_others ~ a1 * parties + a2 * family_drink + a3 * highschool_drink 
   
   # Mediator
-  DRINKCAT ~ b1 * parties + b2 * fam_drink + b3 * hs_drink 
+  DRINKCAT ~ b1 * parties + b2 * family_drink + b3 * highschool_drink 
   SEXASSAULT_others ~ c * DRINKCAT
   
   # Indirect effect
@@ -876,17 +836,17 @@ med_others_mod <- "
   total3 := a3 + (b3 * c)
   
   # Latent variable definitions
-  fam_drink =~ G14 + G15 + G16 + G17
-  hs_drink =~ G8 + G9 + G10
+  family_drink =~ G14 + G15 + G16 + G17
+  highschool_drink =~ G8 + G9 + G10
   parties =~ A10_D + A 10_F
 "
 
 med_them_mod <- "
   # Direct effect
-  SEXASSAULT_them ~ a1 * parties + a2 * fam_drink + a3 * hs_drink 
+  SEXASSAULT_them ~ a1 * parties + a2 * family_drink + a3 * highschool_drink 
   
   # Mediator
-  DRINKCAT ~ b1 * parties + b2 * fam_drink + b3 * hs_drink 
+  DRINKCAT ~ b1 * parties + b2 * family_drink + b3 * highschool_drink 
   SEXASSAULT_them ~ c * DRINKCAT
   
   # Indirect effect
@@ -900,8 +860,8 @@ med_them_mod <- "
   total3 := a3 + (b3 * c)
   
   # Latent variable definitions
-  fam_drink =~ G14 + G15 + G16 + G17
-  hs_drink =~ G8 + G9 + G10
+  family_drink =~ G14 + G15 + G16 + G17
+  highschool_drink =~ G8 + G9 + G10
   parties =~ A10_D + A 10_F
 "
 
