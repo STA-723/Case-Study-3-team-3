@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## EDA: Drinking Habits
 
 
-```{r, out.width = "500px"}
+```{r, echo = FALSE, out.width = "250px", fig.align="center"}
 knitr::include_graphics("plots/reasons_plot.png")
 ```
 
@@ -42,6 +42,17 @@ knitr::include_graphics("plots/reasons_plot.png")
 - Factors: Correlated and Interpretable
 - Ordinal covariates for each factor
 
-## SEM
+## Latent Variable Model
+
+```{r, echo = FALSE, out.width = "250px", fig.align="center"}
+knitr::include_graphics("plots/latent_variable_model.png")
+```
+
+## SEM 
+
+```{r, echo = FALSE, out.width = "250px", fig.align="center"}
+knitr::include_graphics("plots/mediation_analysis.png")
+```
+
 
 ## Discussion
