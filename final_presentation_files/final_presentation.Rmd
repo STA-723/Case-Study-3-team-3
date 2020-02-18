@@ -10,6 +10,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(cowplot)
 ```
 
 ## Introduction 
@@ -62,23 +63,46 @@ knitr::include_graphics("plots/num_drink_plot.png")
 - Ordinal predictors for each factor
 
 ## Dimension Reduction
+
 ```{r, echo=FALSE, out.width = "250px", fig.align="center"}
 knitr::include_graphics("plots/latent_vars.png")
 ```
 
-
-## Latent Variable Model
+## Latent Variable Model - SEM
 
 ```{r, echo = FALSE, out.width = "250px", fig.align="center"}
 knitr::include_graphics("plots/latent_variable_model.png")
 ```
 
-## SEM 
+## SEM Results
+
+```{r, echo = FALSE, out.width = "320px", fig.align="center"}
+p1 <- ggdraw() + draw_image("plots/latent_communities_estimates.png")
+p2 <- ggdraw() + draw_image("plots/latent_personal_estimates.png")
+pp1<- plot_grid(p1, p2)
+ggdraw(pp1)
+```
+
+## SEM Results
+
+```{r, echo = FALSE, out.width = "250px", fig.align="center"}
+knitr::include_graphics("plots/full_model_estimates.png")
+```
+
+## Mediation 
 
 ```{r, echo = FALSE, out.width = "250px", fig.align="center"}
 knitr::include_graphics("plots/mediation_analysis.png")
 ```
 
+## Mediation Results
+
+```{r message=FALSE, echo=FALSE, out.width = "330px",fig.align = "center"}
+p1 <- ggdraw() + draw_image("plots/mediation_others_2.png")
+p2 <- ggdraw() + draw_image("plots/mediation_self_2.png")
+pp1<- plot_grid(p1, p2, align = "v")
+ggdraw(pp1)
+```
 
 ## Discussion 
 

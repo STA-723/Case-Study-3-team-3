@@ -702,8 +702,8 @@ fullmod <-'
             attitude_policy + attitude_drink + 
             college_policy + college_edu + city_policy +
             family_drink + highschool_drink +
-            personal_wellbeing + academic_wellbeing + social_groups
-  
+            personal_wellbeing + academic_wellbeing + social_groups +
+            AGELT21
   # Latent variable definition
   communities =~ A10_A + A10_B +A10_C + A10_D + A10_E + A10_F +A10_G + A10_H
   college_policy =~ B1 + B2 + 
@@ -731,7 +731,7 @@ fullmod <-'
 
 
 ```{r, cache=TRUE}
-indep_vars_patterns <- "^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^D4_H|^D4_I|^E15|AGELT21"
+indep_vars_patterns <- "^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G8|^G9|^G10|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^D4_H|^D4_I|^E15|AGELT21|^A1|^A2"
 DRINKCAT <- ordered(cas97$DRINKCAT)
 SEXASSAULT <- ordered(cas97$sex_assualt_ind)
 drinkcat <- cas97 %>%
@@ -751,8 +751,8 @@ drinkcat <- cas97 %>%
          SEXASSAULT_others = I(D4_H > 1 | D4_I > 1),
          SEXASSAULT_them = I(E15 > 0)) %>%
   filter(complete.cases(.))
-fit_full_neg <- sem(fullmod, drinkcat, ordered = c("DRINKCAT"))
-summary(fit_full)
+fit_full_plus <- sem(fullmod, drinkcat, ordered = c("DRINKCAT"))
+summary(fit_full_plus)
 ```
 
 ```{r}
@@ -774,7 +774,7 @@ full_estimates <- parameterEstimates(fit_full)
 full_estimates %>%
   filter(op == "~") %>%
   ggplot(aes(x = est, y = rhs)) +
-  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper)) +
+  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper), height=.3, size = 0.75) +
   geom_vline(xintercept = 0, linetype="dashed") +
   labs(x = "Estimate", y = "") + 
   geom_point()
@@ -805,6 +805,17 @@ full_estimates %>%
   geom_point() +
   facet_grid(cols = vars(lhs))
 ggsave("final_presentation_files/plots/latent_personal_estimates.png")
+
+full_estimates %>%
+  filter(op == "=~" & lhs == "social_groups") %>%
+  mutate(rhs = recode(rhs, "F6_A" = "pep", "F6_B" = "nervous", "F6_C" = "down", "F6_D" = "calm", "F6_E" = "energetic", "F6_F" = "blue", "F6_G" = "worn-out", "F6_H" = "happy", "F6_I" = "tired")) %>%
+  ggplot(aes(x = est, y = rhs)) +
+  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper), height=.3, size = 0.75) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  labs(x = "Estimate", y = "") + 
+  geom_point() +
+  facet_grid(cols = vars(lhs))
+ggsave("final_presentation_files/plots/latent_social_groups_estimates.png")
 ```
 
 
@@ -833,74 +844,74 @@ full_age_estimates %>%
 ```{r}
 medmod <- "
   # Direct effect
-  SEXASSAULT ~ a1 * parties + a2 * family_drink + a3 * highschool_drink 
+  SEXASSAULT ~ a1 * communities + a2 * family_drink + a3 * highschool_drink 
   
   # Mediator
-  DRINKCAT ~ b1 * parties + b2 * family_drink + b3 * highschool_drink 
+  DRINKCAT ~ b1 * communities + b2 * family_drink + b3 * highschool_drink 
   SEXASSAULT ~ c * DRINKCAT
   
   # Indirect effect
-  med_parties := b1 * c
+  med_communities := b1 * c
   med_family := b2 * c
   med_highschool := b3 * c
   
   # Total effect
-  total_parties := a1 + (b1 * c)
+  total_communities := a1 + (b1 * c)
   total_family := a2 + (b2 * c)
   total_highschool := a3 + (b3 * c)
   
   # Latent variable definitions
   family_drink =~ G14 + G15 + G16 + G17
   highschool_drink =~ G8 + G9 + G10
-  parties =~ A10_D + A 10_F
+  communities =~ A10_D + A 10_F
 "
 
 med_others_mod <- "
   # Direct effect
-  SEXASSAULT_others ~ a1 * parties + a2 * family_drink + a3 * highschool_drink 
+  SEXASSAULT_others ~ a1 * communities + a2 * family_drink + a3 * highschool_drink 
   
   # Mediator
-  DRINKCAT ~ b1 * parties + b2 * family_drink + b3 * highschool_drink 
+  DRINKCAT ~ b1 * communities + b2 * family_drink + b3 * highschool_drink 
   SEXASSAULT_others ~ c * DRINKCAT
   
   # Indirect effect
-  med_parties := b1 * c
-  med_family := b2 * c
-  med_highschool := b3 * c
+  indir_communities := b1 * c
+  indir_family := b2 * c
+  indir_highschool := b3 * c
   
-  # Total effect
-  total_parties := a1 + (b1 * c)
-  total_family := a2 + (b2 * c)
-  total_highschool := a3 + (b3 * c)
+  # Direct effect
+  dir_communities := a1
+  dir_family := a2
+  dir_highschool := a3
   
   # Latent variable definitions
   family_drink =~ G14 + G15 + G16 + G17
   highschool_drink =~ G8 + G9 + G10
-  parties =~ A10_D + A 10_F
+  communities =~ A10_D + A 10_F
 "
 
 med_them_mod <- "
   # Direct effect
-  SEXASSAULT_them ~ a1 * parties + a2 * family_drink + a3 * highschool_drink 
+  SEXASSAULT_them ~ a1 * communities + a2 * family_drink + a3 * highschool_drink 
   
   # Mediator
-  DRINKCAT ~ b1 * parties + b2 * family_drink + b3 * highschool_drink 
+  DRINKCAT ~ b1 * communities + b2 * family_drink + b3 * highschool_drink 
   SEXASSAULT_them ~ c * DRINKCAT
   
   # Indirect effect
-  med_parties := b1 * c
-  med_family := b2 * c
-  med_highschool := b3 * c
+  indir_communities := b1 * c
+  indir_family := b2 * c
+  indir_highschool := b3 * c
   
-  # Total effect
-  total_parties := a1 + (b1 * c)
-  total_family := a2 + (b2 * c)
-  total_highschool := a3 + (b3 * c)
+  # Direct effect
+  dir_communities := a1
+  dir_family := a2
+  dir_highschool := a3
   
   # Latent variable definitions
   family_drink =~ G14 + G15 + G16 + G17
   highschool_drink =~ G8 + G9 + G10
-  parties =~ A10_D + A 10_F
+  communities =~ A10_D + A 10_F
 "
 
 ```
@@ -917,6 +928,7 @@ summary(fit_med_them)
 ```{r}
 med_estimates <- parameterEstimates(fit_med)
 dodge <- ggstance::position_dodgev(height=0.3)
+dodge <- position_dodge(0.3)
 med_estimates %>%
   filter(op == ":=") %>%
   separate(label, c("type", "vars")) %>%
@@ -930,24 +942,28 @@ ggsave("final_presentation_files/plots/mediation_both.png")
 parameterEstimates(fit_med_others) %>%
   filter(op == ":=") %>%
   separate(label, c("type", "vars")) %>%
-  ggplot(aes(x = est, y = vars, colour = type)) +
-  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper), height=.1,  size =1,position = dodge) +
-  geom_vline(xintercept = 0, linetype="dashed") +
-  labs(x = "Estimate", y = "", title = "Assault: others drunk") + 
-  geom_point(position = dodge)
-ggsave("final_presentation_files/plots/mediation_others.png")
+  ggplot(aes(y = est, x = vars, colour = type)) +
+  geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), width=.1,  size =1,position = dodge) +
+  geom_hline(yintercept = 0, linetype="dashed") +
+  labs(y = "Estimate", x = "", title = "Assaulter has been drinking") + 
+  geom_point(position = dodge) + 
+  theme(legend.position = "none")
+ggsave("final_presentation_files/plots/mediation_others_2.png")
 
 parameterEstimates(fit_med_them) %>%
   filter(op == ":=") %>%
   separate(label, c("type", "vars")) %>%
-  ggplot(aes(x = est, y = vars, colour = type)) +
-  geom_errorbarh(aes(xmin = ci.lower, xmax = ci.upper), height=.1, size =1, position = dodge) +
-  geom_vline(xintercept = 0, linetype="dashed") +
-  labs(x = "Estimate", y = "", title = "Assault: self drunk") + 
+  ggplot(aes(y = est, x = vars, colour = type)) +
+  geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), width=.1, size =1, position = dodge) +
+  geom_hline(yintercept = 0, linetype="dashed") +
+  labs(y = "", x = "", title = "Victim has been drinking") + 
   geom_point(position = dodge)
-ggsave("final_presentation_files/plots/mediation_self.png")
+ggsave("final_presentation_files/plots/mediation_self_2.png")
 ```
 
+```{r}
+fitMeasures(fit_med_others, c("rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "aic"))
+```
 
 ## Sensitivity Analysis
 
