@@ -698,14 +698,13 @@ summary(fitf)
 ```{r}
 fullmod <-'
   # Regression
-  DRINKCAT ~ 1*communities +
-            attitude_policy + attitude_drink + 
+  DRINKCAT ~ attitude_policy +  communities + parties + attitude_drink + 
             college_policy + college_edu + city_policy +
             family_drink + highschool_drink +
-            personal_wellbeing + academic_wellbeing + social_groups +
-            AGELT21
+            personal_wellbeing + academic_wellbeing + social_groups
   # Latent variable definition
-  communities =~ A10_A + A10_B +A10_C + A10_D + A10_E + A10_F +A10_G + A10_H
+  parties =~ A10_A + A10_D + A10_F
+  communities =~ A10_B +A10_C +A10_E +A10_G + A10_H
   college_policy =~ B1 + B2 + 
                    B9_A + B9_B + B9_C + B9_D + B9_E + B9_F + B9_G
   college_edu =~ B8 + B7
@@ -770,7 +769,7 @@ Using RMSEA we would accept this model
 Regression coefficients
 
 ```{r}
-full_estimates <- parameterEstimates(fit_full)
+full_estimates <- parameterEstimates(fit_full_plus)
 full_estimates %>%
   filter(op == "~") %>%
   ggplot(aes(x = est, y = rhs)) +
@@ -824,6 +823,7 @@ Try adding two groups of students under and over 21 years old
 ```{r}
 fit_full_age <- sem(fullmod, drinkcat, ordered = c("DRINKCAT"), group = "AGELT21")
 summary(fit_full_age)
+#
 ```
 
 
