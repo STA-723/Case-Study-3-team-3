@@ -3,8 +3,8 @@ title: 'Case Study 3: Team 3'
 author: "Phuc Nyugen, Ezinne Nwankwo, Frances Hung"
 date: "2/16/2020"
 output:
-  beamer_presentation: default
   ioslides_presentation: default
+  beamer_presentation: default
   slidy_presentation: default
 ---
 
@@ -17,6 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Data Cleaning
 
 - Concentrated on 1997 dataset
+- Used predictors from original survey questions 
 - Zero-imputation for NA answers to ordinal data (if sensible)
 
 ## EDA: Drinking Habits
@@ -40,6 +41,7 @@ knitr::include_graphics("plots/reasons_plot.png")
 
 - Grouping into Latent Factors
 - Factors: Correlated and Interpretable
+    - for lavaan, latent factors must be continuous
 - Ordinal predictors for each factor
 
 ## Dimension Reduction
