@@ -956,7 +956,7 @@ parameterEstimates(fit_med_them) %>%
   ggplot(aes(y = est, x = vars, colour = type)) +
   geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), width=.1, size =1, position = dodge) +
   geom_hline(yintercept = 0, linetype="dashed") +
-  labs(y = "Estimate", x = "", title = "Victim has been drinking") + 
+  labs(y = "", x = "", title = "Victim has been drinking") + 
   geom_point(position = dodge)
 ggsave("final_presentation_files/plots/mediation_self_2.png")
 ```
