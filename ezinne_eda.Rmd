@@ -1,0 +1,334 @@
+---
+title: "Ezinne_eda"
+author: "Ezinne Nwankwo"
+date: "2/9/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(glmnet)
+library(lavaan)
+```
+
+## Clean Data
+
+```{r, cache=TRUE}
+read_cas <- function(folder, file, recordfile) {
+  skip <- grep("--------", readLines(unz(folder, recordfile)))
+  record_layout <- read.table(unz(folder, recordfile), 
+                            fill = TRUE, skip = skip, header = FALSE)
+  colnames(record_layout) <- c("variable_name", "start_col", "end_col", "type")
+  record_layout <- record_layout %>% filter(!is.na(end_col))
+  widths <- as.numeric(as.character(record_layout$end_col)) - as.numeric(as.character(record_layout$start_col)) + 1
+  cas <- read.fwf(unz(folder, file), widths = widths, header	= FALSE,
+                  col.names = record_layout$variable_name)
+  return(cas)
+}
+cas93 <- read_cas(folder = "Harvard_CAS_1993.zip", 
+                  file = "Harvard_CAS_1993/DS0001/06577-0001-Data.txt",
+                  recordfile = "Harvard_CAS_1993/DS0001/06577-0001-Record_layout.txt")
+cas97 <- read_cas(folder = "Harvard_CAS_1997.zip", 
+                  file = "Harvard_CAS_1997/DS0001/03163-0001-Data.txt",
+                  recordfile = "Harvard_CAS_1997/DS0001/03163-0001-Record_layout.txt")
+cas99 <- read_cas(folder = "Harvard_CAS_1999.zip", 
+                  file = "Harvard_CAS_1999/DS0001/03818-0001-Data.txt",
+                  recordfile = "Harvard_CAS_1999/DS0001/03818-0001-Record_layout.txt")
+cas20 <- read_cas(folder = "Harvard_CAS_2001.zip", 
+                  file = "Harvard_CAS_2001/DS0001/04291-0001-Data.txt",
+                  recordfile = "Harvard_CAS_2001/DS0001/04291-0001-Record_layout.txt")
+```
+
+
+```{r, cache=TRUE}
+head(cas93)
+```
+
+There are `r ncol(cas93)` columns and `r nrow(cas93)` observations for 1993 data.
+
+```{r}
+cas93 <- cas93 %>% mutate(STUDY_YEAR = 1993)
+cas97 <- cas97 %>% mutate(STUDY_YEAR = 1997)
+cas99 <- cas99 %>% mutate(STUDY_YEAR = 1999)
+cas20 <- cas20 %>% mutate(STUDY_YEAR = 2001)
+```
+
+We cannot join data from all four years because the variable names change from year to year. For example, A9 in 1993 is about extracurricular activities while in 1997 is about greek life. There doesn't seem to be any table keeping track of these changes.
+
+We check for missing data:
+
+```{r}
+na_count <- colSums(apply(cas93, 2, is.na))
+data.frame(name = colnames(cas93), na_pct = na_count/nrow(cas93)) %>% arrange(desc(na_pct))
+```
+
+Almost all variables have some missing data.
+
+
+```{r}
+
+cas93_cleaned_a_e <- cas93 %>% 
+  select(A_cols, E_cols) %>% 
+  ## adding context to variables
+  rename(Age = A1,
+         Gender = A2,
+         Year_current = A3,
+         Transfer = A4, 
+         Currently_live = A5, 
+         Roommate_type = A6, 
+         Major = A7,
+         Frat_Soro = A8,
+         Importance_athletics = A9_A,
+         Importance_arts = A9_B,
+         Importance_academics = A9_C, 
+         Importance_drinking = A9_D,
+         Importance_religion = A9_E, 
+         Importance_greeklife = A9_F,
+         Importance_poliactivisim = A9_G,
+         Importance_parties  = A9_H,
+         Importance_communityserv = A9_I,
+         Attend_faculty_student_gathering  = A10_A,
+         Attend_student_dorm_gathering = A10_B,
+         Attend_dorm_social = A10_C,
+         Attend_greek_parties = A10_D,
+         Attend_campus_dances_concerts = A10_E,
+         Attend_campus_keg_parties = A10_F,
+         Attend_sports_events = A10_G,
+         Attend_campus_pub = A10_H,
+         Attend_offcampus_parties = A10_I,
+         Atend_other_campus_parties = A10_J,
+         Attend_offcampus_bars_clubs = A10_K,
+         Usage_marijuana = E1_A,
+         Usage_crack_cocaine = E1_B,
+         Usage_other_cocaine = E1_C,
+         Usage_barbiturates = E1_D,
+         Usage_amphetamines = E1_E,
+         Usage_tranquilizers = E1_F,
+         Usage_heroin = E1_G, 
+         Usage_opiate = E1_H,
+         Usage_lsd = E1_I, 
+         Usage_pcp = E1_J,
+         Usage_steriods = E1_K,
+         Usage_tobacco = E1_L,
+         Usagee_cigareettes = E1_M,
+         Smoke_per_day = E2,
+         Injection_by_needle = E3,
+         Shared_needle = E4,
+         Sexual_activity = E5,
+         Sexual_partners_30days = E6,
+         Condom_use = E7,
+         Other_contraceptives = E8,
+         Sought_help_alcohol = E9,
+         Counseling_alcohol = E10,
+         Satisfied_counseling_alcohol = E11,
+         Attend_AA = E12A,
+         Attend_alanon = E12B,
+         Attend_acoa = E12C,
+         Attend_NA = E12D,
+         Driving_general = E13,
+         Car_accident_driver = E14_A,
+         Drive_after_drinking = E14_B,
+         Drive_after_5moredrinks = E14_C,
+         Rode_with_drunk_driver = E14_D,
+         Designated_driver = E14_E,
+         Ride_with_designated_driver = E14_F,
+         Drinks_consumed_drive_safely = E15,
+         Drinks_last_designated_driver = E16,
+         Drinks_last_rode_with_designated_driver = E17) %>% 
+
+        
+
+```
+
+
+```{r }
+
+cas93 <- cas93 %>% 
+    mutate(E4 = ifelse(E3 == 2, 0, E4)) %>% 
+    mutate(E6 = ifelse(E5== 2, 0, E6)) %>% 
+    mutate(E7 = ifelse(E5 == 2, 0, E7)) %>% 
+    mutate(E8= ifelse(E5 == 2, 0, E8)) 
+ 
+
+```
+
+
+```{r}
+vars_not_include <- names(cas93)[282:406]
+cas93_dropna <- cas93 %>% select(-COLL_ID, -vars_not_include) %>% drop_na()
+
+```
+
+
+```{r}
+
+x <- cas93_dropna %>% select(-C9) %>% as.matrix()
+y <- cas93_dropna %>% select(C9) %>% as.matrix()
+fit <- glmnet(x, y)
+plot(fit)
+coef(fit, s = 0.01)
+```
+
+
+
+
+```{r usage of other drugs}
+
+#cas93$C2  <- as.factor(cas93$C2)
+E_cols <- c(217:253)
+A_cols <- c(3:30)
+e97 <- cas93 %>% 
+  select(A_cols, E_cols)
+
+head(a_e93)
+
+
+## age distributon 
+a_e93 %>% 
+  filter(!is.na(A1)) %>% 
+  ggplot(aes(A1)) + geom_histogram()
+
+## Cleaning E1
+e1 <- a_e93 %>% select(starts_with('E1')) %>% 
+  drop_na() %>% 
+  rename(marijuana = E1_A, 
+         crack_cocaine = E1_B,
+         other_cocaine = E1_C, 
+         barbiturates = E1_D,
+         amphetamines = E1_E,
+         tranquilizers = E1_F,
+         heroin = E1_G,
+         opiate = E1_H,
+         lsd = E1_I,
+         hallucinogens = E1_J,
+         ectasy = E1_K,
+         steriods = E1_L,
+         tobacco = E1_M)
+
+e1_long  <- e1 %>% select(marijuana:tobacco) %>% 
+  gather(Use_other_drugs,value,marijuana:tobacco, factor_key = TRUE) %>% 
+  mutate(value = factor(value)) 
+
+agg_e1_total <- e1_long %>% 
+  group_by(Use_other_drugs) %>% 
+  count(value) 
+
+  
+summarized_table_e1 <- agg_e1_total %>% 
+  group_by(Use_other_drugs) %>%
+  mutate(counT =  sum(n)) %>% 
+  group_by(value, add = TRUE) %>% 
+  mutate(per=round(100*n/counT,2))
+
+myColors <- c("darkgreen","green","orange","red")
+#actual plot creation
+ggplot(data = summarized_table_e1, aes(x = Use_other_drugs , y = per, fill = value))+
+  geom_bar(stat="identity", width = 0.7)+ 
+  scale_fill_brewer(palette = "Blues")+
+  coord_flip()+
+  ylab("Percentage")+
+  xlab("Question")+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=14,face="bold"))+
+  ggtitle("Other Drug Use Results")+
+  theme(plot.title = element_text(size = 20, face = "bold",hjust = 0.5)) + 
+  theme_bw() 
+
+
+```
+
+```{r}
+cas97 <- cas97 %>% 
+    mutate(E10 = ifelse(E9 == 1, 0, E10)) %>% 
+    mutate(E11 = ifelse(E9== 1, 0, E11)) %>% 
+    mutate(E12 = ifelse(E9 == 1, 0, E12)) %>% 
+    mutate(E26= ifelse(E25 == 1, 0, E26)) 
+```
+
+
+
+```{r}
+#cas97$C2  <- as.factor(cas97$C2)
+E_cols <- c(193:256)
+#A_cols <- c(3:30)
+e97 <- cas97 %>% 
+  select(E_cols)
+
+#head(e97)
+
+## Cleaning E1
+e_rape <- e97 %>% select(E13,E14,E15) %>% 
+  drop_na() %>% 
+  rename(rape_force = E13, 
+         rape_threat_of_harm = E14,
+         rape_drinking = E15)
+
+e_rape_long  <- e_rape %>% select(rape_force:rape_drinking) %>% 
+  gather(Rape_questions,value,rape_force:rape_drinking, factor_key = TRUE) %>% 
+  mutate(value = factor(value)) 
+
+agg_e_rape_total <- e_rape_long %>% 
+  group_by(Rape_questions) %>% 
+  count(value) 
+
+  
+summarized_table_e_rape <- agg_e_rape_total %>% 
+  group_by(Rape_questions) %>%
+  mutate(counT =  sum(n)) %>% 
+  group_by(value, add = TRUE) %>% 
+  mutate(per=round(100*n/counT,2))
+
+#myColors <- c("darkgreen","green","orange","red")
+#actual plot creation
+ggplot(data = summarized_table_e_rape, aes(x = Rape_questions, y = per, fill = value))+
+  geom_bar(stat="identity", width = 0.7)+ 
+  scale_fill_brewer(palette = "Purples")+
+  coord_flip()+
+  ylab("Percentage")+
+  xlab("Question")+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=14,face="bold"))+
+  ggtitle("Rape Questions Results")+
+  theme(plot.title = element_text(size = 20, face = "bold",hjust = 0.5)) + 
+  theme_bw() 
+
+```
+
+
+
+### Lavaan Model 
+
+
+```{r}
+
+modf <- "
+  # Regression
+  DRINKCAT ~ personal_wellbeing + academic_wellbeing + social_groups + F2 + F3
+  # Latent variable definition
+  personal_wellbeing =~  F6_A + F6_B + F6_C + F6_D + F6_E + F6_F + F6_G + F6_H + F6_I
+  academic_wellbeing =~ F1 + F4 
+  social_groups =~ F5_A + F5_B + F5_C + F5_D + F5_E + F5_F + F5_G + F5_H
+  # Factor covariance
+  personal_wellbeing ~~ personal_wellbeing
+  academic_wellbeing ~~ academic_wellbeing
+  social_groups ~~ social_groups
+  personal_wellbeing ~~ academic_wellbeing
+  social_groups ~~ personal_wellbeing 
+  social_groups ~~ academic_wellbeing
+  
+"
+```
+  
+
+
+```{r}
+DRINKCAT <- ordered(cas97$DRINKCAT)
+drinkcat <- cas97 %>%
+  select(grep("^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3", colnames(.))) %>%
+  mutate(DRINKCAT = DRINKCAT) %>%
+  filter(complete.cases(.))
+fitf <- sem(modf, drinkcat, ordered = c("DRINKCAT"))
+summary(fitf)
+```
+
