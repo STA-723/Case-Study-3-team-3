@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Data Cleaning
 
-- Indicator Variables for NA answers to categorical data
+- Concentrated on 1997 dataset
 - Zero-imputation for NA answers to ordinal data (if sensible)
 
 ## EDA: Drinking Habits
@@ -42,15 +42,12 @@ knitr::include_graphics("plots/reasons_plot.png")
 - Factors: Correlated and Interpretable
 - Ordinal predictors for each factor
 
-<<<<<<< HEAD
 ## Dimension Reduction
-```{r, out.width = "500px"}
+```{r, echo=FALSE, out.width = "250px", fig.align="center"}
 knitr::include_graphics("plots/latent_vars.png")
 ```
 
 
-## SEM
-=======
 ## Latent Variable Model
 
 ```{r, echo = FALSE, out.width = "250px", fig.align="center"}
@@ -63,6 +60,5 @@ knitr::include_graphics("plots/latent_variable_model.png")
 knitr::include_graphics("plots/mediation_analysis.png")
 ```
 
->>>>>>> 1a25e9e8ff4fca25628f274120ad85bf1fddbd78
 
 ## Discussion
