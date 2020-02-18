@@ -27,6 +27,12 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::include_graphics("plots/reasons_plot.png")
 ```
 
+## EDA: Drinking Habits
+
+```{r, echo = FALSE, out.width = "250px", fig.align="center"}
+knitr::include_graphics("plots/num_drink_plot.png")
+```
+
 
 ## EDA: Elastic Net 
 
