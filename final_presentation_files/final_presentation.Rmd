@@ -108,11 +108,11 @@ pp1<- plot_grid(p1, p2, align = "v")
 ggdraw(pp1)
 ```
 
-## Discussion and Future Work 
+## Discussion 
 
 - Influential Factors: 
-  * High high school drinking habits is associated with increased college drinking behavior
-  * Worse academic well-being is associated with increased college drinking, while better personal wellbeing is associated with a decrease in college drinking
+  * High school drinking habits are positively associated with an increase college drinking behavior
+  * Worse academic well-being is associated with an increase in college drinking, while better personal wellbeing is associated with a decrease in college drinking
 - Policies: 
   * No evidence of a relationship between strictness of college or city drinking policy and drinking behaviors
   * Less education material on drinking is associated with less drinking 
