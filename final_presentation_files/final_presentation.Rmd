@@ -112,8 +112,6 @@ ggdraw(pp1)
 - Policies: 
   * Both school and local policies did not have a significant effect on college drinking behavior
   * Less education material on drinking is associated with less drinking (possibly due to reactionary effect)
-  
-## Discussion Cont'd and Future Work 
 - Sexual Assault: 
   * High school drinking habits alone and through mediator contributes the most to incidences of sexual assault
 - We assume linearity and normality in our models, so in the future we want to extend to non-parametric models with SEM 
