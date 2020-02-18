@@ -59,22 +59,16 @@ knitr::include_graphics("plots/num_drink_plot.png")
 
 - Grouping into Latent Factors
 - Factors: Correlated and Interpretable
-<<<<<<< HEAD
-- Ordinal covariates for each factor
-
-## SEM
-=======
     - for lavaan, latent factors must be continuous
 - Ordinal predictors for each factor
 
 ## Dimension Reduction
+
 ```{r, echo=FALSE, out.width = "250px", fig.align="center"}
 knitr::include_graphics("plots/latent_vars.png")
 ```
 
-
-## Latent Variable Model
->>>>>>> b8b82029f5b921669a8d2659065d8d662e1bb5ed
+## Latent Variable Model - SEM
 
 ```{r, echo = FALSE, out.width = "250px", fig.align="center"}
 knitr::include_graphics("plots/latent_variable_model.png")
