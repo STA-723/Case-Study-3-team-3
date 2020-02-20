@@ -2,7 +2,9 @@
 title: "Final Writeup"
 author: "Phuc Nguyen, Ezinne Nwankwo, Frances Hung"
 date: "2/19/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -58,18 +60,9 @@ read_cas <- function(folder, file, recordfile) {
                   col.names = record_layout$variable_name)
   return(cas)
 }
-# cas93 <- read_cas(folder = "Harvard_CAS_1993.zip", 
-#                   file = "Harvard_CAS_1993/DS0001/06577-0001-Data.txt",
-#                   recordfile = "Harvard_CAS_1993/DS0001/06577-0001-Record_layout.txt")
 cas97 <- read_cas(folder = "Harvard_CAS_1997.zip", 
                   file = "Harvard_CAS_1997/DS0001/03163-0001-Data.txt",
                   recordfile = "Harvard_CAS_1997/DS0001/03163-0001-Record_layout.txt")
-# cas99 <- read_cas(folder = "Harvard_CAS_1999.zip", 
-#                   file = "Harvard_CAS_1999/DS0001/03818-0001-Data.txt",
-#                   recordfile = "Harvard_CAS_1999/DS0001/03818-0001-Record_layout.txt")
-# cas20 <- read_cas(folder = "Harvard_CAS_2001.zip", 
-#                   file = "Harvard_CAS_2001/DS0001/04291-0001-Data.txt",
-#                   recordfile = "Harvard_CAS_2001/DS0001/04291-0001-Record_layout.txt")
 ```
 
 
@@ -207,11 +200,6 @@ cas97 <- cas97 %>%
   dplyr::select(-E9, -E10, -E12, -E11) %>%
   # E13-15 skipped if male
   replace_na(list(E13 = 0, E14 = 0, E15 = 0)) %>%
-  # Drop E24, E26, E23_answered
-  #dplyr::select(-E24, -E26, -E23_answered, -E23) %>% 
-  #create sexual assault due to drinking variable
-  #rowwise() %>% 
-  #mutate(E15 = E15 + 1) %>% 
   #mutate(sex_assualt = ifelse(D4_H > 1 | D4_I > 1 | E15 > 1,max(D4_H,D4_I,E15, na.rm = TRUE), 1))
   dplyr::select(-E24, -E26, -E23_answered, -E23) %>%
   #create sexual assault due to drinking variable
