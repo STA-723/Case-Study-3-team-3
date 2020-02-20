@@ -27,11 +27,19 @@ In order to understand the relationships between drinking behaviors and sexual a
 
 ## Results
 
-Table FILL IN ## shows the latent variables' coefficents estimates and 95\% confidence interval for the drinking behavior model.
+Table \ref{fig:tab-coefs} shows the estimates and 95\% confidence intervals for the coefficents of latent variables in the drinking behavior model. High school drinking behavior is 
 
 ## Sensitivity Analysis
 
 We can compare our SEM model for college drinking severity to an elastic net model created using the $\texttt{glmnet}$ package. Both of these models carry out dimension reduction, so it is interesting and reassuring to note that the results of both seem to corraborate one another. From the elastic net model, the most important predictors for heavy drinkers are A10_F(parties, -), B6_D (times they were part of drinking group which was asked to be quieter/less disruptive, +), D1_B (opinion on appropriate amount for off-campus bar drinking, +), D9_B (percentage of friends who are binge drinkers, +), and G11 (HS number of binges, +). This supports the results of our latent factor model, which finds strong correlations of college drinking with drinking attitudes, emphasis on partying, and high school drinking. 
+
+## References
+
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2819368/ 
+
+http://lavaan.ugent.be/index.html
+
+An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterdam/Utrecht University
 
 ## Figures
 
