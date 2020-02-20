@@ -11,6 +11,19 @@ output:
 knitr::opts_chunk$set(echo = TRUE,eval=FALSE)
 ```
 
+\begin{abstract}
+In this paper, we study the factors that influence college drinking behavior and its effects on other harmful behaviors, in particular sexual assault. We answer three main questions of interest: first to understand the factors that influence college drinking behavior, second to access if current school policies and methods of spreading resources around drinking had any influence on college drinking behavior, and third to understand the relationship between college drinking behavior and sexual assault while accounting for other confounding factors (i.e. family drinking behaviour, etc.). Through the use of mediatian analysis and structural equation models, we are able to isolate the direct effect of other factors on sexual assault and their indirect effect through college drinking behavior. We conclude that high school drinking behavior had the largest effects, both directly indirectly, on college drinking behavior and on incidences of sexual assault. 
+\end{abstract}
+
+
+## Introduction
+
+Drinking in college is almost like a right of passage. And while policies around college campus seem to vary in terms of strictness, most of them have much more relaxed policies than bars and clubs. Instead what schools care about are the dangerous activities that drinking leads to, such as sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a very pervasive and pertinent issue on campuses everywhere. 
+
+We are interested in studying three questions: (i.) the factors that influence college drinking behavior (ii.) how certain school policies influence drinking behavior (iii.) and then how those behaviors lead to other more harmful behaviors in the hopes that we can help colleges try to prevent some of these more serious issues. 
+
+
+
 ## Data Cleaning
 
 Due to the structure of the survey (students skip certain questions based on their answers), there are a lot of missing values induced in the data for certain variables. We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicator variables for whether a person answered NA or not for each variable in question. We additionally drop true missing values.
