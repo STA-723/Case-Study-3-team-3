@@ -53,11 +53,11 @@ An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterd
 
 ## Figures
 
-```{r num-drinks-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:num-drinks-eda}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
+```{r num-drinks-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:num-drinks-eda}The figure shows the number of students attending certain events, faceted by number of drinks had at an event."}
 #knitr::include_graphics("plots/num_drink_plot.png")
 ```
 
-```{r reasons-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
+```{r reasons-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}The figure shows survey."}
 #knitr::include_graphics("plots/reasons_plot.png")
 ```
 
