@@ -2,7 +2,9 @@
 title: "Final Writeup"
 author: "Phuc Nguyen, Ezinne Nwankwo, Frances Hung"
 date: "2/19/2020"
-output: html_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -19,18 +21,18 @@ We look at drinking patterns casually by visualizing some survey question respon
 
 ## Methods
 
-We create the following latent factors from existing survey question variables. Since these factors must be correlated, interpretable, and continuous (due to our use of the $\texttt{lavaan}$ package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14,G15) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy, College Alcohol Education, and City Alcohol Policy. The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing, Personal Wellbeing, Support for Stricter Policies, Opinions on # Appropriate Drinks, Time Spent on Activities, and General Interests (for College Experience).
+We create the following latent factors from existing survey question variables (Fig. \ref{fig:latent-vars}). Since these factors must be correlated, interpretable, and continuous (due to our use of the $\texttt{lavaan}$ package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14-17) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy (B1, B2, B9), College Alcohol Education (B7, B8), and City Alcohol Policy (B11-13). The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing (F1, F4), Personal Wellbeing (F6), Support for Stricter Policies (D3), Opinions on # Appropriate Drinks (D1), Time Spent on Activities (F5), and General Interests for College Experience (split into activities involving and not involving partying/Greek life, A10).
 
 In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school, college drinking behavior, and participations in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior. 
 
 ## Sensitivity Analysis
 
-We can compare our latent factor models to an elastic net model created using the $\texttt{glmnet}$ package. 
+We can compare our SEM model for college drinking severity to an elastic net model created using the $\texttt{glmnet}$ package. Both of these models carry out dimension reduction, so it is interesting and reassuring to note that the results of both seem to corraborate one another. From the elastic net model, the most important predictors for heavy drinkers are A10_F(parties, -), B6_D (times they were part of drinking group which was asked to be quieter/less disruptive, +), D1_B (opinion on appropriate amount for off-campus bar drinking, +), D9_B (percentage of friends who are binge drinkers, +), and G11 (HS number of binges, +). This supports the results of our latent factor model, which finds strong correlations of college drinking with drinking attitudes, emphasis on partying, and high school drinking. 
 
 
 ## Figures
 
-```{r, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center"}
+```{r latent-vars, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center"}
 knitr::include_graphics("plots/latent_vars.png")
 ```
 
@@ -338,3 +340,36 @@ check_cor <- function(df, desc = FALSE) {
 ## EDA Graphs
 
 ## Elastic Net Model
+
+For EDA, we fit an elastic net model, which allows for correlated covariates (unlike LASSO) and choosing the regularization parameter optimally:
+
+```{r}
+cas97_glm<-cas97 %>% dplyr::select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G9|^G10|^G11|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^DRINKCAT",colnames(.))) %>%
+  mutate_all(function(x) scale(as.numeric(x))) %>%
+  # mutate(G15 = scale(G15),
+  #        G16 = scale(G16),
+  #        G17 = scale(G17),
+  #        G10 = scale(G10),
+  #        G14 = scale(G14),
+  #        G11 = scale(G11),
+  #        G9 = scale(G9),
+  #        G3_45 = I(G3_4 + G3_5 > 0)) %>%
+  mutate(DRINKCAT=case_when(DRINKCAT<=1 ~ "light",
+                            DRINKCAT<=3 ~ "heavy")) %>%
+  mutate(DRINKCAT=as.factor(DRINKCAT)) %>%
+  drop_na()
+
+naive_lasso<-cv.glmnet(x=cas97_glm %>%
+                         dplyr::select(-DRINKCAT) %>% 
+                         mutate_each(as.numeric) %>% 
+                         as.matrix(), 
+                      y=cas97_glm %>% 
+                        dplyr::select(DRINKCAT) %>% 
+                        mutate_each(as.factor) %>% 
+                        as.matrix(),
+                      family="multinomial")
+
+coef(naive_lasso)
+
+#the most important predictors for heavy drinkers: A10_F(parties, neg), B6_D (drinking group which was asked to be quieter/less disruptive, positive), D1_B (opinion on appropriate amount for off-campus bar drinking, pos), D9_B (percentage of friends who are binge drinkers, pos), G11 (HS number of binges, pos)
+```
