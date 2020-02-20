@@ -3,8 +3,8 @@ title: "Final Writeup"
 author: "Phuc Nguyen, Ezinne Nwankwo, Frances Hung"
 date: "2/19/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -18,7 +18,7 @@ In this paper, we study the factors that influence college drinking behavior and
 
 ## Introduction
 
-Drinking in college is almost like a right of passage. And while policies around college campus seem to vary in terms of strictness, most of them have much more relaxed policies than bars and clubs. Instead what schools care about are the dangerous activities that drinking leads to, such as sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a very pervasive and pertinent issue on campuses everywhere. 
+Drinking in college is almost like a rite of passage; while policies around college campus seem to vary in terms of strictness, nearly all have more relaxed policies than bars and clubs. Instead what schools care about are the dangerous activities that drinking leads to, such as sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a very pervasive and pertinent issue on campuses everywhere. 
 
 We are interested in studying three questions: (i.) the factors that influence college drinking behavior (ii.) how certain school policies influence drinking behavior (iii.) and then how those behaviors lead to other more harmful behaviors in the hopes that we can help colleges try to prevent some of these more serious issues. 
 
@@ -36,9 +36,9 @@ For our dependent variable measuring drinking behavior, we choose to use `drinkc
 
 ## Methods
 
-We use Structural Equation Modeling (SEM) for modeling causal relationships between information collected via the survey and our dependent variables `drinkcat` and `sexassault_ind`. The SEM package we use in R, `lavaan`, uses partial least squares regression to find a linear model relating the independent and dependent variables through latent factors. We standardize all of the variables we use in order to make our coefficients interpretable and comparable in the final model.
+We use Structural Equation Modeling (SEM) for modeling relationships between information collected via the survey and our dependent variables `drinkcat` and `sexassault_ind`. SEM is a way of implementing dimension reduction (by using latent factors) while retaining coarse information on all variables of interest. This is different from other dimension reduction strategies which get rid of some variables all together. The SEM package we use in R, `lavaan`, uses partial least squares regression to find a linear model relating the independent and dependent variables through latent factors. We standardize all of the variables we use in order to make our coefficients interpretable and comparable in the final model.
 
-We create the following latent factors from existing survey question variables (Fig. \ref{fig:latent-vars}). Since these factors must be correlated, interpretable, and continuous (due to our use of the `lavaan` package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14-17) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy (B1, B2, B9), College Alcohol Education (B7, B8), and City Alcohol Policy (B11-13). The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing (F1, F4), Personal Wellbeing (F6), Support for Stricter Policies (D3), Opinions on # Appropriate Drinks (D1), Time Spent on Activities (F5), and General Interests for College Experience (split into activities involving and not involving partying/Greek life, A10).
+We create the following latent factors from existing survey question variables (Fig. \ref{fig:latent-vars}). Since these factors must be correlated, interpretable, and continuous (due to our use of the `lavaan` package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14-17) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy (B1, B2, B9), College Alcohol Education (B7, B8), and City Alcohol Policy (B11-13). The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing (F1, F4), Personal Wellbeing (F6), Support for Stricter Policies (D3), Opinions on # Appropriate Drinks (D1), Time Spent on Activities (F5), and General Interests for College Experience (split into activities involving and not involving partying/Greek life, A10). All of the latent factors which draw from one survey question actually consist of several sub-categories within each question (i.e. D3 consists of student rankings of agreement with various school policies).
 
 In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school, college drinking behavior, and participations in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior.
 
