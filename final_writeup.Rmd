@@ -1,0 +1,27 @@
+---
+title: "Final Writeup"
+author: "Phuc Nguyen, Ezinne Nwankwo, Frances Hung"
+date: "2/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Data Cleaning
+
+Due to the structure of the survey (students skip certain questions based on their answers), there are a lot of missing values induced in the data for certain variables. We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicators for whether a person answered NA or not for each variable in question. We additionally drop true missing values.
+
+### EDA
+
+We look at drinking patterns casually by visualizing some survey question responses from Section C, which is about drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken. The reasons students cited as most important for drinking were getting drunk and as a reward. This 
+
+### Methods
+
+We create the following latent factors from existing survey question variables. Since these factors must be correlated, interpretable, and continuous (due to our use of the $\texttt{lavaan}$ package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14,G15) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy, College Alcohol Education, and City Alcohol Policy. The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing, Personal Wellbeing, Support for Stricter Policies, Opinions on # Appropriate Drinks, Time Spent on Activities, and General Interests (for College Experience).
+
+
+### Sensitivity Analysis
+
+elastic net model using the $\texttt{glmnet}$ package.
