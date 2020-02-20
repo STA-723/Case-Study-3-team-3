@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.5.8)  20 FEB 2020 17:37
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.5.8)  20 FEB 2020 17:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -496,11 +496,8 @@ Package: titling 2009/09/04 v2.1d maketitle typesetting
 \thanksmarkwidth=\skip49
 \thanksmargin=\skip50
 \droptitle=\skip51
-) (./final_writeup.aux
-
-LaTeX Warning: Label `fig:latent-vars' multiply defined.
-
 )
+No file final_writeup.aux.
 \openout1 = `final_writeup.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 128.
@@ -590,7 +587,6 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 128.
 LaTeX Info: Redefining \pageref on input line 128.
 LaTeX Info: Redefining \nameref on input line 128.
-(./final_writeup.out) (./final_writeup.out)
 \@outlinefile=\write4
 \openout4 = `final_writeup.out'.
 
@@ -664,73 +660,19 @@ LaTeX Font Info:    Try loading font information for T1+lmtt on input line 175.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [1
-
-{/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-
-LaTeX Warning: Reference `fig:tab-coefs' on page 2 undefined on input line 224.
-
-
-[2]
-<plots/latent_vars.png, id=95, 963.6pt x 722.7pt>
-File: plots/latent_vars.png Graphic file (type png)
-<use plots/latent_vars.png>
-Package pdftex.def Info: plots/latent_vars.png  used on input line 290.
-(pdftex.def)             Requested size: 501.86887pt x 376.40164pt.
-
-Overfull \hbox (32.11385pt too wide) in paragraph at lines 290--291
- [][] 
- []
-
-[3 <./plots/latent_vars.png>]
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 311.
-LaTeX Font Info:    Try loading font information for TS1+lmtt on input line 346
-.
-(/usr/local/texlive/2019/texmf-dist/tex/latex/lm/ts1lmtt.fd
-File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [4] [5] [6] [7]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 622.
-[8]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 622.
-(./final_writeup.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 622.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 622.
-Package rerunfilecheck Info: File `final_writeup.out' has not changed.
-(rerunfilecheck)             Checksum: D67CA9A85E64F008D7ED62121DECDE40;1760.
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: There were multiply-defined labels.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 622.
- ) 
+)
+! Missing $ inserted.
+<inserted text> 
+                $
+l.187 \(\texttt{sexassault_ind}
+                               \). The SEM package we use in R, 
 Here is how much of TeX's memory you used:
- 12968 strings out of 492616
- 189501 string characters out of 6129482
- 311646 words of memory out of 5000000
- 16598 multiletter control sequences out of 15000+600000
- 52321 words of font info for 76 fonts, out of 8000000 for 9000
+ 12788 strings out of 492616
+ 187055 string characters out of 6129482
+ 299398 words of memory out of 5000000
+ 16512 multiletter control sequences out of 15000+600000
+ 47469 words of font info for 61 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,6n,38p,984b,376s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local
-/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/2019/
-texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2019/texmf-dist
-/fonts/enc/dvips/lm/lm-rm.enc}</usr/local/texlive/2019/texmf-dist/fonts/type1/p
-ublic/lm/lmbx10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/l
-mbx12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmbx9.pfb><
-/usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local
-/texlive/2019/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/20
-19/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2019/texmf-di
-st/fonts/type1/public/lm/lmr9.pfb></usr/local/texlive/2019/texmf-dist/fonts/typ
-e1/public/lm/lmri12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/
-lm/lmtk10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmtt10.
-pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on final_writeup.pdf (8 pages, 360729 bytes).
-PDF statistics:
- 207 PDF objects out of 1000 (max. 8388607)
- 182 compressed objects within 2 object streams
- 56 named destinations out of 1000 (max. 500000)
- 10366 words of extra memory for PDF output out of 12000 (max. 10000000)
+ 32i,4n,38p,984b,300s stack positions out of 5000i,500n,10000p,200000b,80000s
 
+!  ==> Fatal error occurred, no output PDF file produced!
