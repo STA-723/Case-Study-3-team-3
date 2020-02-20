@@ -3,8 +3,8 @@ title: "Final Writeup"
 author: "Phuc Nguyen, Ezinne Nwankwo, Frances Hung"
 date: "2/19/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -23,7 +23,7 @@ For our dependent variable measuring drinking behavior, we choose to use $\textt
 
 ## Methods
 
-We use Structural Equation Modeling (SEM) for modeling causal relationships between information collected via the survey and our dependent variables $\texttt{drinkcat}$ and $\texttt{sexassault_ind}$. The SEM package we use in R, $\textt{lavaan}$, uses partial least squares regression to find a linear model relating the independent and dependent variables through latent factors. We standardize all of the variables we use in order to make our coefficients interpretable and comparable in the final model.
+We use Structural Equation Modeling (SEM) for modeling causal relationships between information collected via the survey and our dependent variables $\texttt{drinkcat}$ and $\texttt{sexassault_ind}$. The SEM package we use in R, $\texttt{lavaan}$, uses partial least squares regression to find a linear model relating the independent and dependent variables through latent factors. We standardize all of the variables we use in order to make our coefficients interpretable and comparable in the final model.
 
 We create the following latent factors from existing survey question variables (Fig. \ref{fig:latent-vars}). Since these factors must be correlated, interpretable, and continuous (due to our use of the $\texttt{lavaan}$ package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14-17) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy (B1, B2, B9), College Alcohol Education (B7, B8), and City Alcohol Policy (B11-13). The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing (F1, F4), Personal Wellbeing (F6), Support for Stricter Policies (D3), Opinions on # Appropriate Drinks (D1), Time Spent on Activities (F5), and General Interests for College Experience (split into activities involving and not involving partying/Greek life, A10).
 
@@ -46,6 +46,14 @@ http://lavaan.ugent.be/index.html
 An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterdam/Utrecht University
 
 ## Figures
+
+# ```{r num-drinks-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:num-drinks-eda}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
+# knitr::include_graphics("plots/num_drink_plot.png")
+# ```
+# 
+# ```{r reasons-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
+# knitr::include_graphics("plots/reasons_plot.png")
+# ```
 
 ```{r latent-vars, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
 knitr::include_graphics("plots/latent_vars.png")
