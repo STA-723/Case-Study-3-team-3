@@ -759,7 +759,7 @@ lavInspect(fit_full, "cov.lv")
 ```
 
 ```{r}
-fitMeasures(fit_full, c("rmsea", "rmsea.ci.lower", "rmsea.ci.upper"))
+fitMeasures(fit_full_plus, c("rmsea", "rmsea.ci.lower", "rmsea.ci.upper"))
 ```
 
 Using RMSEA we would accept this model
@@ -782,7 +782,7 @@ ggsave("final_presentation_files/plots/full_model_estimates.png")
 
 ```{r}
 full_estimates %>%
-  filter(op == "=~" & lhs == "communities") %>%
+  filter(op == "=~" & lhs == "parties") %>%
   mutate(rhs = recode(rhs, "A10_H" = "religion", "A10_A" = "athletics",
          "A10_B" = "arts", "A10_C" = "academic", "A10_D" = "greek life",
          "A10_E" = "activism", "A10_F" = "parties", "A10_G" = "volunteer")) %>%
@@ -792,7 +792,6 @@ full_estimates %>%
   labs(x = "Estimate", y = "") + 
   geom_point() +
   facet_grid(cols = vars(lhs))
-ggsave("final_presentation_files/plots/latent_communities_estimates.png")
 
 full_estimates %>%
   filter(op == "=~" & lhs == "personal_wellbeing") %>%
