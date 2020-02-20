@@ -11,9 +11,9 @@ knitr::opts_chunk$set(echo = TRUE,eval=FALSE)
 
 ## Data Cleaning
 
-Due to the structure of the survey (students skip certain questions based on their answers), there are a lot of missing values induced in the data for certain variables. We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicator variables for whether a person answered NA or not for each variable in question. We additionally drop true missing values.
+Due to the structure of the survey (students skip certain questions based on their answers), there are a lot of missing values induced in the data for certain variables. We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicator variables for whether a person answered NA or not for each variable in question. We additionally drop true missing values and use complete cases in this analysis.
 
-## EDA
+## Exploratory Data Analysis
 
 We look at drinking patterns casually by visualizing some survey question responses from Section C, which is about drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken. The reasons students cited as most important for drinking were getting drunk and as a reward. This suggests that location and 
 
@@ -21,6 +21,7 @@ We look at drinking patterns casually by visualizing some survey question respon
 
 We create the following latent factors from existing survey question variables. Since these factors must be correlated, interpretable, and continuous (due to our use of the $\texttt{lavaan}$ package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14,G15) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy, College Alcohol Education, and City Alcohol Policy. The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing, Personal Wellbeing, Support for Stricter Policies, Opinions on # Appropriate Drinks, Time Spent on Activities, and General Interests (for College Experience).
 
+In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school, college drinking behavior, and participations in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior. 
 
 ## Sensitivity Analysis
 
