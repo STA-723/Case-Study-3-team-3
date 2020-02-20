@@ -23,6 +23,10 @@ We create the following latent factors from existing survey question variables. 
 
 In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school, college drinking behavior, and participations in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior.
 
+## Results
+
+Table FILL IN ## shows the latent variables' coefficents estimates and 95\% confidence interval for the drinking behavior model.
+
 ## Sensitivity Analysis
 
 We can compare our latent factor models to an elastic net model created using the $\texttt{glmnet}$ package. 
