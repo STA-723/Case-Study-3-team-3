@@ -21,7 +21,7 @@ We look at drinking patterns casually by visualizing some survey question respon
 
 ## Methods
 
-We create the following latent factors from existing survey question variables. Since these factors must be correlated, interpretable, and continuous (due to our use of the $\texttt{lavaan}$ package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14,G15) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy, College Alcohol Education, and City Alcohol Policy. The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing, Personal Wellbeing, Support for Stricter Policies, Opinions on # Appropriate Drinks, Time Spent on Activities, and General Interests (for College Experience).
+We create the following latent factors from existing survey question variables (Fig. \ref{fig:latent-vars}). Since these factors must be correlated, interpretable, and continuous (due to our use of the $\texttt{lavaan}$ package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14,G15) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy, College Alcohol Education, and City Alcohol Policy. The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing, Personal Wellbeing, Support for Stricter Policies, Opinions on # Appropriate Drinks, Time Spent on Activities, and General Interests (for College Experience).
 
 In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school, college drinking behavior, and participations in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior.
 
@@ -36,7 +36,7 @@ We can compare our latent factor models to an elastic net model created using th
 
 ## Figures
 
-```{r, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center"}
+```{r latent-vars, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
 knitr::include_graphics("plots/latent_vars.png")
 ```
 
@@ -200,7 +200,7 @@ cas97 <- cas97 %>%
   dplyr::select(-E9, -E10, -E12, -E11) %>%
   # E13-15 skipped if male
   replace_na(list(E13 = 0, E14 = 0, E15 = 0)) %>%
-  #mutate(sex_assualt = ifelse(D4_H > 1 | D4_I > 1 | E15 > 1,max(D4_H,D4_I,E15, na.rm = TRUE), 1))
+    #mutate(sex_assualt = ifelse(D4_H > 1 | D4_I > 1 | E15 > 1,max(D4_H,D4_I,E15, na.rm = TRUE), 1))
   dplyr::select(-E24, -E26, -E23_answered, -E23) %>%
   #create sexual assault due to drinking variable
   mutate(sex_assualt_ind = ifelse(D4_H > 1 | D4_I > 1 | E15 > 0, 1, 0))
