@@ -15,7 +15,7 @@ Due to the structure of the survey (students skip certain questions based on the
 
 ### EDA
 
-We look at drinking patterns casually by visualizing some survey question responses from Section C, which is about drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken. The reasons students cited as most important for drinking were getting drunk and as a reward. This 
+We look at drinking patterns casually by visualizing some survey question responses from Section C, which is about drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken. The reasons students cited as most important for drinking were getting drunk and as a reward. This suggests that location and 
 
 ### Methods
 
@@ -24,4 +24,13 @@ We create the following latent factors from existing survey question variables. 
 
 ### Sensitivity Analysis
 
-elastic net model using the $\texttt{glmnet}$ package.
+We can compare our latent factor models to an elastic net model created using the $\texttt{glmnet}$ package. 
+
+
+## Appendix
+
+### Data Cleaning
+
+### EDA Graphs
+
+### Elastic Net Model
