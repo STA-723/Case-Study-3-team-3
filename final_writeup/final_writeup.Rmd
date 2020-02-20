@@ -6,12 +6,12 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,eval=FALSE)
 ```
 
 ## Data Cleaning
 
-Due to the structure of the survey (students skip certain questions based on their answers), there are a lot of missing values induced in the data for certain variables. We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicators for whether a person answered NA or not for each variable in question. We additionally drop true missing values.
+Due to the structure of the survey (students skip certain questions based on their answers), there are a lot of missing values induced in the data for certain variables. We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicator variables for whether a person answered NA or not for each variable in question. We additionally drop true missing values.
 
 ## EDA
 
@@ -27,8 +27,11 @@ We create the following latent factors from existing survey question variables. 
 We can compare our latent factor models to an elastic net model created using the $\texttt{glmnet}$ package. 
 
 
-##Figures
+## Figures
 
+```{r, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center"}
+knitr::include_graphics("plots/latent_vars.png")
+```
 
 ## Appendix
 
