@@ -44,19 +44,21 @@ For our dependent variable measuring drinking behavior, we choose to use `drinkc
 
 We use Structural Equation Modeling (SEM) for modeling relationships between information collected via the survey and our dependent variables `drinkcat` and `sexassault_ind`. SEM is a way of implementing dimension reduction (by using latent factors) while retaining coarse information on all variables of interest. This is different from other dimension reduction strategies which get rid of some variables all together. The SEM package we use in R, `lavaan`, uses partial least squares regression to find a linear model relating the independent and dependent variables through latent factors. We standardize all of the variables we use in order to make our coefficients interpretable and comparable in the final model.
 
-We create the following latent factors from existing survey question variables (Fig. \ref{fig:latent-vars}). Since these factors must be correlated, interpretable, and continuous (due to our use of the `lavaan` package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14-17) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy (B1, B2, B9), College Alcohol Education (B7, B8), and City Alcohol Policy (B11-13). The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing (F1, F4), Personal Wellbeing (F6), Support for Stricter Policies (D3), Opinions on the Number of Appropriate Drinks (D1), Time Spent on Activities (F5), and General Interests for College Experience (split into activities involving and not involving partying/Greek life, A10). All of the latent factors which draw from one survey question actually consist of several sub-questions within each question (i.e. D3 consists of student rankings of agreement with many different school policies).
+We create the following latent factors from existing survey question variables (Fig. \ref{fig:latent-vars}). Since these factors must be correlated, interpretable, and continuous (due to our use of the `lavaan` package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14-17) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy (B1, B2, B9), College Alcohol Education (B7, B8), and City Alcohol Policy (B11-13). The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing (F1, F4), Personal Wellbeing (F6), Support for Stricter Policies (D3), Opinions on the Number of Appropriate Drinks (D1), Time Spent on Activities (F5), and General Interests for College Experience (split into activities involving and not involving partying/Greek life, A10). All of the latent factors which draw from one survey question actually consist of several sub-questions within each question (i.e. D3 consists of student rankings of agreement with many different school policies). The graphical model is represented in Fig. \ref{fig:graphical-latent}.
 
-In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school drinking, `drinkcat`, and participation in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior. The equations for the mediation model are written below: 
+In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school drinking, `drinkcat`, and participation in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior. The equations for the mediation model are written below (also see Fig. \ref{fig:graphical-mediation}): 
 $$
-\text{drinkcat} \sim \text{communities} + \text{family} + \text{highschool} \\
-\text{sexualassault} \sim \text{communities} + \text{family} + \text{highschool} + \text{drinkcat}
+\begin{aligned}
+\text{drinkcat} &\sim \text{communities} + \text{family} + \text{highschool} \\
+\text{sexualassault} &\sim \text{communities} + \text{family} + \text{highschool} + \text{drinkcat}
+\end{aligned}
 $$
 
 ## Results
 
 ### Drinking Behavior
 
-Table \ref{fig:tab-coefs} shows the estimates and 95\% confidence intervals for the coefficents of latent variables in the drinking behavior model. We accept the model as its RMSEA 95\% CI of [0.053, 0.054] is around the conventional threshold of 0.05 for a good fit (CITE). Since the survey answers generally did not have physical units, we standardized the variables to compare the size of the estimated coefficients. The dependent variable, i.e. the rating of levels of drinking, also does not have physical units. Thus, we will interpret these coefficents in terms of the relative magnitude and direction of their association with heavier drinking. High school drinking history is most correlated with more drinking in college. The latent factor Parties summarizing the importance of fraternity/sorority, parties and athletics to students, with a lower value corresponding to more importance, has the second largest association. In other words, students who participate more in the mentioned activities tend to drink more. The latent factor Communities measures the importance of other activities such as volunteering, religion, arts, activism and academic, has the third largest association. Students who care less about these activities tend to drink more. Fourthly, students who perceive a larger number of drink appropriate tend to drink more. The loadings of these four variables are shown in Table \ref{tab:load-coefs}. Other latent variables with significant but smaller associations with heavier drinking in college include Personal Wellbeing, Family Education/Drinking and Support for More Lenient Policy. Specifically, students who are generally more happy, whose families approve of drinking, or who support more lenient drinking policies on campus tend to drink more. There is not enough evidence to establish a relationship between stricter college drinking policy and drinking behaviors. We find a small association between more exposure to alcohol/drinking education and heavier drinkers. We hypothesize that students who already have drinking problems or schools with more prevalent drinking culture might consequently have more educational programs on the issue.
+Table \ref{tab:full-coefs} shows the estimates and 95\% confidence intervals for the coefficents of latent variables in the drinking behavior model. We accept the model as its RMSEA 95\% CI of [0.053, 0.054] is around the conventional threshold of 0.05 for a good fit (CITE). Since the survey answers generally did not have physical units, we standardized the variables to compare the size of the estimated coefficients. The dependent variable, i.e. the rating of levels of drinking, also does not have physical units. Thus, we will interpret these coefficents in terms of the relative magnitude and direction of their association with heavier drinking. High school drinking history is most correlated with more drinking in college. The latent factor Parties summarizing the importance of fraternity/sorority, parties and athletics to students, with a lower value corresponding to more importance, has the second largest association. In other words, students who participate more in the mentioned activities tend to drink more. The latent factor Communities measures the importance of other activities such as volunteering, religion, arts, activism and academic, has the third largest association. Students who care less about these activities tend to drink more. Fourthly, students who perceive a larger number of drink appropriate tend to drink more. The loadings of these four variables are shown in Table \ref{tab:load-coefs}. Other latent variables with significant but smaller associations with heavier drinking in college include Personal Wellbeing, Family Education/Drinking and Support for More Lenient Policy. Specifically, students who are generally more happy, whose families approve of drinking, or who support more lenient drinking policies on campus tend to drink more. There is not enough evidence to establish a relationship between stricter college drinking policy and drinking behaviors. We find a small association between more exposure to alcohol/drinking education and heavier drinkers. We hypothesize that students who already have drinking problems or schools with more prevalent drinking culture might consequently have more educational programs on the issue.
 
 ### Risk of Sexual Assault
 
@@ -87,12 +89,11 @@ We assume linearity and normality in our models, so in the future we want to ext
 
 ## Appendix
 
-### Figures 
-```{r num-drinks-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:num-drinks-eda}The figure shows the number of students attending certain events, faceted by number of drinks had at an event."}
+```{r num-drinks-eda, echo=FALSE, eval=TRUE,out.width = "300px", fig.align="center", fig.pos = "h", fig.cap="\\label{fig:num-drinks-eda}The figure shows the number of students attending certain events, faceted by number of drinks had at an event."}
 knitr::include_graphics("plots/num_drink_plot.png")
 ```
 
-```{r reasons-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}The figure shows survey."}
+```{r reasons-eda, echo=FALSE, eval=TRUE,out.width = "300px", fig.align="center", fig.pos="h", fig.cap="\\label{fig:latent-vars}The figure shows survey."}
 knitr::include_graphics("plots/reasons_plot.png")
 ```
 
@@ -100,25 +101,26 @@ knitr::include_graphics("plots/reasons_plot.png")
 knitr::include_graphics("plots/latent_vars.png")
 ```
 
-## Tables
 
 ```{r, eval=TRUE, echo=FALSE}
 suppressMessages(library(xtable))
 full_coefs <- readRDS("table/full_estimates.rds")
 ```
 
+\newpage
 
-```{r, eval=TRUE, echo=FALSE, results='asis'}
-print.xtable(xtable(full_coefs %>% 
+```{r, eval=TRUE, echo=FALSE, results='asis', fig.align = "center",fig.pos="h"}
+knitr::kable(full_coefs %>% 
                filter(op == "~") %>%
                mutate(latent_var = rhs, est = round(est, 2), p_value = round(pvalue, 2),
                       ci_lower = round(ci.lower, 2), ci_upper = round(ci.upper, 2)) %>%
                select(latent_var, est, ci_lower, ci_upper, p_value),
-             caption = "\\label{tab:full-coefs}Estimates and 95% confident intervals of latent factors in the SEM for levels of drinking. High school drinking, support of more lenient drinking policy, importance of parties (parties), less exposure to alcohol education, family drinks, and personal wellbeing are associated with more drinking in college."), comment = FALSE)
+             align = "c",
+             caption = "\\label{tab:full-coefs}Estimates and 95 percent confident intervals of latent factors in the SEM for levels of drinking. High school drinking, support of more lenient drinking policy, importance of parties (parties), less exposure to alcohol education, family drinks, and personal wellbeing are associated with more drinking in college")
 ```
 
 
-```{r, eval=TRUE, echo=FALSE, results='asis'}
+```{r, eval=TRUE, echo=FALSE, results='asis', fig.align="center", fig.pos="h"}
 knitr::kable(full_coefs %>% 
                filter(op == "=~" & lhs %in% c("highschool_drink", "parties", "communities", "attitude_drink")) %>%
                mutate(latent_var = lhs, survey_question = rhs, est = round(est, 2), p_value = round(pvalue, 2),
@@ -128,7 +130,7 @@ knitr::kable(full_coefs %>%
              caption = "\\label{tab:load-coefs}Loadings of survey questions for latent factors.")
 ```
 
-```{r, results='asis', eval=TRUE, echo=FALSE}
+```{r, results='asis', eval=TRUE, echo=FALSE, fig.align = "center",fig.pos="h"}
 medvictim_coef <- readRDS("table/med_them_estimates.rds")
 knitr::kable(medvictim_coef %>% 
                filter(op == ":=") %>%
@@ -140,7 +142,7 @@ knitr::kable(medvictim_coef %>%
              caption = "\\label{tab:medvictim-coefs}Direct and indirect effects of latent factors on risk of sexual assault when victim was drinking.")
 ```
 
-```{r, eval=TRUE, echo=FALSE, results='asis'}
+```{r, eval=TRUE, echo=FALSE, results='asis', fig.align = "center", fig.pos="h"}
 medass_coef <- readRDS("table/med_others_estimates.rds")
 knitr::kable(medass_coef %>% 
                filter(op == ":=") %>%
@@ -152,9 +154,18 @@ knitr::kable(medass_coef %>%
              caption = "\\label{tab:medass-coefs}Direct and indirect effects of latent factors on risk of sexual assault when assaulter was drinking.")
 ```
 
+\newpage
 
+Below are tables of the estimates for the following three models
+$$
+\begin{aligned}
+\text{SEXASSAULT} &\sim \text{communities} + \text{family$\_$drink} + \text{highschool$\_$drink} \\
+\text{DRINKCAT} &\sim \text{communities} + \text{family$\_$drink} + \text{highschool$\_$drink} \\
+\text{SEXASSAULT} &\sim \text{DRINKCAT}
+\end{aligned}
+$$
 
-```{r, results='asis', eval=TRUE, echo=FALSE}
+```{r, results='asis', eval=TRUE, echo=FALSE, fig.pos="h"}
 knitr::kable(medass_coef %>% 
                head(7) %>%
                mutate(response = recode(lhs, "SEXASSAULT_others" = "SEXASSAULT"), 
@@ -163,12 +174,12 @@ knitr::kable(medass_coef %>%
                       ci_lower = round(ci.lower, 2), ci_upper = round(ci.upper, 2)) %>%
                select(response, latent_var, est, ci_lower, ci_upper, p_value),
              align = "c",
-             caption = "\\label{tab:indir2-coefs}Coefficient estimates of three models: SEXASSAULT ~ communities + family_drink + highschool_drink, DRINKCAT ~ communities + family_drink + highschool_drink, SEXASSAULT ~ DRINKCAT. The response is indicator of sexual assault when the assaulter was drinking.")
+             caption = "\\label{tab:indir2-coefs}Coefficient estimates of the three models. The response is indicator of sexual assault when the assaulter was drinking.")
 ```
 
 
 
-```{r, results='asis', eval=TRUE, echo=FALSE}
+```{r, results='asis', eval=TRUE, echo=FALSE, fig.pos="h"}
 knitr::kable(medvictim_coef %>% 
                head(7) %>%
                mutate(response = recode(lhs, "SEXASSAULT_them" = "SEXASSAULT"), 
@@ -177,12 +188,8 @@ knitr::kable(medvictim_coef %>%
                       ci_lower = round(ci.lower, 2), ci_upper = round(ci.upper, 2)) %>%
                select(response, latent_var, est, ci_lower, ci_upper, p_value),
              align = "c",
-             caption = "\\label{tab:indir-coefs}Coefficient estimates of three models: SEXASSAULT ~ communities + family_drink + highschool_drink, DRINKCAT ~ communities + family_drink + highschool_drink, SEXASSAULT ~ DRINKCAT. The response is indicator of sexual assault when the victim was drinking.")
+             caption = "\\label{tab:indir-coefs}Coefficient estimates of the three models. The response is indicator of sexual assault when the victim was drinking.")
 ```
-
-## Appendix
-
-## Data Cleaning
 
 ```{r load_data, include = FALSE, cache=TRUE}
 ### Reading In Data
@@ -301,9 +308,6 @@ cas97 %>%
   filter(complete.cases(.)) %>%
   nrow()
 ```
-
-
-
 
 
 ```{r section_e, include = FALSE}
@@ -463,6 +467,15 @@ check_cor <- function(df, desc = FALSE) {
 } 
 ```
 
-\newpage
 
-## Elastic Net Model
+```{r graphical_latent, echo = FALSE, eval = TRUE, fig.pos = "h",out.width = "300px", fig.align="center", fig.cap="\\label{fig:graphical-latent} Graphical representation of latent variable model DRINKCAT response."}
+knitr::include_graphics("plots/latent_variable_model.png")
+
+```
+
+```{r graphical_mediation, echo = FALSE, eval = TRUE, fig.pos = "h",out.width = "300px", fig.align="center", fig.cap="\\label{fig:graphical-mediation} Graphical representation of mediation analysis."}
+knitr::include_graphics("plots/mediation_analysis.png")
+
+```
+
+\newpage
