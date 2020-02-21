@@ -3,22 +3,25 @@ title: "Final Writeup"
 author: "Phuc Nguyen, Ezinne Nwankwo, Frances Hung"
 date: "2/19/2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,eval=FALSE)
+library(tidyverse)
+library(glmnet)
+library(lavaan)
 ```
 
 \begin{abstract}
-In this paper, we study the factors that influence college drinking behavior and its effects on other harmful behaviors, in particular sexual assault. We answer three main questions of interest: first to understand the factors that influence college drinking behavior, second to access if current school policies and methods of spreading resources around drinking had any influence on college drinking behavior, and third to understand the relationship between college drinking behavior and sexual assault while accounting for other confounding factors (i.e. family drinking behaviour, etc.). Through the use of mediatian analysis and structural equation models, we are able to isolate the direct effect of other factors on sexual assault and their indirect effect through college drinking behavior. We conclude that high school drinking behavior had the largest effects, both directly indirectly, on college drinking behavior and on incidences of sexual assault. 
+In this paper, we study the factors that influence college drinking behavior and its effects on other harmful behaviors, in particular sexual assault. We answer three main questions of interest: (i.) to understand the factors that influence college drinking behavior, (ii.) to access if current school policies and methods of spreading resources around drinking had any influence on college drinking behavior, and (third (iii.) to understand the relationship between college drinking behavior and sexual assault while accounting for other confounding factors (i.e. family drinking behaviour, etc.). Through the use of mediatian analysis and structural equation models, we are able to isolate the direct effect of other factors on sexual assault and their indirect effect mediated through college drinking behavior. We conclude that high school drinking behavior had the largest effects, both directly and indirectly, on college drinking behavior and on incidences of sexual assault on college campuses. 
 \end{abstract}
 
 
 ## Introduction
 
-Drinking in college is almost like a rite of passage; while policies around college campus seem to vary in terms of strictness, nearly all have more relaxed policies than bars and clubs. Instead what schools care about are the dangerous activities that drinking leads to, such as sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a very pervasive and pertinent issue on campuses everywhere. 
+Drinking in college not uncommon among the student body. Some even consider college drinking to be a right of passage for every incoming freshman. It is a well known occurence on most university campuses nationwide. while policies around college campus seem to vary in terms of strictness, nearly all have more relaxed policies than bars and clubs. Instead what schools care about are the dangerous activities that drinking leads to, such as sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a very pervasive and pertinent issue on campuses everywhere. 
 
 We are interested in studying three questions: (i.) the factors that influence college drinking behavior (ii.) how certain school policies influence drinking behavior (iii.) and then how those behaviors lead to other more harmful behaviors in the hopes that we can help colleges try to prevent some of these more serious issues. 
 
@@ -56,16 +59,22 @@ Table \ref{fig:tab-coefs} shows the estimates and 95\% confidence intervals for 
 
 We can compare our SEM model for college drinking severity to an elastic net model created using the $\texttt{glmnet}$ package. Both of these models carry out dimension reduction, so it is interesting and reassuring to note that the results of both seem to corraborate one another. From the elastic net model, the most important predictors for heavy drinkers are A10_F(parties, -), B6_D (times they were part of drinking group which was asked to be quieter/less disruptive, +), D1_B (opinion on appropriate amount for off-campus bar drinking, +), D9_B (percentage of friends who are binge drinkers, +), and G11 (HS number of binges, +). This supports the results of our latent factor model, which finds strong correlations of college drinking with drinking attitudes, emphasis on partying, and high school drinking. 
 
+
+
+
 ## References
 
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2819368/ 
+[1] https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2819368/ 
 
-http://lavaan.ugent.be/index.html
+[2] http://lavaan.ugent.be/index.html
 
-An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterdam/Utrecht University
+[3] An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterdam/Utrecht University
+ 
 
-## Figures
 
+## Appendix
+
+### Figures 
 ```{r num-drinks-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:num-drinks-eda}The figure shows the number of students attending certain events, faceted by number of drinks had at an event."}
 #knitr::include_graphics("plots/num_drink_plot.png")
 ```
@@ -74,19 +83,14 @@ An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterd
 #knitr::include_graphics("plots/reasons_plot.png")
 ```
 
-```{r latent-vars, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
+```{r latent-vars, echo=FALSE, eval=TRUE,out.width = "300px", fig.align="center",fig.pos="h", fig.cap="\\label{fig:latent-vars}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
 knitr::include_graphics("plots/latent_vars.png")
 ```
 
-## Appendix
 
-## Data Cleaning
-
+```{r load_data, include = FALSE, cache=TRUE}
 ### Reading In Data
-
-Split file by number of columns for each variable in Record_layout.txt file. Spaces are missing values.
-
-```{r load_data, cache=TRUE}
+### Split file by number of columns for each variable in Record_layout.txt file. Spaces are missing values.
 read_cas <- function(folder, file, recordfile) {
   skip <- grep("--------", readLines(unz(folder, recordfile)))
   record_layout <- read.table(unz(folder, recordfile), 
@@ -104,7 +108,7 @@ cas97 <- read_cas(folder = "Harvard_CAS_1997.zip",
 ```
 
 
-```{r}
+```{r summary_na_function, include = FALSE}
 summary_na<-function(df) {
   na_count <- colSums(apply(df, 2, is.na))
   data.frame(name = colnames(df), na_pct = na_count/nrow(df)) %>% arrange(desc(na_pct))
@@ -112,12 +116,11 @@ summary_na<-function(df) {
 ```
 
 
-The survey asks students to skip some questions on purpose. We manually go through the survey to impute these values and drop remaining missing entries.
 
+```{r section_a, include = FALSE}
 #### Section A
-
-```{r}
 # See which vars have lots of NA's
+# The survey asks students to skip some questions on purpose. We manually go through the survey to impute these values and drop remaining missing entries.
 cas97 %>% 
   dplyr::select(which(grepl("^A", colnames(.)))) %>%
   summary_na()
@@ -150,13 +153,14 @@ cas97 %>%
 ```
 
 
+
+
+```{r section_b, include = FALSE}
 #### Section B
 
-No skipped questions
+#No skipped questions
 
-For B10, an indicator is an option, fill in zero for than NA
-
-```{r}
+#For B10, an indicator is an option, fill in zero for than NA
 # Which columns in this section have lots of NA?
 cas97 %>% 
   dplyr::select(which(grepl("^B", colnames(.)))) %>%
@@ -184,15 +188,9 @@ cas97 %>%
   nrow()
 ```
 
-#### Section C
 
-```{r}
-
-```
-
+```{r section_d, include = FALSE}
 #### Section D
-
-```{r}
 # Which columns in this section have lots of NA?
 cas97 %>% 
   dplyr::select(which(grepl("^D\\d", colnames(.)))) %>%
@@ -210,11 +208,12 @@ cas97 %>%
 
 
 
+
+
+```{r section_e, include = FALSE}
 #### Section E
 
-Possible groups to consider: Female vs Male, Younger vs Older than 21 years old
-
-```{r}
+#Possible groups to consider: Female vs Male, Younger vs Older than 21 years old
 # Which columns in this section have lots of NA?
 cas97 %>% 
   dplyr::select(which(grepl("^E\\d", colnames(.)))) %>%
@@ -245,11 +244,10 @@ cas97 <- cas97 %>%
 
 ```
 
+
+
+```{r section_f, include = FALSE}
 #### Section F
-
-Everything seems fine
-
-```{r}
 # Which columns in this section have lots of NA?
 cas97 %>% 
   dplyr::select(which(grepl("^F", colnames(.)))) %>%
@@ -260,9 +258,10 @@ cas97 <- cas97 %>%
   dplyr::select(-F70FRND, -F30FRND)
 ```
 
-#### Section G
 
-```{r}
+
+```{r section_g, include = FALSE}
+#### Section G
 cas97 <- cas97 %>% 
   mutate(G3_answered = cas97 %>%
                         dplyr::select(which(grepl("^G3_", colnames(.)))) %>%
@@ -297,9 +296,9 @@ cas97 %>%
   summary_na()
 ```
 
-Here we check for the number of complete cases after the preprocessing step above:
 
-```{r}
+```{r check_complete_case, include = FALSE}
+#Here we check for the number of complete cases after the preprocessing step above:
 cas97 %>%
   dplyr::select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
   dplyr::select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
@@ -307,47 +306,51 @@ cas97 %>%
   dim()
 ```
 
-We only have about 7100 observations for 212 variables 
 
-```{r}
+
+```{r drinkcat_missingness, include = FALSE}
+
+#We only have about 7100 observations for 212 variables 
+#There are few missing values for the response DRINKCAT
+
 mean(is.na(cas97$DRINKCAT))
+
 ```
 
-There are few missing values for the response DRINKCAT
+```{r corr matrix, include = FALSE, eval = FALSE}
 
 #### Multicolinearity
-
-```{r}
 cas97_noc <- cas97 %>%
   dplyr::select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
   dplyr::select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
   filter(complete.cases(.)) %>%
   dplyr::select(-A6_NA)
-sort(apply(cas97_noc, 2 , sd))
-```
-
-Drop A6_NA in complete cases, because the standard deviation is 0.
-
-Let's check the correlation between the variables
-
-```{r}
+#sort(apply(cas97_noc, 2 , sd))
+#Drop A6_NA in complete cases, because the standard deviation is 0 and we also check the correlation between the variables
 plot_cormat <- function(X) {
   cormat <- round(cor(X), 2)
   melted_cormat <- reshape2::melt(cormat)
   ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile() + scale_fill_gradient2(low = "blue", mid = "white", high = "red")
+  ggsave("plots/corr_matrix.png")
 }
 
 plot_cormat(cas97_noc)
 ```
 
-```{r}
+```{r corr_matrix_output, echo = FALSE, eval = TRUE, fig.pos = "h",out.width = "300px", fig.align="center", fig.cap="\\label{fig:corr_matrix} Correlations between Survey Questions."}
+knitr::include_graphics("plots/corr_matrix.png")
+
+```
+
+
+```{r corr dist, echo = FALSE, fig.cap="Histogram of Correlations"}
 cormat <- round(cor(cas97_noc), 2)
 covvec <- cormat[upper.tri(cormat, diag = FALSE)]
 hist(covvec, breaks = 50)
-reshape2::melt(cormat) %>%
-  filter(Var1 != Var2) %>%
-  arrange(value)
+#reshape2::melt(cormat) %>%
+#  filter(Var1 != Var2) %>%
+#  arrange(value)
 
 check_cor <- function(df, desc = FALSE) {
   cormat <- round(cor(df), 2)
@@ -364,7 +367,6 @@ check_cor <- function(df, desc = FALSE) {
 } 
 ```
 
-
-## EDA Graphs
+\newpage
 
 ## Elastic Net Model
