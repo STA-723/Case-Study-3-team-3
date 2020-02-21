@@ -15,21 +15,15 @@ library(lavaan)
 ```
 
 \begin{abstract}
-<<<<<<< HEAD
-In this paper, we study the factors that influence college drinking behavior and its effects on other harmful behaviors, in particular sexual assault. We answer three main questions of interest: (i.) to understand the factors that influence college drinking behavior, (ii.) to access if current school policies and methods of spreading resources around drinking had any influence on college drinking behavior, and (third (iii.) to understand the relationship between college drinking behavior and sexual assault while accounting for other confounding factors (i.e. family drinking behaviour, etc.). Through the use of mediatian analysis and structural equation models, we are able to isolate the direct effect of other factors on sexual assault and their indirect effect mediated through college drinking behavior. We conclude that high school drinking behavior had the largest effects, both directly and indirectly, on college drinking behavior and on incidences of sexual assault on college campuses. 
-=======
+
 In this paper, we study the factors that influence college drinking behavior and its effects on other harmful behaviors, in particular sexual assault. We answer three main questions of interest: understanding student-specific factors that influence college drinking behavior, determining if current school policies and alcohol eduction have any influence on college drinking, and understanding the relationship between college drinking behavior and sexual assault while accounting for other confounding factors (i.e. family drinking behaviour). Through the use of mediation analysis and structural equation models, we are able to isolate the direct effect of other factors on sexual assault and their indirect effect through college drinking behavior. We conclude that in 1997, high school drinking behavior had the largest effects, both directly and indirectly, on college drinking behavior and on incidences of sexual assault. 
->>>>>>> 4e47734f927714cb1f790b7c8c08f7458b302cd0
+
 \end{abstract}
 
 
 ## Introduction
 
-<<<<<<< HEAD
-Drinking in college not uncommon among the student body. Some even consider college drinking to be a right of passage for every incoming freshman. It is a well known occurence on most university campuses nationwide. while policies around college campus seem to vary in terms of strictness, nearly all have more relaxed policies than bars and clubs. Instead what schools care about are the dangerous activities that drinking leads to, such as sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a very pervasive and pertinent issue on campuses everywhere. 
-=======
 Drinking in college is akin to a rite of passage; while policies around college campus seem to vary in terms of strictness, enforcement is often less stringent than at bars and clubs. Rather than focusing on drinking, many schools care more about the dangerous situations that drinking can lead to, like sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a pervasive and pertinent issue on college campuses. 
->>>>>>> 4e47734f927714cb1f790b7c8c08f7458b302cd0
 
 We are interested in studying three questions in the hopes that we can help colleges take preventative measures: (i.) which factors influence college drinking behavior (ii.) how school policies influence drinking behavior and (iii.) how those behaviors can lead to sexual assault. 
 
