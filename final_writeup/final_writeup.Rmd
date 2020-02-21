@@ -15,16 +15,25 @@ library(lavaan)
 ```
 
 \begin{abstract}
+<<<<<<< HEAD
 In this paper, we study the factors that influence college drinking behavior and its effects on other harmful behaviors, in particular sexual assault. We answer three main questions of interest: (i.) to understand the factors that influence college drinking behavior, (ii.) to access if current school policies and methods of spreading resources around drinking had any influence on college drinking behavior, and (third (iii.) to understand the relationship between college drinking behavior and sexual assault while accounting for other confounding factors (i.e. family drinking behaviour, etc.). Through the use of mediatian analysis and structural equation models, we are able to isolate the direct effect of other factors on sexual assault and their indirect effect mediated through college drinking behavior. We conclude that high school drinking behavior had the largest effects, both directly and indirectly, on college drinking behavior and on incidences of sexual assault on college campuses. 
+=======
+In this paper, we study the factors that influence college drinking behavior and its effects on other harmful behaviors, in particular sexual assault. We answer three main questions of interest: understanding student-specific factors that influence college drinking behavior, determining if current school policies and alcohol eduction have any influence on college drinking, and understanding the relationship between college drinking behavior and sexual assault while accounting for other confounding factors (i.e. family drinking behaviour). Through the use of mediation analysis and structural equation models, we are able to isolate the direct effect of other factors on sexual assault and their indirect effect through college drinking behavior. We conclude that in 1997, high school drinking behavior had the largest effects, both directly and indirectly, on college drinking behavior and on incidences of sexual assault. 
+>>>>>>> 4e47734f927714cb1f790b7c8c08f7458b302cd0
 \end{abstract}
 
 
 ## Introduction
 
+<<<<<<< HEAD
 Drinking in college not uncommon among the student body. Some even consider college drinking to be a right of passage for every incoming freshman. It is a well known occurence on most university campuses nationwide. while policies around college campus seem to vary in terms of strictness, nearly all have more relaxed policies than bars and clubs. Instead what schools care about are the dangerous activities that drinking leads to, such as sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a very pervasive and pertinent issue on campuses everywhere. 
+=======
+Drinking in college is akin to a rite of passage; while policies around college campus seem to vary in terms of strictness, enforcement is often less stringent than at bars and clubs. Rather than focusing on drinking, many schools care more about the dangerous situations that drinking can lead to, like sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a pervasive and pertinent issue on college campuses. 
+>>>>>>> 4e47734f927714cb1f790b7c8c08f7458b302cd0
 
-We are interested in studying three questions: (i.) the factors that influence college drinking behavior (ii.) how certain school policies influence drinking behavior (iii.) and then how those behaviors lead to other more harmful behaviors in the hopes that we can help colleges try to prevent some of these more serious issues. 
+We are interested in studying three questions in the hopes that we can help colleges take preventative measures: (i.) which factors influence college drinking behavior (ii.) how school policies influence drinking behavior and (iii.) how those behaviors can lead to sexual assault. 
 
+Our data comes from the 1997 v, a survey of students from more than 100 colleges across the US which asked 
 
 
 ## Data Cleaning
@@ -33,9 +42,9 @@ Due to the structure of the survey (students skip certain questions based on the
 
 ## Exploratory Data Analysis
 
-We look at drinking patterns casually by visualizing some survey question responses from Section C, which is about drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken. The reasons students cited as most important for drinking were getting drunk and as a reward. This suggests that drinking location and social groups may be important predictors of drinking behavior.
+We look at drinking patterns casually by visualizing some survey question responses from Section C, which is about drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken (Fig. \ref{fig:num-drinks-eda}). The reasons students cited as most important for drinking were getting drunk and as a reward (Fig \ref{fig:reasons-eda}). This suggests that drinking location and social groups may be important predictors of drinking behavior.
 
-For our dependent variable measuring drinking behavior, we choose to use `drinkcat`, a variable created by researchers which classifies drinking behavior into four ordinal risk categories. The sexual assault index variable draws from three questions in the survey: D5_H (unwanted sexual advance), D5_I (date rape/sexual assault), E15 (intoxicated, unable to consent).
+For our dependent variable measuring drinking behavior, we choose to use `drinkcat`, a variable created by researchers which classifies drinking behavior into four ordinal risk categories. The sexual assault index variable draws from three questions in the survey: D5_H (unwanted sexual advance, intoxicated perpetrator), D5_I (date rape/sexual assault, intoxicated perpetrator), E15 (intoxicated, unable to consent).
 
 ## Methods
 
@@ -43,21 +52,21 @@ We use Structural Equation Modeling (SEM) for modeling relationships between inf
 
 We create the following latent factors from existing survey question variables (Fig. \ref{fig:latent-vars}). Since these factors must be correlated, interpretable, and continuous (due to our use of the `lavaan` package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14-17) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy (B1, B2, B9), College Alcohol Education (B7, B8), and City Alcohol Policy (B11-13). The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing (F1, F4), Personal Wellbeing (F6), Support for Stricter Policies (D3), Opinions on # Appropriate Drinks (D1), Time Spent on Activities (F5), and General Interests for College Experience (split into activities involving and not involving partying/Greek life, A10). All of the latent factors which draw from one survey question actually consist of several sub-categories within each question (i.e. D3 consists of student rankings of agreement with various school policies).
 
-In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school, college drinking behavior, and participations in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior.
+In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school drinking, `drinkcat`, and participation in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior.
 
 ## Results
 
 ### Drinking Behavior
 
-Table \ref{fig:tab-coefs} shows the estimates and 95\% confidence intervals for the coefficents of latent variables in the drinking behavior model. We accept the model as its RMSEA 95\% CI of [0.053, 0.054] is around the conventional threshold of 0.05 for a good fit (CITE). Since the survey answers generally did not have physical units, we standardized the variables to compare the size of the estimated coefficients. The dependent variable, i.e. the rating of levels of drinking, also does not have physical units. Thus, we will interpret these coefficents in terms of the relative magnitude and direction of their association with heavier drinking. High school drinking history is most correlated with more drinking in college. The latent factor Parties summarizing the importance of fraternity/sorority, parties and athletics to students (A10), with a lower value corresponding to more importance, has the second largest association. In other words, students who participate more in the mentioned activities tend to drink more. The variable Communities measures the importance of other activities such as volunteering, religion, arts, activism and academic (A10), has the third largest association. Students who care less about these activities tend to drink more. Fourthly, students who perceive a larger number of drink appropriate tend to drink more. Other latent variables with significant but smaller associations with heavier drinking in college include Personal Wellbeing, Family Education/Drinking and Support for More Lenient Policy. Specifically, students who are generally more happy, whose families approve of drinking, or who support more lenient drinking policies on campus tend to drink more. There is not enough evidence to establish a relationship between stricter college drinking policy and drinking behaviors. We find a small association between more exposure to alcohol/drinking education and heavier drinkers. We hypothesize that students who already have drinking problems or schools with more prevalent drinking culture might consequently have more educational programs on the issue.
+Table \ref{fig:tab-coefs} shows the estimates and 95\% confidence intervals for the coefficents of latent variables in the drinking behavior model. We accept the model as its RMSEA 95\% CI of [0.053, 0.054] is around the conventional threshold of 0.05 for a good fit (CITE). Since the survey answers generally did not have physical units, we standardized the variables to compare the size of the estimated coefficients. The dependent variable, i.e. the rating of levels of drinking, also does not have physical units. Thus, we will interpret these coefficents in terms of the relative magnitude and direction of their association with heavier drinking. High school drinking history is most correlated with more drinking in college. The latent factor Parties summarizing the importance of fraternity/sorority, parties and athletics to students, with a lower value corresponding to more importance, has the second largest association. In other words, students who participate more in the mentioned activities tend to drink more. The latent factor Communities measures the importance of other activities such as volunteering, religion, arts, activism and academic, has the third largest association. Students who care less about these activities tend to drink more. Fourthly, students who perceive a larger number of drink appropriate tend to drink more. Other latent variables with significant but smaller associations with heavier drinking in college include Personal Wellbeing, Family Education/Drinking and Support for More Lenient Policy. Specifically, students who are generally more happy, whose families approve of drinking, or who support more lenient drinking policies on campus tend to drink more. There is not enough evidence to establish a relationship between stricter college drinking policy and drinking behaviors. We find a small association between more exposure to alcohol/drinking education and heavier drinkers. We hypothesize that students who already have drinking problems or schools with more prevalent drinking culture might consequently have more educational programs on the issue.
 
 ### Risk of Sexual Assault
 
-  
+We accept the mediation models for when the victim was drinking and when the assaulter was drinking which have RMSEA 95\% CI's of [0.029, 0.035] and [0.029, 0.034] respectively. More acceptance of alcohol use from family, drinking history in high school, more participation in parties/Greek life/athletics and heavier drinking are all significantly associated with higher risk of sexual assault in both models (Table ####). Table CITE ### shows that the indirect effects of family, high school drinking history and parties mediated through a student's drinking behavior are statistically signficant at 5\% level. Interestingly, the indirect effects are larger when the victim was drinking compared to when the assaulter was drinking at the time of the incident.
 
 ## Sensitivity Analysis
 
-We can compare our SEM model for college drinking severity to an elastic net model created using the $\texttt{glmnet}$ package. Both of these models carry out dimension reduction, so it is interesting and reassuring to note that the results of both seem to corraborate one another. From the elastic net model, the most important predictors for heavy drinkers are A10_F(parties, -), B6_D (times they were part of drinking group which was asked to be quieter/less disruptive, +), D1_B (opinion on appropriate amount for off-campus bar drinking, +), D9_B (percentage of friends who are binge drinkers, +), and G11 (HS number of binges, +). This supports the results of our latent factor model, which finds strong correlations of college drinking with drinking attitudes, emphasis on partying, and high school drinking. 
+We can compare our SEM model for college drinking severity to an elastic net model created using the $\texttt{glmnet}$ package. Both of these models carry out dimension reduction using different methods, so it is interesting and reassuring to note that the results of both seem to corraborate one another. From the elastic net model, the most important predictors for heavy drinkers are A10_F(parties, -), B6_D (times they were part of drinking group which was asked to be quieter/less disruptive, +), D1_B (opinion on appropriate amount for off-campus bar drinking, +), D9_B (percentage of friends who are binge drinkers, +), and G11 (HS number of binges, +). This supports the results of our latent factor model, which finds strong correlations of college drinking with drinking attitudes, emphasis on partying, and high school drinking. 
 
 
 
@@ -68,8 +77,14 @@ We can compare our SEM model for college drinking severity to an elastic net mod
 
 [2] http://lavaan.ugent.be/index.html
 
+<<<<<<< HEAD
 [3] An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterdam/Utrecht University
  
+=======
+http://archive.sph.harvard.edu/cas/What-We-Learned-08.pdf
+
+An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterdam/Utrecht University
+>>>>>>> 4e47734f927714cb1f790b7c8c08f7458b302cd0
 
 
 ## Appendix
