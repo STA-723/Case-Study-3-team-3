@@ -3,8 +3,10 @@ title: "Final Writeup"
 author: "Phuc Nguyen, Ezinne Nwankwo, Frances Hung"
 date: "2/19/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
+bibliography: bibliography.bib
+link-citations: true
 ---
 
 ```{r setup, include=FALSE}
@@ -23,20 +25,22 @@ In this paper, we study the factors that influence college drinking behavior and
 
 ## Introduction
 
+Drinking in college is akin to a rite of passage; while policies around college campus seem to vary in terms of strictness, enforcement is often less stringent than at bars and clubs. Rather than focusing on drinking, many schools care more about the dangerous situations that drinking can lead to, like sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a pervasive and pertinent issue on college campuses. 
 
-Drinking in college is akin to a rite of passage; while policies around college campus seem to vary in terms of strictness, enforcement is often less stringent than at bars and clubs. Rather than focusing on drinking, many schools care more about the dangerous situations that drinking can lead to, like sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a pervasive and pertinent issue on college campuses. To ground our study, we offer up Duke University as an example of this issue. In a 2018 Student Experience Survey, it was reported that 48 percent of females had been victims of sexual assault while enrolled. We hope to offer guidance to universities on how to address this issue as it relates alcohol use. 
+We are interested in studying three questions in the hopes that we can help colleges take preventative measures: (i.) which factors influence college drinking behavior (ii.) how school policies influence drinking behavior and (iii.) how those behaviors can lead to sexual assault. 
 
-We are interested in studying three questions in the hopes that we can help colleges take preventative measures: (i.) which factors influence college drinking behavior (ii.) how school policies influence drinking behavior and (iii.) how those behaviors can lead to sexual assault. Our data comes from the 1997 Harvard School of Public Health College Alcohol Survey (CAS) survey, which was a multi-round survey that interviewed students from over 100 colleges across the US. The survey collected information on various aspects of students' daily activities, living arrangements, social life, sexual activity, satisfaction with education, attitude on campus alcohol policies, their high school drinking behavior and college drinking patterns. Demographic variables such as age, race, sex, parent education level, and parent drinking habits were also collected. 
+Our data comes from the 1997 v, a survey of students from more than 100 colleges across the US which sought to collect information on drinking habits, school policy, and personal activities/beliefs [@blei2003latent]
+
 
 ## Data Cleaning
 
-The survey had a very complex design that induced a lot of missingness in the data. For example, there were many instances where students skip certain questions based on their answers to previous questions. As a result, there is a lot of missing values for certain questions.We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicator variables for whether a person answered NA or not for each variable in question. Afterwards, we drop any remaining missing values as we deemed these to be truly missing as opposed to design induced missingness.
+Due to the structure of the survey (students skip certain questions based on their answers), there are a lot of missing values induced in the data for certain variables. We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicator variables for whether a person answered NA or not for each variable in question. We additionally drop true missing values.
 
 ## Exploratory Data Analysis
 
-We look at drinking patternsby visualizing a subset of survey question responses from Section C, which asks about a students drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken (Fig. \ref{fig:num-drinks-eda}). The reasons students cited as most important for drinking were getting drunk and as a reward (Fig \ref{fig:reasons-eda}). This suggests that drinking location and social groups may be important predictors of drinking behavior.
+We look at drinking patterns casually by visualizing some survey question responses from Section C, which is about drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken (Fig. \ref{fig:num-drinks-eda}). The reasons students cited as most important for drinking were getting drunk and as a reward (Fig \ref{fig:reasons-eda}). This suggests that drinking location and social groups may be important predictors of drinking behavior.
 
-For our dependent variable measuring drinking behavior, we choose to use `drinkcat`, a variable created by researchers which classifies drinking behavior into four ordinal risk categories. The sexual assault index variable draws from three questions in the survey that are related to occurences of sexual assault where alcohol is involved: D5_H (unwanted sexual advance, intoxicated perpetrator), D5_I (date rape/sexual assault, intoxicated perpetrator), E15 (intoxicated, unable to consent). If any one of these questions is marked as occuring at least once by the respondent, then the sexual assault variable is equal to one and zero otherwise.
+For our dependent variable measuring drinking behavior, we choose to use `drinkcat`, a variable created by researchers which classifies drinking behavior into four ordinal risk categories. The sexual assault index variable draws from three questions in the survey: D5_H (unwanted sexual advance, intoxicated perpetrator), D5_I (date rape/sexual assault, intoxicated perpetrator), E15 (intoxicated, unable to consent).
 
 ## Methods
 
@@ -60,18 +64,6 @@ We accept the mediation models for when the victim was drinking and when the ass
 
 We can compare our SEM model for college drinking severity to an elastic net model created using the $\texttt{glmnet}$ package. Both of these models carry out dimension reduction using different methods, so it is interesting and reassuring to note that the results of both seem to corraborate one another. From the elastic net model, the most important predictors for heavy drinkers are A10_F(parties, -), B6_D (times they were part of drinking group which was asked to be quieter/less disruptive, +), D1_B (opinion on appropriate amount for off-campus bar drinking, +), D9_B (percentage of friends who are binge drinkers, +), and G11 (HS number of binges, +). This supports the results of our latent factor model, which finds strong correlations of college drinking with drinking attitudes, emphasis on partying, and high school drinking. 
 
-## Discussion and Future Work 
-Influential Factors: 
-  * High school drinking habits are positively associated with an increase college drinking behavior
-  * Worse academic well-being is associated with an increase in college drinking, while better personal wellbeing is associated with a decrease in college drinking
-Policies: 
-  * No evidence of a relationship between strictness of college or city drinking policy and drinking behaviors
-  * Less education material on drinking is associated with less drinking 
-Sexual Assault: 
-  * High school drinking habits alone and through mediator contributes the most to incidences of sexual assault
-We assume linearity and normality in our models, so in the future we want to extend to non-parametric models with SEM 
-
-
 
 
 
@@ -86,6 +78,8 @@ We assume linearity and normality in our models, so in the future we want to ext
 [4] http://archive.sph.harvard.edu/cas/What-We-Learned-08.pdf
 
 
+
+
 ## Appendix
 
 ### Figures 
@@ -93,7 +87,7 @@ We assume linearity and normality in our models, so in the future we want to ext
 knitr::include_graphics("plots/num_drink_plot.png")
 ```
 
-```{r reasons-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}The figure shows survey."}
+```{r reasons-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}The figure shows the reasons why students say they drink, faceted by importance (very important=1)."}
 knitr::include_graphics("plots/reasons_plot.png")
 ```
 
@@ -384,3 +378,34 @@ check_cor <- function(df, desc = FALSE) {
 \newpage
 
 ## Elastic Net Model
+
+```{r}
+cas97_glm<-cas97 %>% dplyr::select(grep("^B8_B$|^B8_C$|^B12_A$|^B7_A$|^B7_B$|^B7_C$|^B7_D$|^B7_E$|^B7_F$|^B8_D$|^B12_B$|^B9_C$|^B9_G$|^B1$|^B6_A$|^B6_B$|^B9_A$|^B9_D$|^B9_E$|^B9_F$|^B13_A$|^B13_B$|^B9_B$|^B11$|^B6_E$|^B6_C$|^B13_E$|^B2$|^B3$|^B13_C$|^B13_D$|^B6_D$|^F5_A|^F5_B|^F5_C|^F5_D|^F5_E|^F5_F|^F5_G|^F5_H|^F6_A|^F6_B|^F6_C|^F6_D|^F6_E|^F6_E|^F6_F|^F6_G|^F6_H|^F6_I|^F1|^F4|^F2|^F3|^G2|^G3|^G4|^G9|^G10|^G11|^G15|^G14|^G16|^G17|^G13|^A8|^D2|^D8|^D9|^D3|^D1|^A9|^A10|^DRINKCAT",colnames(.))) %>%
+  mutate_all(function(x) scale(as.numeric(x))) %>%
+  # mutate(G15 = scale(G15),
+  #        G16 = scale(G16),
+  #        G17 = scale(G17),
+  #        G10 = scale(G10),
+  #        G14 = scale(G14),
+  #        G11 = scale(G11),
+  #        G9 = scale(G9),
+  #        G3_45 = I(G3_4 + G3_5 > 0)) %>%
+  mutate(DRINKCAT=case_when(DRINKCAT<=1 ~ "light",
+                            DRINKCAT<=3 ~ "heavy")) %>%
+  mutate(DRINKCAT=as.factor(DRINKCAT)) %>%
+  drop_na()
+
+naive_lasso<-cv.glmnet(x=cas97_glm %>%
+                         dplyr::select(-DRINKCAT) %>% 
+                         mutate_each(as.numeric) %>% 
+                         as.matrix(), 
+                      y=cas97_glm %>% 
+                        dplyr::select(DRINKCAT) %>% 
+                        mutate_each(as.factor) %>% 
+                        as.matrix(),
+                      family="multinomial")
+
+coef(naive_lasso)
+
+#the most important predictors for heavy drinkers: A10_F(parties, neg), B6_D (drinking group which was asked to be quieter/less disruptive, positive), D1_B (opinion on appropriate amount for off-campus bar drinking, pos), D9_B (percentage of friends who are binge drinkers, pos), G11 (HS number of binges, pos)
+```
