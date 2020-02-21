@@ -961,7 +961,7 @@ ggsave("final_presentation_files/plots/mediation_self_2.png")
 ```
 
 ```{r}
-fitMeasures(fit_med_others, c("rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "aic"))
+fitMeasures(fit_med_them, c("rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "aic"))
 ```
 
 ## Sensitivity Analysis
