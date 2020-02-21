@@ -23,15 +23,8 @@ In this paper, we study the factors that influence college drinking behavior and
 
 ## Introduction
 
-<<<<<<< HEAD
+
 Drinking in college is akin to a rite of passage; while policies around college campus seem to vary in terms of strictness, enforcement is often less stringent than at bars and clubs. Rather than focusing on drinking, many schools care more about the dangerous situations that drinking can lead to, like sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a pervasive and pertinent issue on college campuses. To ground our study, we offer up Duke University as an example of this issue. In a 2018 Student Experience Survey, it was reported that 48 percent of females had been victims of sexual assault while enrolled. We hope to offer guidance to universities on how to address this issue as it relates alcohol use. 
-=======
-Drinking in college is akin to a rite of passage; while policies around college campus seem to vary in terms of strictness, enforcement is often less stringent than at bars and clubs. Rather than focusing on drinking, many schools care more about the dangerous situations that drinking can lead to, like sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a pervasive and pertinent issue on college campuses. 
-
-We are interested in studying three questions in the hopes that we can help colleges take preventative measures: (i.) which factors influence college drinking behavior (ii.) how school policies influence drinking behavior and (iii.) how those behaviors can lead to sexual assault. 
-
-Our data comes from the 1997 v, a survey of students from more than 100 colleges across the US which asked 
->>>>>>> 272c9919fcdef18118c4f374d77ae14c80a7c12c
 
 We are interested in studying three questions in the hopes that we can help colleges take preventative measures: (i.) which factors influence college drinking behavior (ii.) how school policies influence drinking behavior and (iii.) how those behaviors can lead to sexual assault. Our data comes from the 1997 Harvard School of Public Health College Alcohol Survey (CAS) survey, which was a multi-round survey that interviewed students from over 100 colleges across the US. The survey collected information on various aspects of students' daily activities, living arrangements, social life, sexual activity, satisfaction with education, attitude on campus alcohol policies, their high school drinking behavior and college drinking patterns. Demographic variables such as age, race, sex, parent education level, and parent drinking habits were also collected. 
 
@@ -71,12 +64,12 @@ We can compare our SEM model for college drinking severity to an elastic net mod
 Influential Factors: 
   * High school drinking habits are positively associated with an increase college drinking behavior
   * Worse academic well-being is associated with an increase in college drinking, while better personal wellbeing is associated with a decrease in college drinking
-- Policies: 
+Policies: 
   * No evidence of a relationship between strictness of college or city drinking policy and drinking behaviors
   * Less education material on drinking is associated with less drinking 
-- Sexual Assault: 
+Sexual Assault: 
   * High school drinking habits alone and through mediator contributes the most to incidences of sexual assault
-- We assume linearity and normality in our models, so in the future we want to extend to non-parametric models with SEM 
+We assume linearity and normality in our models, so in the future we want to extend to non-parametric models with SEM 
 
 
 
