@@ -3,39 +3,42 @@ title: "Final Writeup"
 author: "Phuc Nguyen, Ezinne Nwankwo, Frances Hung"
 date: "2/19/2020"
 output:
-  #bookdown::pdf_document2
   pdf_document: default
-  #html_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,eval=FALSE)
 suppressMessages(library(kableExtra))
 suppressMessages(library("tidyverse"))
+library(tidyverse)
+library(glmnet)
+library(lavaan)
 ```
 
 \begin{abstract}
-In this paper, we study the factors that influence college drinking behavior and its effects on other harmful behaviors, in particular sexual assault. We answer three main questions of interest: first to understand the factors that influence college drinking behavior, second to access if current school policies and methods of spreading resources around drinking had any influence on college drinking behavior, and third to understand the relationship between college drinking behavior and sexual assault while accounting for other confounding factors (i.e. family drinking behaviour, etc.). Through the use of mediatian analysis and structural equation models, we are able to isolate the direct effect of other factors on sexual assault and their indirect effect through college drinking behavior. We conclude that high school drinking behavior had the largest effects, both directly indirectly, on college drinking behavior and on incidences of sexual assault. 
+
+In this paper, we study the factors that influence college drinking behavior and its effects on other harmful behaviors, in particular sexual assault. We answer three main questions of interest: understanding student-specific factors that influence college drinking behavior, determining if current school policies and alcohol eduction have any influence on college drinking, and understanding the relationship between college drinking behavior and sexual assault while accounting for other confounding factors (i.e. family drinking behaviour). Through the use of mediation analysis and structural equation models, we are able to isolate the direct effect of other factors on sexual assault and their indirect effect through college drinking behavior. We conclude that in 1997, high school drinking behavior had the largest effects, both directly and indirectly, on college drinking behavior and on incidences of sexual assault. 
+
 \end{abstract}
 
 
 ## Introduction
 
-Drinking in college is almost like a rite of passage; while policies around college campus seem to vary in terms of strictness, nearly all have more relaxed policies than bars and clubs. Instead what schools care about are the dangerous activities that drinking leads to, such as sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a very pervasive and pertinent issue on campuses everywhere. 
 
-We are interested in studying three questions: (i.) the factors that influence college drinking behavior (ii.) how certain school policies influence drinking behavior (iii.) and then how those behaviors lead to other more harmful behaviors in the hopes that we can help colleges try to prevent some of these more serious issues. 
+Drinking in college is akin to a rite of passage; while policies around college campus seem to vary in terms of strictness, enforcement is often less stringent than at bars and clubs. Rather than focusing on drinking, many schools care more about the dangerous situations that drinking can lead to, like sexual assault and drunk driving. For this study, we focus on understanding sexual assault, as it is a pervasive and pertinent issue on college campuses. To ground our study, we offer up Duke University as an example of this issue. In a 2018 Student Experience Survey, it was reported that 48 percent of females had been victims of sexual assault while enrolled. We hope to offer guidance to universities on how to address this issue as it relates alcohol use. 
 
-
+We are interested in studying three questions in the hopes that we can help colleges take preventative measures: (i.) which factors influence college drinking behavior (ii.) how school policies influence drinking behavior and (iii.) how those behaviors can lead to sexual assault. Our data comes from the 1997 Harvard School of Public Health College Alcohol Survey (CAS) survey, which was a multi-round survey that interviewed students from over 100 colleges across the US. The survey collected information on various aspects of students' daily activities, living arrangements, social life, sexual activity, satisfaction with education, attitude on campus alcohol policies, their high school drinking behavior and college drinking patterns. Demographic variables such as age, race, sex, parent education level, and parent drinking habits were also collected. 
 
 ## Data Cleaning
 
-Due to the structure of the survey (students skip certain questions based on their answers), there are a lot of missing values induced in the data for certain variables. We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicator variables for whether a person answered NA or not for each variable in question. We additionally drop true missing values.
+The survey had a very complex design that induced a lot of missingness in the data. For example, there were many instances where students skip certain questions based on their answers to previous questions. As a result, there is a lot of missing values for certain questions.We impute zero values for NAs if the variables are ordinal and if NAs are naturally lowest in the ordinal structure. Otherwise, we create indicator variables for whether a person answered NA or not for each variable in question. Afterwards, we drop any remaining missing values as we deemed these to be truly missing as opposed to design induced missingness.
 
 ## Exploratory Data Analysis
 
-We look at drinking patterns casually by visualizing some survey question responses from Section C, which is about drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken. The reasons students cited as most important for drinking were getting drunk and as a reward. This suggests that drinking location and social groups may be important predictors of drinking behavior.
+We look at drinking patternsby visualizing a subset of survey question responses from Section C, which asks about a students drinking patterns in college. By looking at histograms, we can see that drinking at off-campus parties and bars results in the highest number of drinks taken (Fig. \ref{fig:num-drinks-eda}). The reasons students cited as most important for drinking were getting drunk and as a reward (Fig \ref{fig:reasons-eda}). This suggests that drinking location and social groups may be important predictors of drinking behavior.
 
-For our dependent variable measuring drinking behavior, we choose to use `drinkcat`, a variable created by researchers which classifies drinking behavior into four ordinal risk categories. The sexual assault index variable draws from three questions in the survey: D5_H (unwanted sexual advance), D5_I (date rape/sexual assault), E15 (intoxicated, unable to consent).
+For our dependent variable measuring drinking behavior, we choose to use `drinkcat`, a variable created by researchers which classifies drinking behavior into four ordinal risk categories. The sexual assault index variable draws from three questions in the survey that are related to occurences of sexual assault where alcohol is involved: D5_H (unwanted sexual advance, intoxicated perpetrator), D5_I (date rape/sexual assault, intoxicated perpetrator), E15 (intoxicated, unable to consent). If any one of these questions is marked as occuring at least once by the respondent, then the sexual assault variable is equal to one and zero otherwise.
 
 ## Methods
 
@@ -43,13 +46,13 @@ We use Structural Equation Modeling (SEM) for modeling relationships between inf
 
 We create the following latent factors from existing survey question variables (Fig. \ref{fig:latent-vars}). Since these factors must be correlated, interpretable, and continuous (due to our use of the `lavaan` package), we ensure that the survey question variables included in each factor are uniformly ordinal in an interpretable way. Our two factors related to students' pre-college lives are Family Education/Drinking (G14-17) and High School Drinking Behavior (G9-11). The external-policy related factors are College Alcohol Policy (B1, B2, B9), College Alcohol Education (B7, B8), and City Alcohol Policy (B11-13). The rest of the latent factors have to do with students' college experiences and opinions: Academic Wellbeing (F1, F4), Personal Wellbeing (F6), Support for Stricter Policies (D3), Opinions on # Appropriate Drinks (D1), Time Spent on Activities (F5), and General Interests for College Experience (split into activities involving and not involving partying/Greek life, A10). All of the latent factors which draw from one survey question actually consist of several sub-categories within each question (i.e. D3 consists of student rankings of agreement with various school policies).
 
-In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school, college drinking behavior, and participations in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior.
+In order to understand the relationships between drinking behaviors and sexual assault, we fit another latent factor model with mediation on the indicator of being a victim of sexual assault given family education/drinking background, high school drinking, `drinkcat`, and participation in parties. Mediation analysis allows us to estimate how much of the association between a risk factor, such as participation in parties, and the risk of sexual assault is mediated by the victim's drinking behavior.
 
 ## Results
 
 ### Drinking Behavior
 
-Table \ref{tab:full-coefs} shows the estimates and 95\% confidence intervals for the coefficents of latent variables in the drinking behavior model. We accept the model as its RMSEA 95\% CI of [0.053, 0.054] is around the conventional threshold of 0.05 for a good fit (CITE). Since the survey answers generally did not have physical units, we standardized the variables to compare the size of the estimated coefficients. The dependent variable, i.e. the rating of levels of drinking, also does not have physical units. Thus, we will interpret these coefficents in terms of the relative magnitude and direction of their association with heavier drinking. High school drinking history is most correlated with more drinking in college. The latent factor Parties summarizing the importance of fraternity/sorority, parties and athletics to students, with a lower value corresponding to more importance, has the second largest association. In other words, students who participate more in the mentioned activities tend to drink more. The variable Communities measures the importance of other activities such as volunteering, religion, arts, activism and academic, has the third largest association. Students who care less about these activities tend to drink more. Fourthly, students who perceive a larger number of drink appropriate tend to drink more. The loadings of these four variables are shown in Table \ref{tab:load-coefs}. Other latent variabmles with significant but smaller associations with heavier drinking in college include Personal Wellbeing, Family Education/Drinking and Support for More Lenient Policy. Specifically, students who are generally more happy, whose families approve of drinking, or who support more lenient drinking policies on campus tend to drink more. There is not enough evidence to establish a relationship between stricter college drinking policy and drinking behaviors. We find a small association between more exposure to alcohol/drinking education and heavier drinkers. We hypothesize that students who already have drinking problems or schools with more prevalent drinking culture might consequently have more educational programs on the issue.
+Table \ref{fig:tab-coefs} shows the estimates and 95\% confidence intervals for the coefficents of latent variables in the drinking behavior model. We accept the model as its RMSEA 95\% CI of [0.053, 0.054] is around the conventional threshold of 0.05 for a good fit (CITE). Since the survey answers generally did not have physical units, we standardized the variables to compare the size of the estimated coefficients. The dependent variable, i.e. the rating of levels of drinking, also does not have physical units. Thus, we will interpret these coefficents in terms of the relative magnitude and direction of their association with heavier drinking. High school drinking history is most correlated with more drinking in college. The latent factor Parties summarizing the importance of fraternity/sorority, parties and athletics to students, with a lower value corresponding to more importance, has the second largest association. In other words, students who participate more in the mentioned activities tend to drink more. The latent factor Communities measures the importance of other activities such as volunteering, religion, arts, activism and academic, has the third largest association. Students who care less about these activities tend to drink more. Fourthly, students who perceive a larger number of drink appropriate tend to drink more. The loadings of these four variables are shown in Table \ref{tab:load-coefs}. Other latent variables with significant but smaller associations with heavier drinking in college include Personal Wellbeing, Family Education/Drinking and Support for More Lenient Policy. Specifically, students who are generally more happy, whose families approve of drinking, or who support more lenient drinking policies on campus tend to drink more. There is not enough evidence to establish a relationship between stricter college drinking policy and drinking behaviors. We find a small association between more exposure to alcohol/drinking education and heavier drinkers. We hypothesize that students who already have drinking problems or schools with more prevalent drinking culture might consequently have more educational programs on the issue.
 
 ### Risk of Sexual Assault
 
@@ -57,23 +60,46 @@ We accept the mediation models for when the victim was drinking and when the ass
 
 ## Sensitivity Analysis
 
-We can compare our SEM model for college drinking severity to an elastic net model created using the $\texttt{glmnet}$ package. Both of these models carry out dimension reduction, so it is interesting and reassuring to note that the results of both seem to corraborate one another. From the elastic net model, the most important predictors for heavy drinkers are A10_F(parties, -), B6_D (times they were part of drinking group which was asked to be quieter/less disruptive, +), D1_B (opinion on appropriate amount for off-campus bar drinking, +), D9_B (percentage of friends who are binge drinkers, +), and G11 (HS number of binges, +). This supports the results of our latent factor model, which finds strong correlations of college drinking with drinking attitudes, emphasis on partying, and high school drinking. 
+We can compare our SEM model for college drinking severity to an elastic net model created using the $\texttt{glmnet}$ package. Both of these models carry out dimension reduction using different methods, so it is interesting and reassuring to note that the results of both seem to corraborate one another. From the elastic net model, the most important predictors for heavy drinkers are A10_F(parties, -), B6_D (times they were part of drinking group which was asked to be quieter/less disruptive, +), D1_B (opinion on appropriate amount for off-campus bar drinking, +), D9_B (percentage of friends who are binge drinkers, +), and G11 (HS number of binges, +). This supports the results of our latent factor model, which finds strong correlations of college drinking with drinking attitudes, emphasis on partying, and high school drinking. 
+
+## Discussion and Future Work 
+Influential Factors: 
+  * High school drinking habits are positively associated with an increase college drinking behavior
+  * Worse academic well-being is associated with an increase in college drinking, while better personal wellbeing is associated with a decrease in college drinking
+Policies: 
+  * No evidence of a relationship between strictness of college or city drinking policy and drinking behaviors
+  * Less education material on drinking is associated with less drinking 
+Sexual Assault: 
+  * High school drinking habits alone and through mediator contributes the most to incidences of sexual assault
+We assume linearity and normality in our models, so in the future we want to extend to non-parametric models with SEM 
+
+
+
+
 
 ## References
 
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2819368/ 
+[1] https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2819368/ 
 
-http://lavaan.ugent.be/index.html
+[2] http://lavaan.ugent.be/index.html
 
-An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterdam/Utrecht University
+[3] An Introduction to Structural Equation Modeling. J.J. Hox. University of Amsterdam/Utrecht University
+ 
+[4] http://archive.sph.harvard.edu/cas/What-We-Learned-08.pdf
 
-## Figures
 
+## Appendix
+
+### Figures 
 ```{r num-drinks-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:num-drinks-eda}The figure shows the number of students attending certain events, faceted by number of drinks had at an event."}
-#knitr::include_graphics("plots/num_drink_plot.png")
+knitr::include_graphics("plots/num_drink_plot.png")
 ```
 
-```{r, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
+```{r reasons-eda, echo=FALSE, eval=TRUE,out.width = "500px", fig.align="center", fig.cap="\\label{fig:latent-vars}The figure shows survey."}
+knitr::include_graphics("plots/reasons_plot.png")
+```
+
+```{r latent-vars, echo=FALSE, eval=TRUE,out.width = "300px", fig.align="center",fig.pos="h", fig.cap="\\label{fig:latent-vars}Figure shows latent factors (ovals) in the SEM for drinking behaviors. Squares show summary of actual questions in the survey."}
 knitr::include_graphics("plots/latent_vars.png")
 ```
 
@@ -157,16 +183,13 @@ knitr::kable(medvictim_coef %>%
              caption = "\\label{tab:indir-coefs}Coefficient estimates of three models: SEXASSAULT ~ communities + family_drink + highschool_drink, DRINKCAT ~ communities + family_drink + highschool_drink, SEXASSAULT ~ DRINKCAT. The response is indicator of sexual assault when the victim was drinking.")
 ```
 
-
 ## Appendix
 
 ## Data Cleaning
 
+```{r load_data, include = FALSE, cache=TRUE}
 ### Reading In Data
-
-Split file by number of columns for each variable in Record_layout.txt file. Spaces are missing values.
-
-```{r load_data, cache=TRUE}
+### Split file by number of columns for each variable in Record_layout.txt file. Spaces are missing values.
 read_cas <- function(folder, file, recordfile) {
   skip <- grep("--------", readLines(unz(folder, recordfile)))
   record_layout <- read.table(unz(folder, recordfile), 
@@ -184,7 +207,7 @@ cas97 <- read_cas(folder = "Harvard_CAS_1997.zip",
 ```
 
 
-```{r}
+```{r summary_na_function, include = FALSE}
 summary_na<-function(df) {
   na_count <- colSums(apply(df, 2, is.na))
   data.frame(name = colnames(df), na_pct = na_count/nrow(df)) %>% arrange(desc(na_pct))
@@ -192,12 +215,11 @@ summary_na<-function(df) {
 ```
 
 
-The survey asks students to skip some questions on purpose. We manually go through the survey to impute these values and drop remaining missing entries.
 
+```{r section_a, include = FALSE}
 #### Section A
-
-```{r}
 # See which vars have lots of NA's
+# The survey asks students to skip some questions on purpose. We manually go through the survey to impute these values and drop remaining missing entries.
 cas97 %>% 
   dplyr::select(which(grepl("^A", colnames(.)))) %>%
   summary_na()
@@ -230,13 +252,14 @@ cas97 %>%
 ```
 
 
+
+
+```{r section_b, include = FALSE}
 #### Section B
 
-No skipped questions
+#No skipped questions
 
-For B10, an indicator is an option, fill in zero for than NA
-
-```{r}
+#For B10, an indicator is an option, fill in zero for than NA
 # Which columns in this section have lots of NA?
 cas97 %>% 
   dplyr::select(which(grepl("^B", colnames(.)))) %>%
@@ -264,15 +287,9 @@ cas97 %>%
   nrow()
 ```
 
-#### Section C
 
-```{r}
-
-```
-
+```{r section_d, include = FALSE}
 #### Section D
-
-```{r}
 # Which columns in this section have lots of NA?
 cas97 %>% 
   dplyr::select(which(grepl("^D\\d", colnames(.)))) %>%
@@ -290,11 +307,12 @@ cas97 %>%
 
 
 
+
+
+```{r section_e, include = FALSE}
 #### Section E
 
-Possible groups to consider: Female vs Male, Younger vs Older than 21 years old
-
-```{r}
+#Possible groups to consider: Female vs Male, Younger vs Older than 21 years old
 # Which columns in this section have lots of NA?
 cas97 %>% 
   dplyr::select(which(grepl("^E\\d", colnames(.)))) %>%
@@ -325,11 +343,10 @@ cas97 <- cas97 %>%
 
 ```
 
+
+
+```{r section_f, include = FALSE}
 #### Section F
-
-Everything seems fine
-
-```{r}
 # Which columns in this section have lots of NA?
 cas97 %>% 
   dplyr::select(which(grepl("^F", colnames(.)))) %>%
@@ -340,9 +357,10 @@ cas97 <- cas97 %>%
   dplyr::select(-F70FRND, -F30FRND)
 ```
 
-#### Section G
 
-```{r}
+
+```{r section_g, include = FALSE}
+#### Section G
 cas97 <- cas97 %>% 
   mutate(G3_answered = cas97 %>%
                         dplyr::select(which(grepl("^G3_", colnames(.)))) %>%
@@ -377,9 +395,9 @@ cas97 %>%
   summary_na()
 ```
 
-Here we check for the number of complete cases after the preprocessing step above:
 
-```{r}
+```{r check_complete_case, include = FALSE}
+#Here we check for the number of complete cases after the preprocessing step above:
 cas97 %>%
   dplyr::select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
   dplyr::select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
@@ -387,47 +405,51 @@ cas97 %>%
   dim()
 ```
 
-We only have about 7100 observations for 212 variables 
 
-```{r}
+
+```{r drinkcat_missingness, include = FALSE}
+
+#We only have about 7100 observations for 212 variables 
+#There are few missing values for the response DRINKCAT
+
 mean(is.na(cas97$DRINKCAT))
+
 ```
 
-There are few missing values for the response DRINKCAT
+```{r corr matrix, include = FALSE, eval = FALSE}
 
 #### Multicolinearity
-
-```{r}
 cas97_noc <- cas97 %>%
   dplyr::select(which(grepl("^[[:upper:]]\\d", colnames(.)))) %>%
   dplyr::select(which(!grepl("^C\\d", colnames(.)))) %>% # Remove Section C for now
   filter(complete.cases(.)) %>%
   dplyr::select(-A6_NA)
-sort(apply(cas97_noc, 2 , sd))
-```
-
-Drop A6_NA in complete cases, because the standard deviation is 0.
-
-Let's check the correlation between the variables
-
-```{r}
+#sort(apply(cas97_noc, 2 , sd))
+#Drop A6_NA in complete cases, because the standard deviation is 0 and we also check the correlation between the variables
 plot_cormat <- function(X) {
   cormat <- round(cor(X), 2)
   melted_cormat <- reshape2::melt(cormat)
   ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile() + scale_fill_gradient2(low = "blue", mid = "white", high = "red")
+  ggsave("plots/corr_matrix.png")
 }
 
 plot_cormat(cas97_noc)
 ```
 
-```{r}
+```{r corr_matrix_output, echo = FALSE, eval = TRUE, fig.pos = "h",out.width = "300px", fig.align="center", fig.cap="\\label{fig:corr_matrix} Correlations between Survey Questions."}
+knitr::include_graphics("plots/corr_matrix.png")
+
+```
+
+
+```{r corr dist, echo = FALSE, fig.cap="Histogram of Correlations"}
 cormat <- round(cor(cas97_noc), 2)
 covvec <- cormat[upper.tri(cormat, diag = FALSE)]
 hist(covvec, breaks = 50)
-reshape2::melt(cormat) %>%
-  filter(Var1 != Var2) %>%
-  arrange(value)
+#reshape2::melt(cormat) %>%
+#  filter(Var1 != Var2) %>%
+#  arrange(value)
 
 check_cor <- function(df, desc = FALSE) {
   cormat <- round(cor(df), 2)
@@ -444,7 +466,6 @@ check_cor <- function(df, desc = FALSE) {
 } 
 ```
 
-
-## EDA Graphs
+\newpage
 
 ## Elastic Net Model
